@@ -1,133 +1,106 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
+import React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import { HiMenu, HiX } from "react-icons/hi"; // Add icons for menu and close
+import { AiOutlineSearch, AiOutlineUser, AiOutlineShoppingCart, AiOutlineHeart } from "react-icons/ai";
+import { Button } from "@/components/ui/button";
+import logoImage from "@/public/logo.png";
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
   return (
-    <header className="bg-gray-900 text-white shadow-md">
-      <div className="container mx-auto flex justify-between items-center p-4">
-        <div className="flex items-center space-x-4">
-          {/* Logo */}
-          <Link href="/" passHref>
-            <div className="text-3xl font-bold">ShopEase</div>
-          </Link>
+    <header className="bg-white border-b">
+      {/* Top Section */}
+      <div className="container mx-auto flex items-center justify-between py-4 px-6">
+        {/* Logo Section */}
+        <div className="flex items-center">
+          <Image
+            src={logoImage}
+            alt="Logo"
+            width={180}
+            height={80}
+            className="w-21 h-21"
+          />
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6">
-          <Link href="/shop" passHref>
-            <div className="hover:text-gray-300">Shop</div>
-          </Link>
-          <Link href="/about" passHref>
-            <div className="hover:text-gray-300">About Us</div>
-          </Link>
-          <Link href="/contact" passHref>
-            <div className="hover:text-gray-300">Contact</div>
-          </Link>
-          <Link href="/cart" passHref>
-            <div className="hover:text-gray-300">Cart</div>
-          </Link>
-        </nav>
-
-        {/* Mobile Menu Icon */}
-        <div className="md:hidden">
-          <Button
-            onClick={toggleMenu}
-            variant="secondary"
-            size="sm"
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600"
-          >
-            {isMenuOpen ? (
-              <HiX className="text-xl" />
-            ) : (
-              <HiMenu className="text-xl" />
-            )}
-          </Button>
+        {/* Search Bar */}
+        <div className="flex flex-1 justify-center mx-4">
+          <div className="relative w-full max-w-xl">
+            <input
+              type="text"
+              placeholder="Search for products"
+              className="w-full rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-green-500"
+            />
+            <AiOutlineSearch className="absolute top-2.5 right-4 text-gray-500" size={20} />
+          </div>
         </div>
 
-        {/* User Auth and Cart Button (Desktop) */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Link href="/login" passHref>
-            <div className="hover:text-gray-300">Login</div>
-          </Link>
-          <Link href="/signup" passHref>
-            <div className="hover:text-gray-300">Sign Up</div>
-          </Link>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600"
-          >
-            Cart (0)
-          </Button>
+        {/* Icons Section */}
+        <div className="flex items-center space-x-6 text-gray-600">
+          <AiOutlineUser size={24} className="cursor-pointer hover:text-green-500" />
+          <div className="relative cursor-pointer hover:text-green-500">
+            <AiOutlineHeart size={24} />
+            <span
+              className="absolute -top-2 -right-2 text-white text-xs px-1"
+              style={{ backgroundColor: "#00B412" }}
+            >
+              0
+            </span>
+          </div>
+          <div className="relative cursor-pointer hover:text-green-500">
+            <AiOutlineShoppingCart size={24} />
+            <span
+              className="absolute -top-2 -right-2 text-white text-xs px-1"
+              style={{ backgroundColor: "#00B412" }}
+            >
+              0
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu (Sheet style) */}
-      <div
-        className={`fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity duration-300 ${
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={toggleMenu}
-      />
-      <div
-        className={`fixed top-0 right-0 w-64 bg-gray-900 text-white h-full shadow-lg transform transition-transform duration-300 ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex justify-between items-center p-4">
-          <div className="text-3xl font-bold">ShopEase</div>
-          <Button
-            onClick={toggleMenu}
-            variant="secondary"
-            size="sm"
-            className="text-white"
-          >
-            <HiX className="text-xl" />
-          </Button>
-        </div>
-
-        <nav className="flex flex-col items-center space-y-6">
-          <Link href="/shop" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
-              Shop
-            </div>
-          </Link>
-          <Link href="/about" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
+      {/* Navigation Section */}
+      <nav className="bg-white">
+        <div className="container mx-auto flex items-center justify-between py-2 text-gray-700">
+          {/* Centered Links */}
+          <div className="flex-1 flex justify-center space-x-8">
+            <Link
+              href="/"
+              className="text-[#867916] font-semibold border-b-2 border-[#867916]"
+            >
+              Home
+            </Link>
+            <Link
+              href="/about"
+              className="hover:text-[#867916]"
+            >
               About Us
-            </div>
-          </Link>
-          <Link href="/contact" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
-              Contact
-            </div>
-          </Link>
-          <Link href="/cart" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
-              Cart
-            </div>
-          </Link>
-          <Link href="/login" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
-              Login
-            </div>
-          </Link>
-          <Link href="/signup" passHref>
-            <div onClick={toggleMenu} className="hover:text-gray-300">
-              Sign Up
-            </div>
-          </Link>
-        </nav>
-      </div>
+            </Link>
+            <Link
+              href="/products"
+              className="hover:text-[#867916]"
+            >
+              Our Products
+            </Link>
+            <Link
+              href="/blogs"
+              className="hover:text-[#867916]"
+            >
+              Blogs
+            </Link>
+          </div>
+
+          {/* Right-Aligned Contact Us Button */}
+          <div>
+            <Button
+              variant="default"
+              className="bg-black text-white hover:bg-brown-700 px-4 py-2 rounded-lg"
+            >
+              Contact Us
+            </Button>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 };
