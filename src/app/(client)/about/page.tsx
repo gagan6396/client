@@ -1,8 +1,14 @@
+import { NextPage } from "next";
+import SubscriptionForm from "@/Layout/SubscriptionForm";
 
 const page = () => {
   return (
-    <div>About</div>
+    <div>
+      <SubscriptionForm />
+    </div>
   )
 }
 
 export default page
+
+

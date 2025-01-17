@@ -4,6 +4,7 @@ const page = () => {
     <div>
       {/* <img src={imp1.src} alt="Google Logo" /> */}
       HIII
+      
     </div>
   );
 };

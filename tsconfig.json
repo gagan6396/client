@@ -29,14 +29,16 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      // "@/components/*": ["components/*"],
+      // "@/lib/*": ["lib/*"]
     }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
+    ".next/types/**/*.ts", "src/app/(client)/contact",
   ],
   "exclude": [
     "node_modules"
