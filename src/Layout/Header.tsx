@@ -1,11 +1,16 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { AiOutlineSearch, AiOutlineUser, AiOutlineShoppingCart, AiOutlineHeart } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import logoImage from "@/public/logo.png";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import {
+  AiOutlineHeart,
+  AiOutlineSearch,
+  AiOutlineShoppingCart,
+  AiOutlineUser,
+} from "react-icons/ai";
 
 const Header: React.FC = () => {
   return (
@@ -31,13 +36,19 @@ const Header: React.FC = () => {
               placeholder="Search for products"
               className="w-full rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-1 focus:ring-green-500"
             />
-            <AiOutlineSearch className="absolute top-2.5 right-4 text-gray-500" size={20} />
+            <AiOutlineSearch
+              className="absolute top-2.5 right-4 text-gray-500"
+              size={20}
+            />
           </div>
         </div>
 
         {/* Icons Section */}
         <div className="flex items-center space-x-6 text-gray-600">
-          <AiOutlineUser size={24} className="cursor-pointer hover:text-green-500" />
+          <AiOutlineUser
+            size={24}
+            className="cursor-pointer hover:text-green-500"
+          />
           <div className="relative cursor-pointer hover:text-green-500">
             <AiOutlineHeart size={24} />
             <span
@@ -63,39 +74,28 @@ const Header: React.FC = () => {
       <nav className="bg-white">
         <div className="container mx-auto flex items-center justify-between py-2 text-gray-700">
           {/* Centered Links */}
-          <div className="flex-1 flex justify-center space-x-8">
+          <div></div>
+          <div className="flex justify-center space-x-8">
             <Link
               href="/"
               className="text-[#867916] font-semibold border-b-2 border-[#867916]"
             >
               Home
             </Link>
-            <Link
-              href="/about"
-              className="hover:text-[#867916]"
-            >
+            <Link href="/about" className="hover:text-[#867916]">
               About Us
             </Link>
-            <Link
-              href="/products"
-              className="hover:text-[#867916]"
-            >
+            <Link href="/products" className="hover:text-[#867916]">
               Our Products
             </Link>
-            <Link
-              href="/blogs"
-              className="hover:text-[#867916]"
-            >
+            <Link href="/blogs" className="hover:text-[#867916]">
               Blogs
             </Link>
           </div>
 
           {/* Right-Aligned Contact Us Button */}
           <div>
-            <Button
-              variant="default"
-              className="bg-black text-white hover:bg-brown-700 px-4 py-2 rounded-lg"
-            >
+            <Button variant="default" className="bg-[#2B0504] rounded-full">
               Contact Us
             </Button>
           </div>

@@ -1,7 +1,7 @@
-import React from "react";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import clsx from "clsx";
+import React from "react";
 
 // Accordion Root
 export const Accordion = AccordionPrimitive.Root;
@@ -11,7 +11,7 @@ export const AccordionItem = React.forwardRef<HTMLDivElement, AccordionPrimitive
   ({ children, className, ...props }, ref) => (
     <AccordionPrimitive.Item
       ref={ref}
-      className={clsx("border-b border-gray-200 focus-within:ring focus-within:ring-green-200", className)}
+      className={clsx("border-b border-gray-200 ", className)}
       {...props}
     >
       {children}
@@ -28,7 +28,7 @@ export const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionPri
         ref={ref}
         className={clsx(
           "group flex flex-1 items-center justify-between py-4 text-left text-gray-800 transition",
-          "hover:text-green-600 focus:outline-none focus-visible:ring focus-visible:ring-green-200",
+          "focus:outline-none focus-visible:ring ",
           className
         )}
         {...props}

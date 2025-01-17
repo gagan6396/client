@@ -1,15 +1,16 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import * as React from "react";
-import Image from "next/image";
 import HeroImage1 from "@/public/hero-bg.png";
+import Autoplay from "embla-carousel-autoplay";
+import Image from "next/image";
+import * as React from "react";
 
 export function CarouselPlugin() {
   const plugin = React.useRef(
@@ -19,14 +20,14 @@ export function CarouselPlugin() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full max-w-full h-96 relative"
+      className="w-full"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
         {/* Hero Carousel Items */}
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index} className="relative">
+        {Array.from({ length: 1 }).map((_, index) => (
+          <CarouselItem key={index}>
             <div className="w-full h-full">
               <Image
                 src={HeroImage1}
@@ -34,12 +35,17 @@ export function CarouselPlugin() {
                 className="w-full h-full object-cover"
               />
               {/* Overlay content for the hero section */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <h1 className="w-45 text-black text-center text-4xl font-bold">
-                Pure, Fresh, Organic - Straight from Nature to Your Home {index + 1}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                <h1 className="w-45 text-[#2B0504] text-center text-4xl font-bold">
+                  Pure, Fresh, Organic - Straight from Nature to Your Home{" "}
+                  {index + 1}
                 </h1>
-                <p className="text-black text-center">Bringing Nature's Purity to Your Home</p>
-                <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-12 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Shop Now</button>
+                <p className="text-[#2B0504] text-center">
+                  Bringing Nature's Purity to Your Home
+                </p>
+                <Button type="button" className=" rounded bg-[#2B0504]">
+                  Shop Now
+                </Button>
               </div>
             </div>
           </CarouselItem>

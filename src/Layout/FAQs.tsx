@@ -1,14 +1,14 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import React from "react";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 const FAQs: React.FC = () => {
   return (
     <section className="bg-gray-100 py-12">
       <div className="container mx-auto px-6">
-        <h2 className="text-center text-3xl font-bold text-green-800 mb-8">FREQUENTLY ASKED QUESTIONS</h2>
+        <h2 className="text-center text-3xl font-bold mb-8">FREQUENTLY ASKED QUESTIONS</h2>
         <Accordion type="single" collapsible className="space-y-4">
           <AccordionItem value="item-1">
-            <AccordionTrigger className="text-lg font-semibold text-gray-800">
+            <AccordionTrigger className="text-lg font-semibold">
               What makes Gauraaj's products organic?
             </AccordionTrigger>
             <AccordionContent>
@@ -17,7 +17,7 @@ const FAQs: React.FC = () => {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger className="text-lg font-semibold text-gray-800">
+            <AccordionTrigger className="text-lg font-semibold">
               Do you offer international shipping?
             </AccordionTrigger>
             <AccordionContent>
@@ -25,7 +25,7 @@ const FAQs: React.FC = () => {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger className="text-lg font-semibold text-gray-800">
+            <AccordionTrigger className="text-lg font-semibold">
               Are your products tested for quality?
             </AccordionTrigger>
             <AccordionContent>
@@ -34,7 +34,7 @@ const FAQs: React.FC = () => {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
-            <AccordionTrigger className="text-lg font-semibold text-gray-800">
+            <AccordionTrigger className="text-lg font-semibold">
               What is your return policy?
             </AccordionTrigger>
             <AccordionContent>

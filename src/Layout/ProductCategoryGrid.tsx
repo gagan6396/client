@@ -1,5 +1,4 @@
-import React from "react";
-import Image, { StaticImageData } from "next/image";
+import { Button } from "@/components/ui/button";
 import Product1Image from "@/public/product-1.png";
 import Product2Image from "@/public/product-2.png";
 import Product3Image from "@/public/product-3.png";
@@ -8,7 +7,9 @@ import Product5Image from "@/public/product-5.png";
 import Product6Image from "@/public/product-6.png";
 import Product7Image from "@/public/product-7.png";
 import Product8Image from "@/public/product-8.png";
-
+import Image, { StaticImageData } from "next/image";
+import React from "react";
+import { CiHeart } from "react-icons/ci";
 // Adjust the type to accept either StaticImageData or string
 type ProductCardProps = {
   imageSrc: StaticImageData | string; // Allow imported images or external URLs
@@ -26,32 +27,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isBestSeller,
 }) => {
   return (
-    <div className="bg-white border rounded-lg shadow-lg p-4 group">
+    <div className="bg-white border rounded-lg shadow-lg group relative hover:scale-105 cursor-pointer">
       {/* Badge and Image */}
-      <div className="relative">
-        {isBestSeller && (
-          <div className="absolute top-2 right-2 bg-red-800 text-white text-xs px-2 py-1 rounded">
-            Best Seller
-          </div>
-        )}
+      <div>
         <Image
           src={imageSrc}
           alt={title}
-          className="w-full h-48 object-cover rounded-lg group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-48 object-contain rounded-lg hover:p-1"
         />
       </div>
-
+      {isBestSeller && (
+        <div className="absolute top-0 right-0 bg-[#2B0504] text-white text-xs px-5 py-1 rounded-md">
+          Best Seller
+        </div>
+      )}
+      <div className="absolute top-0 left-0 bg-[#00B412] text-white text-xs px-5 py-1 rounded-md">
+        -5%
+      </div>
       {/* Content */}
-      <div className="mt-4 text-center">
-        <h3 className="text-gray-800 text-lg font-semibold">{title}</h3>
-        <div className="flex items-center justify-between mt-2 space-x-4">
+      <div className="mt-4 p-4">
+        <h3 className="text-[#867916] text-lg font-semibold line-clamp-1">
+          {title}
+        </h3>
+        <div className="flex items-center justify-between py-3">
           {/* Price and Original Price */}
           <div>
             <span className="text-green-600 font-bold">{price}</span>
-            <span className="text-gray-500 line-through ml-2">{originalPrice}</span>
+            <span className="text-gray-500 line-through ml-2">
+              {originalPrice}
+            </span>
           </div>
           {/* 5-star Rating */}
-          <div className="flex space-x-1">
+          <div className="flex">
             {[...Array(5)].map((_, index) => (
               <svg
                 key={index}
@@ -65,9 +72,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ))}
           </div>
         </div>
-        <button className="mt-4 bg-[#2B0504] text-white px-4 py-2 rounded-lg hover:bg-[#3C0606] transition">
-          Shop Now
-        </button>
+        <div className=" flex items-center justify-between gap-3">
+          <Button className=" rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white">
+            Shop Now
+          </Button>
+          <CiHeart
+            size={30}
+            className=" hover:text-red-600 hover:scale-105 cursor-pointer"
+          />
+        </div>
       </div>
     </div>
   );
@@ -134,7 +147,8 @@ const ProductCategoryGrid: React.FC = () => {
   ];
 
   return (
-    <div className="my-10">
+    <div className=" container mx-auto py-7">
+      <h1 className=" text-center text-4xl font-bold">Our Best Seller Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {products.map((product, index) => (
           <ProductCard key={index} {...product} />
@@ -143,9 +157,9 @@ const ProductCategoryGrid: React.FC = () => {
 
       {/* See All Products Button */}
       <div className="flex justify-center mt-8">
-        <button className="bg-[#2B0504] text-white px-6 py-3 hover:bg-[#3C0606] transition">
+        <Button className="bg-[#2B0504] text-white px-6 py-3 hover:bg-[#3C0606] transition">
           See All Our Products
-        </button>
+        </Button>
       </div>
     </div>
   );
