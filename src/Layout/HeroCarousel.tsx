@@ -40,7 +40,7 @@ export function CarouselPlugin() {
                   {index + 1}
                 </h1>
                 <p className="text-[#2B0504] text-center text-sm sm:text-base">
-                  Bringing Nature's Purity to Your Home
+                  Bringing Nature&apos;s Purity to Your Home
                 </p>
                 <Button
                   type="button"
