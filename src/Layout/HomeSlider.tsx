@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
 } from "@/components/ui/carousel";
 import HeroImage1 from "@/public/hero-bg.png";
 import Autoplay from "embla-carousel-autoplay";
@@ -84,17 +84,17 @@ const HomeSlider = () => {
                 <div className="w-full h-full">
                   <Image
                     src={HeroImage1}
-                    alt={`Slide ${index + 1}`}
+                    alt={`Slide ${1}`}
                     className="w-full h-full object-cover"
                   />
                   {/* Overlay content for the hero section */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <h1 className="w-45 text-black text-center text-4xl font-bold">
                       Pure, Fresh, Organic - Straight from Nature to Your Home{" "}
-                      {index + 1}
+                      {}
                     </h1>
                     <p className="text-black text-center">
-                      Bringing Nature's Purity to Your Home
+                      Bringing Nature&apos;s Purity to Your Home
                     </p>
                     <button
                       type="button"

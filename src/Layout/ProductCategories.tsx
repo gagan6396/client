@@ -176,7 +176,7 @@ const ProductCategories = () => {
               Discover the Essence of Nature!
             </h2>
             <p className="text-gray-600 mt-4 text-sm md:text-xl">
-              At Gauraaj, we're dedicated to bringing you pure, organic products
+              At Gauraaj, we&apos;re dedicated to bringing you pure, organic products
               straight from the heart of nature. Experience the goodness of
               sustainable living and join us in creating a healthier, greener
               planet.
