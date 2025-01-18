@@ -3,6 +3,7 @@
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useRef } from "react";
+
 const dummyReels = [
   {
     _id: "1",
@@ -32,7 +33,7 @@ export function ReelsCarousel() {
     {
       loop: true,
       align: "start",
-      slidesToScroll: 4, // Scroll 4 slides at a time
+      slidesToScroll: 1, // Scroll 1 slide at a time (mobile optimized)
     },
     [autoplay.current]
   );
@@ -50,17 +51,17 @@ export function ReelsCarousel() {
           <p>No reels available. Start by uploading one!</p>
         ) : (
           <div ref={emblaRef} className="embla overflow-hidden">
-            <div className="embla__container flex">
+            <div className="embla__container flex space-x-4">
               {dummyReels.map((reel) => (
                 <div
                   key={reel._id}
-                  className="embla__slide min-w-[calc(100%/4)] px-2"
+                  className="embla__slide min-w-[calc(100%/1.25)] sm:min-w-[calc(100%/2)] lg:min-w-[calc(100%/4)] px-2"
                 >
                   <div className="relative">
                     <iframe
                       height="560"
                       src={reel.link}
-                      className=" rounded-md"
+                      className="w-full rounded-md"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       title={`Reel ${reel._id}`}

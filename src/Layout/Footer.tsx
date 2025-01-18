@@ -10,7 +10,7 @@ import {
 } from "react-icons/ai";
 const Footer = () => {
   return (
-    <div className="white w-full h-auto pt-10">
+    <div className="white w-full h-auto pt-10 hidden md:block">
       {/* Footer */}
       <div className="container mx-auto">
         <div className="grid md:grid-cols-6 gap-6  grid-cols-2">

@@ -1,4 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import Product1Image from "@/public/product-1.png";
 import Product2Image from "@/public/product-2.png";
 import Product3Image from "@/public/product-3.png";
@@ -7,9 +13,11 @@ import Product5Image from "@/public/product-5.png";
 import Product6Image from "@/public/product-6.png";
 import Product7Image from "@/public/product-7.png";
 import Product8Image from "@/public/product-8.png";
+import Autoplay from "embla-carousel-autoplay";
 import Image, { StaticImageData } from "next/image";
 import React from "react";
 import { CiHeart } from "react-icons/ci";
+
 // Adjust the type to accept either StaticImageData or string
 type ProductCardProps = {
   imageSrc: StaticImageData | string; // Allow imported images or external URLs
@@ -27,13 +35,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isBestSeller,
 }) => {
   return (
-    <div className="bg-white border rounded-lg shadow-lg group relative hover:scale-105 cursor-pointer">
+    <div className="bg-white border rounded-lg shadow-lg group relative hover:scale-105 cursor-pointer transition-all duration-300">
       {/* Badge and Image */}
-      <div>
+      <div className="relative">
         <Image
           src={imageSrc}
           alt={title}
-          className="w-full h-48 object-contain rounded-lg hover:p-1"
+          className="w-full h-48 object-contain rounded-lg group-hover:p-1 transition-all duration-300"
         />
       </div>
       {isBestSeller && (
@@ -72,13 +80,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ))}
           </div>
         </div>
-        <div className=" flex items-center justify-between gap-3">
-          <Button className=" rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white">
+        <div className="flex items-center justify-between gap-3">
+          <Button className="rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white transition">
             Shop Now
           </Button>
           <CiHeart
             size={30}
-            className=" hover:text-red-600 hover:scale-105 cursor-pointer"
+            className="hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
           />
         </div>
       </div>
@@ -87,6 +95,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 const ProductCategoryGrid: React.FC = () => {
+  const plugin = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
+
   const products = [
     {
       imageSrc: Product1Image,
@@ -147,9 +159,26 @@ const ProductCategoryGrid: React.FC = () => {
   ];
 
   return (
-    <div className=" container mx-auto py-7">
-      <h1 className=" text-center text-4xl font-bold">Our Best Seller Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+    <div className="container mx-auto py-7">
+      <h1 className="text-center text-2xl md:text-4xl font-bold">
+        Our Best Seller Products
+      </h1>
+
+      {/* Carousel for Mobile */}
+      <div className="relative sm:hidden">
+        <Carousel plugins={[plugin.current]} className="w-full p-4">
+          <CarouselContent className="flex space-x-4 py-3">
+            {products.map((product, index) => (
+              <CarouselItem key={index}>
+                <ProductCard {...product} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
+
+      {/* Grid for Desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 hidden sm:grid" >
         {products.map((product, index) => (
           <ProductCard key={index} {...product} />
         ))}
