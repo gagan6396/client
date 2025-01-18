@@ -1,6 +1,5 @@
-import React from "react";
-import Image from "next/image";
 import ContactUsImg from "@/public/contact-us.png";
+import Image from "next/image";
 
 export function ContactCard() {
   return (
@@ -25,7 +24,7 @@ export function ContactCard() {
       {/* Right Section: Content */}
       <div className="w-full md:w-1/2 text-center md:text-left">
         <p className="text-lg md:text-xl font-medium text-gray-700">
-          "Have questions or need support? Contact us today and let's grow
+          "Have questions or need support? Contact us today and let&quot;s grow
           something amazing together!"
         </p>
         <button className="mt-6 px-6 py-3 text-white bg-green-900 rounded-lg hover:bg-green-800 focus:ring-4 focus:ring-green-700">
