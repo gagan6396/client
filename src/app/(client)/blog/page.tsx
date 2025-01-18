@@ -1,6 +1,6 @@
-import { NextPage } from "next";
-import BlogSection from "@/Layout/BlogSection";
+
 import BlogCategorySection from "@/Layout/BlogCategorySection";
+import BlogSection from "@/Layout/BlogSection";
 import PopularArticlesSection from "@/Layout/PopularArticlesSection";
 
 const page = () => {
