@@ -1,6 +1,7 @@
 
 
 import AboutHeroSection from "@/Layout/About/AboutHeroSection";
+import AwardsAchievements from "@/Layout/About/AwardsAchievements";
 import { MissionVision } from "@/Layout/About/MissionVision";
 import { OrganicCollection } from "@/Layout/About/OrganicCollection";
 import { TeamAndTargets } from "@/Layout/About/TeamAndTargets";
@@ -13,7 +14,7 @@ const page = () => {
       <AboutHeroSection />
       <MissionVision />
       <TeamAndTargets />
-      {/* <AwardsAchievements /> */}
+      <AwardsAchievements />
       <Testimonials />
       <OrganicCollection />
       <SubscriptionForm />
