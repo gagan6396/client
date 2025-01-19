@@ -23,7 +23,7 @@ import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
-
+import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
 const ProductCategories = () => {
   const plugin = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: false })
@@ -90,20 +90,35 @@ const ProductCategories = () => {
                   key={index}
                   className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
                 >
-                  <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center text-center">
-                    <Image
-                      src={category.image}
-                      alt={category.title}
-                      width={80}
-                      height={80}
-                      className="mb-4 rounded-full object-cover"
-                    />
-                    <h3 className="text-sm md:text-lg font-semibold text-gray-800">
-                      {category.title}
-                    </h3>
-                    <p className="text-xs md:text-sm text-gray-600">
-                      {category.items}
-                    </p>
+                  <div
+                    key={index}
+                    className="bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl relative"
+                  >
+                    <a href="#">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        className="h-60 w-full object-cover rounded-t-xl"
+                      />
+                      <div className="px-4 py-3">
+                        <p className="text-lg font-bold text-black truncate block capitalize">
+                          {category.title}
+                        </p>
+                        <div className="flex items-center">
+                          <p className="text-lg font-semibold text-black cursor-auto my-3">
+                            {category.items}
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <div className="absolute top-4 right-4 flex space-x-2">
+                      <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100">
+                        <AiOutlineHeart className="text-red-500 text-lg" />
+                      </button>
+                      <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100">
+                        <AiOutlineShoppingCart className="text-green-500 text-lg" />
+                      </button>
+                    </div>
                   </div>
                 </CarouselItem>
               ))}
@@ -176,10 +191,10 @@ const ProductCategories = () => {
               Discover the Essence of Nature!
             </h2>
             <p className="text-gray-600 mt-4 text-sm md:text-xl">
-              At Gauraaj, we&apos;re dedicated to bringing you pure, organic products
-              straight from the heart of nature. Experience the goodness of
-              sustainable living and join us in creating a healthier, greener
-              planet.
+              At Gauraaj, we&apos;re dedicated to bringing you pure, organic
+              products straight from the heart of nature. Experience the
+              goodness of sustainable living and join us in creating a
+              healthier, greener planet.
             </p>
           </div>
         </div>

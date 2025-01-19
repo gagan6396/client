@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Image
           src={imageSrc}
           alt={title}
-          className="w-full h-48 object-contain rounded-lg group-hover:p-1 transition-all duration-300"
+          className="w-full h-48 md:h-64 object-cover rounded-lg group-hover:p-1 transition-all duration-300"
         />
       </div>
       {isBestSeller && (
