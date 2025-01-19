@@ -1,16 +1,21 @@
 "use client";
+import { RootState } from "@/app/store";
+import { loginFailure, loginStart, loginSuccess } from "@/features/authSlice";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 const LoginPage = () => {
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
   // Validation schema with Yup
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -22,26 +27,29 @@ const LoginPage = () => {
   });
 
   const handleSubmit = (values: any) => {
-    setLoading(true);
-    // Simulate API login call (replace with real API)
+    dispatch(loginStart());
+    // Simulate login (no API call)
     setTimeout(() => {
-      setLoading(false);
-      toast.success("Login successful!", {
-        position: "top-center",
-      });
-      router.push("/");
+      if (values.email === "test@example.com" && values.password === "password123") {
+        // Simulate successful login
+        dispatch(loginSuccess({ email: values.email }));
+        toast.success("Login successful!", { position: "top-center" });
+        router.push("/");
+      } else {
+        // Simulate error
+        dispatch(loginFailure("Invalid email or password."));
+        toast.error("Invalid email or password.", { position: "top-center" });
+      }
     }, 1500);
   };
 
   return (
-    <section className=" min-h-screen flex items-center justify-center">
-      <div className=" flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
+    <section className="min-h-screen flex items-center justify-center">
+      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
         {/* Form Container */}
         <div className="md:w-1/2 px-8 md:px-16">
           <h2 className="font-bold text-2xl text-[#002D74]">Login</h2>
-          <p className="text-xs mt-4 text-[#002D74]">
-            If you are already a member, easily log in
-          </p>
+          <p className="text-xs mt-4 text-[#002D74]">If you are already a member, easily log in</p>
 
           {/* Formik Form */}
           <Formik
@@ -88,9 +96,13 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"
+                  disabled={loading}
                 >
                   {loading ? "Logging in..." : "Login"}
                 </button>
+                {error && (
+                  <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+                )}
               </Form>
             )}
           </Formik>

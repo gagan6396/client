@@ -37,11 +37,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300">
       {/* Badge and Image */}
-      <div className="relative">
+      <div className="relative ">
         <Image
           src={imageSrc}
           alt={title}
-          className="w-full h-48 md:h-64 object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
+          className="w-full  aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
         />
       </div>
       {isBestSeller && (
