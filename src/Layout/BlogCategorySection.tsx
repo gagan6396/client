@@ -1,9 +1,9 @@
-import { FC } from "react";
-import Image from "next/image";
 import category1 from "@/public/category1.png";
 import category2 from "@/public/category2.png";
 import category3 from "@/public/category3.png";
 import category4 from "@/public/category4.png";
+import Image from "next/image";
+import { FC } from "react";
 
 
 interface Category {

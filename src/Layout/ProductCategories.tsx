@@ -1,55 +1,169 @@
-import Link from "next/link";
+"use client";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import arsa from "@/public/arsa.jpg";
+import buransh from "@/public/buransh-tea.jpg";
+import chamomile from "@/public/chamomile-tea.jpg";
+import ghee from "@/public/ghee.jpg";
+import ghee1 from "@/public/ghee1.png";
+import gujiye from "@/public/gujiye.jpg";
+import herbs from "@/public/herbs.png";
+import honey from "@/public/honey.jpg";
+import honey1 from "@/public/honey1.png";
+import millet from "@/public/millet.png";
+import mixSweets from "@/public/mix-sweets.jpg";
+import moongdaalLadoo from "@/public/moongdaal-ladoo.jpg";
+import normalAtta from "@/public/normal-atta.jpg";
+import rotana from "@/public/rotana.jpg";
+import spices from "@/public/spices.png";
+import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
-
+import Link from "next/link";
+import * as React from "react";
 
 const ProductCategories = () => {
+  const plugin = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
+
+  const topCategories = [
+    { image: honey, title: "Honey", items: "5 Items" },
+    { image: moongdaalLadoo, title: "Moong Daal Ladoo", items: "9 Items" },
+    { image: rotana, title: "Rotana", items: "11 Items" },
+    { image: gujiye, title: "Gujiya", items: "7 Items" },
+    { image: chamomile, title: "Chamomile Tea", items: "3 Items" },
+    { image: mixSweets, title: "Mix Sweets", items: "8 Items" },
+    { image: normalAtta, title: "Normal Atta", items: "10 Items" },
+    { image: buransh, title: "Buransh Tea", items: "4 Items" },
+    { image: arsa, title: "Arsa", items: "6 Items" },
+    { image: ghee, title: "Ghee", items: "12 Items" },
+  ];
+
+  const bestCategories = [
+    {
+      name: "Organic Grains",
+      desc: "Whole, unprocessed grains sourced from sustainable farms.",
+      img: millet,
+    },
+    {
+      name: "Spices",
+      desc: "Fresh, aromatic spices to elevate your cooking.",
+      img: spices,
+    },
+    {
+      name: "Herbs",
+      desc: "Handpicked herbs for medicinal and culinary use.",
+      img: herbs,
+    },
+    {
+      name: "Oils and Ghees",
+      desc: "Nourishing oils for cooking and skincare.",
+      img: ghee1,
+    },
+    {
+      name: "Honey",
+      desc: "Raw, organic honey packed with natural goodness and health benefits.",
+      img: honey1,
+    },
+  ];
+
   return (
-    <section className="bg-gray-100 py-12">
-      {/* Top Offers Section */}
-      <div className="container mx-auto px-6">
-        <h2 className="text-2xl font-semibold text-green-800 mb-4">Top Offers of This Week</h2>
-        <div className="flex space-x-4 overflow-x-auto">
-          {["/offer1.jpg", "/offer2.jpg", "/offer3.jpg", "/offer4.jpg", "/offer5.jpg"].map((src, index) => (
-            <div key={index} className="rounded-full w-20 h-20 overflow-hidden border border-gray-300">
-              <img src={src} alt={`Offer ${index + 1}`} className="w-full h-full object-cover" />
-            </div>
-          ))}
+    <section className="px-5 md:py-14">
+      {/* Top Categories Section */}
+      <div className="container mx-auto">
+        <h1 className="text-2xl md:text-4xl text-center font-bold py-5">
+          Popular Products
+        </h1>
+        <div className="relative">
+          <Carousel
+            plugins={[plugin.current]}
+            className="w-full"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
+          >
+            <CarouselContent className="flex space-x-4 py-3">
+              {topCategories.map((category, index) => (
+                <CarouselItem
+                  key={index}
+                  className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
+                >
+                  <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center text-center">
+                    <Image
+                      src={category.image}
+                      alt={category.title}
+                      width={80}
+                      height={80}
+                      className="mb-4 rounded-full object-cover"
+                    />
+                    <h3 className="text-sm md:text-lg font-semibold text-gray-800">
+                      {category.title}
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-600">
+                      {category.items}
+                    </p>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </div>
 
       {/* Best Product Categories Section */}
-      <div className="container mx-auto px-6 mt-12">
-        <h2 className="text-center text-2xl font-bold text-gray-800 mb-6">BEST PRODUCT CATEGORIES</h2>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          {[
-            { name: "Organic Grains", desc: "Whole, unprocessed grains sourced from sustainable farms.", img: "/millet.png" },
-            { name: "Spices", desc: "Fresh, aromatic spices to elevate your cooking.", img: "/spices.png" },
-            { name: "Herbs", desc: "Handpicked herbs for medicinal and culinary use.", img: "/herbs.png" },
-            { name: "Oils and Ghees", desc: "Nourishing oils for cooking and skincare.", img: "/ghee.png" },
-            { name: "Honey", desc: "Raw, organic honey packed with natural goodness and health benefits.", img: "/honey.png" },
-          ].map((category, index) => (
-            <div
-              key={index}
-              className="bg-white border border-gray-200 rounded-full shadow-lg flex flex-col items-center text-center py-8 px-4 space-y-4 hover:shadow-xl transition duration-300 w-30 h-100 object-cover border-2 border-brown-500"
-            >
-              <Image src={category.img} alt={category.name} width={40} height={40} className="w-20 h-20 object-cover rounded-full border-2 border-green-500" />
-              <h3 className="text-lg font-semibold text-gray-800">{category.name}</h3>
-              <p className="text-sm text-gray-600">{category.desc}</p>
-              <Link href="/" className="text-green-600 font-medium hover:underline">
-                View More
-              </Link>
-            </div>
-          ))}
+      <div className="container mx-auto my-12">
+        <h2 className="text-2xl md:text-4xl text-center font-bold text-gray-800 py-5">
+          Best Product Categories
+        </h2>
+        <div className="relative">
+          <Carousel
+            plugins={[plugin.current]}
+            className="w-full"
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
+          >
+            <CarouselContent className="flex space-x-4 py-4">
+              {bestCategories.map((category, index) => (
+                <CarouselItem
+                  key={index}
+                  className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
+                >
+                  <div className="bg-white border-gray-200 rounded-lg shadow-lg flex flex-col items-center text-center py-4 px-2 md:py-6 md:px-4 space-y-2 md:space-y-4 hover:shadow-xl transition duration-300">
+                    <Image
+                      src={category.img}
+                      alt={category.name}
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full"
+                    />
+                    <h3 className="text-sm md:text-lg font-semibold text-gray-800">
+                      {category.name}
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
+                      {category.desc}
+                    </p>
+                    <Link
+                      href="/"
+                      className="text-green-600 font-medium hover:underline text-xs md:text-sm"
+                    >
+                      View More
+                    </Link>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </div>
 
       {/* Video and Description Section */}
-      <div className="container mx-auto px-6 mt-12">
-        <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-6">
-          {/* Video Section */}
+      <div className="container mx-auto py-14">
+        <div className="flex flex-col md:flex-row items-center gap-5">
           <div className="flex-1">
             <iframe
-              className="w-full h-64 md:h-80 rounded-lg shadow-lg"
+              className="w-full aspect-video rounded-lg shadow-lg"
               src="https://www.youtube.com/embed/CxFQEdI3XvU"
               title="Organic Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -57,12 +171,15 @@ const ProductCategories = () => {
             ></iframe>
           </div>
 
-          {/* Text Section */}
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-green-800">Discover the Essence of Nature!</h2>
-            <p className="text-gray-600 mt-4">
-              At Gauraaj, we're dedicated to bringing you pure, organic products straight from the heart of nature.
-              Experience the goodness of sustainable living and join us in creating a healthier, greener planet.
+            <h2 className="font-bold text-2xl md:text-4xl py-4">
+              Discover the Essence of Nature!
+            </h2>
+            <p className="text-gray-600 mt-4 text-sm md:text-xl">
+              At Gauraaj, we&apos;re dedicated to bringing you pure, organic products
+              straight from the heart of nature. Experience the goodness of
+              sustainable living and join us in creating a healthier, greener
+              planet.
             </p>
           </div>
         </div>
