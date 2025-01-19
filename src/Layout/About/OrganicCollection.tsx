@@ -1,6 +1,5 @@
-import React from "react";
+import organicImage from "@/public/About/organic-collection.png";
 import Image from "next/image";
-import organicImage from "@/public/About/organic-collection.png"; 
 
 export function OrganicCollection() {
   return (
@@ -14,7 +13,7 @@ export function OrganicCollection() {
           <p className="text-white text-base leading-relaxed">
             Looking for healthy, chemical-free products? Gauraaj’s organic
             collection is curated to bring you the best nature has to offer.
-            Whether it's for cooking, skincare, or your wellness, our handpicked
+            Whether it&apos;s for cooking, skincare, or your wellness, our handpicked
             products will make a difference in your daily life. Browse our
             collection and taste the true difference today!
           </p>

@@ -1,8 +1,7 @@
-import React from "react";
-import Image from "next/image";
 import handshakeImage from "@/public/About/handshake.png";
 import kidsGroup from "@/public/About/kids-group.png";
 import womenFarmers from "@/public/About/women-farmers.png";
+import Image from "next/image";
 
 export function MissionVision() {
   return (
@@ -75,7 +74,7 @@ export function MissionVision() {
           <h2 className="text-xl font-bold text-green-900 text-center mb-4">Our Vision</h2>
           <p className="text-center text-gray-600 mb-6">
             To transform lives by nurturing hill communities, empowering women, and celebrating 
-            Uttarakhand's rich agricultural heritage, fostering a future where nature and people thrive together.
+            Uttarakhand&apos;'s rich agricultural heritage, fostering a future where nature and people thrive together.
           </p>
           <div className="space-y-4">
             <div className="flex items-center bg-green-100 p-4 rounded-lg shadow-md">

@@ -1,9 +1,8 @@
-import React from "react";
-import Image from "next/image";
 import teamMember1 from "@/public/About/suman-nainwal.png";
 import target1 from "@/public/About/target1.png";
 import target2 from "@/public/About/target2.png";
 import target3 from "@/public/About/target3.png";
+import Image from "next/image";
 
 export function TeamAndTargets() {
   return (
@@ -66,7 +65,7 @@ export function TeamAndTargets() {
               />
               <div className="mt-4">
                 <h3 className="text-base font-semibold text-green-800">
-                  Women's Empowerment
+                  Women&apos;s Empowerment
                 </h3>
                 <p className="text-gray-600 text-sm">
                   Empowering women is at the heart of Gauraj’s mission. We

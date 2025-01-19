@@ -41,10 +41,10 @@ const Testimonials: React.FC = () => {
               >
                 <div className="bg-white border rounded-lg shadow-lg p-6 text-center animate-fadeIn">
                   <p className="text-gray-700 italic">
-                    "Gauraaj has been a game changer for my health. Their
+                  &quot;Gauraaj has been a game changer for my health. Their
                     organic honey and grains have made a significant difference
                     in my diet. The quality is top-notch, and I love knowing
-                    that I’m supporting sustainable farming."
+                    that I&quot;m supporting sustainable farming.&quot;
                   </p>
                   <div className="mt-4 flex flex-col items-center">
                     <Image
