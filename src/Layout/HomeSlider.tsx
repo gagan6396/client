@@ -79,8 +79,8 @@ const HomeSlider = () => {
         <CarouselContent className="flex">
           {Array.isArray(contents) &&
             contents.length > 0 &&
-            contents.map((content) => (
-              <CarouselItem className="w-full">
+            contents.map((content, index) => (
+              <CarouselItem className="w-full" key={index}>
                 <div className="w-full h-full">
                   <Image
                     src={HeroImage1}
