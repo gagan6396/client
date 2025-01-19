@@ -1,13 +1,11 @@
-import { NextPage } from "next";
 
 
+import AboutHeroSection from "@/Layout/About/AboutHeroSection";
 import { MissionVision } from "@/Layout/About/MissionVision";
-import Testimonials from "@/Layout/Testimonials";
-import SubscriptionForm from "@/Layout/SubscriptionForm";
 import { OrganicCollection } from "@/Layout/About/OrganicCollection";
 import { TeamAndTargets } from "@/Layout/About/TeamAndTargets";
-import AwardsAchievements from "@/Layout/About/AwardsAchievements";
-import AboutHeroSection from "@/Layout/About/AboutHeroSection";
+import SubscriptionForm from "@/Layout/SubscriptionForm";
+import Testimonials from "@/Layout/Testimonials";
 
 const page = () => {
   return (
@@ -15,7 +13,7 @@ const page = () => {
       <AboutHeroSection />
       <MissionVision />
       <TeamAndTargets />
-      <AwardsAchievements />
+      {/* <AwardsAchievements /> */}
       <Testimonials />
       <OrganicCollection />
       <SubscriptionForm />
