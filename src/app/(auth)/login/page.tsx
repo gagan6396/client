@@ -137,7 +137,7 @@ const LoginPage = () => {
 
           {/* Register Link */}
           <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">
-            <p>Don't have an account?</p>
+            <p>Don&apos;t have an account?</p>
             <Link
               href={"/signup"}
               className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
