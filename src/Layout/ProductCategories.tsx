@@ -88,7 +88,7 @@ const ProductCategories = () => {
               {topCategories.map((category, index) => (
                 <CarouselItem
                   key={index}
-                  className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
+                  className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-2/3 md:basis-1/4 lg:basis-1/5"
                 >
                   <div
                     key={index}
@@ -98,7 +98,7 @@ const ProductCategories = () => {
                       <Image
                         src={category.image}
                         alt={category.title}
-                        className="h-60 w-full object-cover rounded-t-xl"
+                        className=" h-48 md:h-60 w-full object-cover rounded-t-xl"
                       />
                       <div className="px-4 py-3">
                         <p className="text-lg font-bold text-black truncate block capitalize">
@@ -175,7 +175,7 @@ const ProductCategories = () => {
 
       {/* Video and Description Section */}
       <div className="container mx-auto py-14">
-        <div className="flex flex-col md:flex-row items-center gap-5">
+        <div className="flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1">
             <iframe
               className="w-full aspect-video rounded-lg shadow-lg"
