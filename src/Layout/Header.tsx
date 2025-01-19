@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import {
   AiOutlineHeart,
@@ -13,6 +14,12 @@ import {
 } from "react-icons/ai";
 
 const Header: React.FC = () => {
+  const pathname = usePathname(); // Get the current path
+
+  const getLinkClass = (path: string) => {
+    return pathname === path ? "text-[#2B0504] font-semibold" : "hover:text-[#2B0504]";
+  };
+
   return (
     <header className="bg-white border-b shadow-sm md:block top-0 z-50 h-20 md:h-36">
       {/* Top Section */}
@@ -76,19 +83,19 @@ const Header: React.FC = () => {
         <div className="container mx-auto flex items-center justify-center py-2 px-4 text-gray-700 ">
           {/* Centered Links */}
           <div className="flex space-x-8 items-center pl-12">
-            <Link href="/" className="hover:text-[#2B0504]">
+            <Link href="/" className={getLinkClass("/")}>
               Home
             </Link>
-            <Link href="/about" className="hover:text-[#2B0504]">
+            <Link href="/about" className={getLinkClass("/about")}>
               About Us
             </Link>
-            <Link href="/products" className="hover:text-[#2B0504]">
+            <Link href="/products" className={getLinkClass("/products")}>
               Our Products
             </Link>
-            <Link href="/blogs" className="hover:text-[#2B0504]">
+            <Link href="/blogs" className={getLinkClass("/blogs")}>
               Blogs
             </Link>
-            <Link href="/contact" className="hover:text-[#2B0504]">
+            <Link href="/contact" className={getLinkClass("/contact")}>
               Contact Us
             </Link>
           </div>
