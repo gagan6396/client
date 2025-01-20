@@ -94,11 +94,11 @@ const Header: React.FC = () => {
               </div>
               <div
                 className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/cart")}
+                onClick={() => router.push("/add-to-cart")}
               >
                 <AiOutlineShoppingCart
                   size={24}
-                  className={getLinkClass("/cart")}
+                  className={getLinkClass("/add-to-cart")}
                 />
                 <span
                   className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"
@@ -142,11 +142,11 @@ const Header: React.FC = () => {
               </div>
               <div
                 className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/cart")}
+                onClick={() => router.push("/add-to-cart")}
               >
                 <AiOutlineShoppingCart
                   size={24}
-                  className={getLinkClass("/cart")}
+                  className={getLinkClass("/add-to-cart")}
                 />
                 <span
                   className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"

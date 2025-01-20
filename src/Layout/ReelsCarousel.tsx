@@ -45,7 +45,7 @@ export function ReelsCarousel() {
   }, [emblaApi]);
 
   return (
-    <section className="container py-5 bg-white text-black mx-auto">
+    <section className="container py-14 bg-white text-black mx-auto">
       <main>
         {dummyReels.length === 0 ? (
           <p>No reels available. Start by uploading one!</p>

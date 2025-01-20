@@ -5,14 +5,15 @@ import {
   registerStart,
   registerSuccess,
 } from "@/features/authSlice";
+import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
-
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const route = useRouter();
@@ -56,7 +57,7 @@ const RegisterPage = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center">
-      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
+      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center">
         {/* Form Container */}
         <div className="md:w-1/2 px-8 md:px-16">
           <h2 className="font-bold text-2xl text-[#002D74]">Register</h2>
@@ -149,11 +150,7 @@ const RegisterPage = () => {
         </div>
         {/* Image Section */}
         <div className="md:block hidden w-1/2">
-          <img
-            className="rounded-2xl"
-            src="https://images.unsplash.com/photo-1616606103915-dea7be788566?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-            alt="Register"
-          />
+          <Image className="rounded-2xl" src={bgImage} alt="Register" />
         </div>
       </div>
       <ToastContainer />

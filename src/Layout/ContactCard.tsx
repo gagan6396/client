@@ -1,9 +1,9 @@
-import ContactUsImg from "@/public/contact-us.png";
+import ContactUsImg from "@/public/l2.jpg";
 import Image from "next/image";
 
 export function ContactCard() {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-green-50 rounded-lg shadow-lg">
+    <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-lg">
       {/* Left Section: Image */}
       <div className="w-full md:w-1/2">
         <div className="relative overflow-hidden rounded-lg">
@@ -12,12 +12,6 @@ export function ContactCard() {
             alt="Gauraj Valleyfood Pvt. Ltd."
             className="w-full h-auto object-cover"
           />
-          {/* Overlay Text */}
-          <div className="absolute inset-0 flex flex-col justify-start items-start p-6">
-            <span className="text-white text-xl md:text-2xl font-bold bg-black/50 px-4 py-2 rounded-lg mb-2">
-              CONTACT US
-            </span>
-          </div>
         </div>
       </div>
 

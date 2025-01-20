@@ -27,7 +27,7 @@ type ProductCardProps = {
   isBestSeller: boolean;
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({
+export const ProductCard: React.FC<ProductCardProps> = ({
   imageSrc,
   title,
   price,

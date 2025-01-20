@@ -1,22 +1,24 @@
-import { Carousel } from "@/components/ui/carousel";
 import Image from "next/image";
 import { FC } from "react";
 
 // Images
-import {
-  default as slider1,
-  default as slider2,
-} from "@/public/About/slider1.png";
-import {
-  default as storyImage1,
-  default as storyImage2,
-} from "@/public/About/story1.png";
+import storyImage1 from "@/public/l2.jpg";
+import storyImage2 from "@/public/l3.jpg";
+import slider1 from "@/public/l4.jpg";
 
 const AboutHeroSection: FC = () => {
   return (
-    <div className="bg-gray-50">
+    <div className="">
       {/* Hero Section */}
-      <section className="text-center py-12 bg-white">
+      <section
+        className="text-center py-12 bg-white h-screen"
+        style={{
+          backgroundImage: `url(${slider1.src})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
         <h1 className="text-3xl md:text-4xl font-bold text-green-700">
           About Gauraaj: Rooted in Sustainability, Growing with Purpose
         </h1>
@@ -24,32 +26,10 @@ const AboutHeroSection: FC = () => {
           &quot;Discover Our Journey of Empowering Communities and Delivering
           Pure, Organic Products from the Heart of Nature.&quot;
         </p>
-
-        {/* Carousel */}
-        <div className="mt-8">
-          <Carousel>
-            <div className="relative w-full h-64 md:h-80">
-              <Image
-                src={slider1}
-                alt="Carousel Image 1"
-                className="object-cover w-full h-full"
-                layout="fill"
-              />
-            </div>
-            <div className="relative w-full h-64 md:h-80">
-              <Image
-                src={slider2}
-                alt="Carousel Image 2"
-                className="object-cover w-full h-full"
-                layout="fill"
-              />
-            </div>
-          </Carousel>
-        </div>
       </section>
 
       {/* "Our Story" Section */}
-      <section className="py-12 bg-gray-100">
+      <section className="py-12">
         <div className="container mx-auto px-6 md:px-12">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-green-700">
             Our Story
@@ -58,12 +38,11 @@ const AboutHeroSection: FC = () => {
           {/* First Row: Image on the Left, Text on the Right */}
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Image */}
-            <div className="relative w-full h-64">
+            <div className="relative w-full">
               <Image
                 src={storyImage1}
                 alt="Our Story Image 1"
-                className="object-cover rounded-md shadow-lg"
-                layout="fill"
+                className="object-cover"
               />
             </div>
             {/* Text */}
@@ -90,11 +69,11 @@ const AboutHeroSection: FC = () => {
           {/* Second Row: Image on the Left, Text on the Right */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Image */}
-            <div className="relative w-full h-64">
+            <div className="relative w-full h-64 md:order-1">
               <Image
                 src={storyImage2}
                 alt="Our Story Image 2"
-                className="object-cover rounded-md shadow-lg"
+                className="object-cover"
                 layout="fill"
               />
             </div>

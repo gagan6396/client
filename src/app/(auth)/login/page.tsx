@@ -1,8 +1,10 @@
 "use client";
 import { RootState } from "@/app/store";
 import { loginFailure, loginStart, loginSuccess } from "@/features/authSlice";
+import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,7 +32,10 @@ const LoginPage = () => {
     dispatch(loginStart());
     // Simulate login (no API call)
     setTimeout(() => {
-      if (values.email === "test@example.com" && values.password === "password123") {
+      if (
+        values.email === "test@example.com" &&
+        values.password === "password123"
+      ) {
         // Simulate successful login
         dispatch(loginSuccess({ email: values.email }));
         toast.success("Login successful!", { position: "top-center" });
@@ -45,11 +50,13 @@ const LoginPage = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center">
-      <div className="flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
+      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center">
         {/* Form Container */}
         <div className="md:w-1/2 px-8 md:px-16">
           <h2 className="font-bold text-2xl text-[#002D74]">Login</h2>
-          <p className="text-xs mt-4 text-[#002D74]">If you are already a member, easily log in</p>
+          <p className="text-xs mt-4 text-[#002D74]">
+            If you are already a member, easily log in
+          </p>
 
           {/* Formik Form */}
           <Formik
@@ -101,7 +108,9 @@ const LoginPage = () => {
                   {loading ? "Logging in..." : "Login"}
                 </button>
                 {error && (
-                  <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+                  <p className="text-red-500 text-sm text-center mt-2">
+                    {error}
+                  </p>
                 )}
               </Form>
             )}
@@ -161,11 +170,7 @@ const LoginPage = () => {
 
         {/* Image Section */}
         <div className="md:block hidden w-1/2">
-          <img
-            className="rounded-2xl"
-            src="https://images.unsplash.com/photo-1616606103915-dea7be788566?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
-            alt="Login"
-          />
+          <Image className="rounded-2xl" src={bgImage} alt="Login" />
         </div>
       </div>
     </section>
