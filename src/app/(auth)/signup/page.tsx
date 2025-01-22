@@ -1,60 +1,68 @@
 "use client";
-import { Spinner } from "@/components/custom/Spinner"; // If you have a spinner component in ShadCN
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { RootState } from "@/app/store";
+import {
+  registerFailure,
+  registerStart,
+  registerSuccess,
+} from "@/features/authSlice";
+import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
+const RegisterPage = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const route = useRouter();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
 
-// Validation Schema using Yup
-const validationSchema = Yup.object({
-  name: Yup.string()
-    .min(2, "Name must be at least 2 characters")
-    .required("Name is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "Passwords must match")
-    .required("Confirm password is required"),
-});
+  // Validation schema with Yup
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .min(3, "Name must be at least 3 characters")
+      .required("Name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .required("Confirm Password is required"),
+  });
 
-const Register: React.FC = () => {
-  const [loading, setLoading] = useState(false); // For showing loader on form submission
-
-  // Form submit handler
-  const handleSubmit = async (values: {
-    name: string;
-    email: string;
-    password: string;
-  }) => {
-    setLoading(true);
-    try {
-      // Simulate an API call
-      console.log("Registering with", values);
-      // Use API to handle registration here
-
-      // Simulating a delay
-      setTimeout(() => {
-        setLoading(false);
-        alert("Registered successfully");
-      }, 2000);
-    } catch (error) {
-      setLoading(false);
-      alert("Registration failed");
-    }
+  const handleSubmit = async (values: any) => {
+    dispatch(registerStart());
+    // Simulate the registration process (no API call)
+    setTimeout(() => {
+      if (values.name && values.email && values.password) {
+        // Simulate successful registration
+        dispatch(registerSuccess(values));
+        toast.success("Registration successful!", { position: "top-center" });
+        route.push("/");
+      } else {
+        // Simulate error
+        dispatch(registerFailure("Registration failed. Please try again."));
+        toast.error("Registration failed. Please try again.", {
+          position: "top-center",
+        });
+      }
+    }, 1500);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md p-6">
-        <CardContent>
-          <h2 className="text-2xl font-semibold text-center mb-4">
-            Create Account
-          </h2>
+    <section className="min-h-screen flex items-center justify-center">
+      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center">
+        {/* Form Container */}
+        <div className="md:w-1/2 px-8 md:px-16">
+          <h2 className="font-bold text-2xl text-[#002D74]">Register</h2>
+          <p className="text-xs mt-4 text-[#002D74]">Create a new account</p>
+
           <Formik
             initialValues={{
               name: "",
@@ -65,118 +73,89 @@ const Register: React.FC = () => {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
-              <Form>
-                {/* Name Field */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-600"
-                  >
-                    Full Name
-                  </label>
+            {() => (
+              <Form className="flex flex-col gap-4 mt-2">
+                <Field
+                  className="p-2 rounded-xl border"
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                />
+                <ErrorMessage
+                  name="name"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
+                <Field
+                  className="p-2 rounded-xl border"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
+                <div className="relative">
                   <Field
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="text-red-600 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Email Field */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-600"
-                  >
-                    Email
-                  </label>
-                  <Field
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-600 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-600"
-                  >
-                    Password
-                  </label>
-                  <Field
-                    type="password"
-                    id="password"
+                    className="p-2 rounded-xl border w-full"
+                    type={showPassword ? "text" : "password"}
                     name="password"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                    placeholder="Password"
                   />
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-600 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Confirm Password Field */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium text-gray-600"
+                  <div
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                   >
-                    Confirm Password
-                  </label>
-                  <Field
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-                  />
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="div"
-                    className="text-red-600 text-xs mt-1"
-                  />
+                    {showPassword ? (
+                      <EyeOff color="gray" size={16} />
+                    ) : (
+                      <Eye color="gray" size={16} />
+                    )}
+                  </div>
                 </div>
-
-                {/* Submit Button */}
-                <div className="flex items-center justify-between">
-                  <Button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-                    disabled={isSubmitting || loading}
-                  >
-                    {loading ? <Spinner className="w-5 h-5" /> : "Register"}
-                  </Button>
-                </div>
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
+                <Field
+                  className="p-2 rounded-xl border"
+                  type={showPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                />
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
+                <button
+                  type="submit"
+                  className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"
+                  disabled={loading}
+                >
+                  {loading ? "Registering..." : "Register"}
+                </button>
+                {error && (
+                  <p className="text-red-500 text-sm text-center mt-2">
+                    {error}
+                  </p>
+                )}
               </Form>
             )}
           </Formik>
-
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
-                Login
-              </a>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          {/* Other sections (Google login, etc.) */}
+        </div>
+        {/* Image Section */}
+        <div className="md:block hidden w-1/2">
+          <Image className="rounded-2xl" src={bgImage} alt="Register" />
+        </div>
+      </div>
+      <ToastContainer />
+    </section>
   );
 };
 
-export default Register;
+export default RegisterPage;

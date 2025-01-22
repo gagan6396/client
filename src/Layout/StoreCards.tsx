@@ -1,4 +1,7 @@
-import { FC } from "react";
+"use client"
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
+import { FC, useRef } from "react";
 
 interface StoreInfo {
   title: string;
@@ -35,29 +38,36 @@ const stores: StoreInfo[] = [
 ];
 
 const StoreCards: FC = () => {
+  const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
+  const [emblaRef] = useEmblaCarousel({ loop: true }, [autoplay.current]);
+
   return (
     <div className="mt-12 text-center">
       <h2 className="text-2xl font-bold text-green-700 mb-6">
         Looking for Our Local Store?
       </h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stores.map((store, index) => (
-          <div
-            key={index}
-            className="bg-white shadow-md rounded-md p-4 text-left border"
-          >
-            <h3 className="font-semibold text-lg text-green-700 mb-2">
-              {store.title}
-            </h3>
-            <p className="text-gray-600">{store.address}</p>
-            <p className="text-gray-600 mt-2">
-              <strong>Monday – Sunday:</strong> {store.timings}
-            </p>
-            <p className="text-gray-600 mt-1">
-              <strong>Delivery:</strong> {store.delivery}
-            </p>
-          </div>
-        ))}
+      <div className="embla overflow-hidden" ref={emblaRef}>
+        <div className="embla__container flex space-x-6">
+          {stores.map((store, index) => (
+            <div
+              key={index}
+              className="embla__slide min-w-[calc(100%/1.25)] sm:min-w-[calc(100%/2)] md:min-w-[calc(100%/3)] lg:min-w-[calc(100%/4)] px-4"
+            >
+              <div className="bg-white shadow-md rounded-md p-4 text-left border">
+                <h3 className="font-semibold text-lg text-green-700 mb-2">
+                  {store.title}
+                </h3>
+                <p className="text-gray-600">{store.address}</p>
+                <p className="text-gray-600 mt-2">
+                  <strong>Monday – Sunday:</strong> {store.timings}
+                </p>
+                <p className="text-gray-600 mt-1">
+                  <strong>Delivery:</strong> {store.delivery}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
