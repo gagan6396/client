@@ -1,6 +1,5 @@
 "use client";
-import { RootState } from "@/app/store";
-import { loginFailure, loginStart, loginSuccess } from "@/features/authSlice";
+import { LoginAPI } from "@/apis/AuthAPIs";
 import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
@@ -8,15 +7,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Validation schema with Yup
   const validationSchema = Yup.object({
@@ -28,24 +26,27 @@ const LoginPage = () => {
       .required("Password is required"),
   });
 
-  const handleSubmit = (values: any) => {
-    dispatch(loginStart());
-    // Simulate login (no API call)
-    setTimeout(() => {
-      if (
-        values.email === "test@example.com" &&
-        values.password === "password123"
-      ) {
-        // Simulate successful login
-        dispatch(loginSuccess({ email: values.email }));
-        toast.success("Login successful!", { position: "top-center" });
-        router.push("/");
-      } else {
-        // Simulate error
-        dispatch(loginFailure("Invalid email or password."));
-        toast.error("Invalid email or password.", { position: "top-center" });
-      }
-    }, 1500);
+  // Handle login submission
+  const handleSubmit = async (values: { email: string; password: string }) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await LoginAPI({
+        email: values.email,
+        password: values.password,
+      });
+
+      localStorage.setItem("accessToken", response.data.data.token);
+      toast.success("Login successful!", { position: "top-center" });
+      router.replace("/");
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Something went wrong!";
+      setError(errorMessage);
+      toast.error(errorMessage, { position: "top-center" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,11 +73,8 @@ const LoginPage = () => {
                   name="email"
                   placeholder="Email"
                 />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+                <ErrorMessage name="email" component="div" className="text-red-500 text-xs" />
+
                 <div className="relative">
                   <Field
                     className="p-2 rounded-xl border w-full"
@@ -88,18 +86,11 @@ const LoginPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                   >
-                    {showPassword ? (
-                      <EyeOff color="gray" size={16} />
-                    ) : (
-                      <Eye color="gray" size={16} />
-                    )}
+                    {showPassword ? <EyeOff color="gray" size={16} /> : <Eye color="gray" size={16} />}
                   </div>
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+                <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
+
                 <button
                   type="submit"
                   className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"
@@ -107,11 +98,7 @@ const LoginPage = () => {
                 >
                   {loading ? "Logging in..." : "Login"}
                 </button>
-                {error && (
-                  <p className="text-red-500 text-sm text-center mt-2">
-                    {error}
-                  </p>
-                )}
+                {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
               </Form>
             )}
           </Formik>
@@ -159,10 +146,7 @@ const LoginPage = () => {
           {/* Register Link */}
           <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">
             <p>Don&apos;t have an account?</p>
-            <Link
-              href={"/signup"}
-              className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
-            >
+            <Link href="/signup" className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
               Register
             </Link>
           </div>

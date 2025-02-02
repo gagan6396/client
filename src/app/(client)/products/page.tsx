@@ -1,88 +1,77 @@
 "use client";
+import { getProductByCategoryAPI } from "@/apis/categoriesAPIs";
+import { getProductsAPI } from "@/apis/products";
 import { ProductCard } from "@/Layout/ProductCategoryGrid";
-import Product1Image from "@/public/product-1.png";
-import Product2Image from "@/public/product-2.png";
-import Product3Image from "@/public/product-3.png";
-import Product4Image from "@/public/product-4.png";
-import Product5Image from "@/public/product-5.png";
-import Product6Image from "@/public/product-6.png";
-import Product7Image from "@/public/product-7.png";
-import Product8Image from "@/public/product-8.png";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
-import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
-const products = [
-  {
-    imageSrc: Product1Image,
-    title: "Mixed Sweets",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product2Image,
-    title: "Gir Cow Pure Vedic Ghee 500 ml",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product3Image,
-    title: "Buransh Tea 30 gms",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product4Image,
-    title: "Rotana 500 gms",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product5Image,
-    title: "Makki Nachos",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product6Image,
-    title: "Normal MP Atta",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product7Image,
-    title: "Gujiyas",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-  {
-    imageSrc: Product8Image,
-    title: "Chamomile Tea",
-    price: "₹118.75",
-    originalPrice: "₹125.00",
-    isBestSeller: true,
-  },
-];
+const ProductGrid = ({ products }: { products: any[] }) => {
+  console.log("products", products);
+
+  return (
+    <div className="w-11/12 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {products.length > 0 &&
+        products.map((product, index) => {
+          // Add a check to ensure product.images is defined and has at least one element
+          if (!product?.images || product.images.length === 0) {
+            console.warn(`Product at index ${index} has no images`, product);
+            return null; // Skip rendering this product
+          }
+
+          return (
+            <div
+              key={index}
+              className="embla__slide rounded-xl p-4 my-3 relative min-w-[80%] sm:min-w-[50%] md:min-w-[33%] lg:min-w-[25%]"
+            >
+              <ProductCard
+                imageSrc={product.images[0]}
+                title={product.name}
+                price={product.price?.$numberDecimal || "N/A"}
+                originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                isBestSeller={true}
+                productId={product._id}
+              />
+            </div>
+          );
+        })}
+    </div>
+  );
+};
 
 const ProductPage = () => {
+  const [products, setProducts] = useState<any[]>([]);
+  const searchParams = useSearchParams();
+  const category = searchParams.get("category");
+
   const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-      align: "start",
-    },
+    { loop: true, align: "start" },
     [autoplay.current]
   );
 
   useEffect(() => {
-    if (emblaApi) autoplay.current?.play();
+    const fetchCategories = async () => {
+      try {
+        if (category) {
+          const response = await getProductByCategoryAPI(category);
+          console.log("API Response:", response.data); // Check structure
+          setProducts(response.data.data);
+        } else {
+          const ProductsResponse = await getProductsAPI();
+          console.log(ProductsResponse);
+          setProducts(ProductsResponse.data.data.products);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchCategories();
+  }, [category]);
+
+  useEffect(() => {
+    if (emblaApi) emblaApi.on("init", () => autoplay.current?.play());
   }, [emblaApi]);
 
   return (
@@ -94,21 +83,7 @@ const ProductPage = () => {
         </h2>
         <div ref={emblaRef} className="embla w-11/12 mx-auto">
           <div className="embla__container flex gap-4">
-            {products.map((product, index) => (
-              <div
-                key={index}
-                className="embla__slide rounded-xl p-4 my-3 relative min-w-[80%] sm:min-w-[50%] md:min-w-[33%] lg:min-w-[25%]"
-              >
-                {/* Use the ProductCard component for each product */}
-                <ProductCard
-                  imageSrc={product.imageSrc}
-                  title={product.title}
-                  price={product.price}
-                  originalPrice={product.originalPrice}
-                  isBestSeller={product.isBestSeller}
-                />
-              </div>
-            ))}
+            <ProductGrid products={products} />
           </div>
         </div>
       </section>
@@ -118,23 +93,7 @@ const ProductPage = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
           Top Products
         </h2>
-        <div className="w-11/12 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.slice(0, 4).map((product, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl relative"
-            >
-              {/* Use the ProductCard component for top products */}
-              <ProductCard
-                imageSrc={product.imageSrc}
-                title={product.title}
-                price={product.price}
-                originalPrice={product.originalPrice}
-                isBestSeller={product.isBestSeller}
-              />
-            </div>
-          ))}
-        </div>
+        <ProductGrid products={products} />
       </section>
 
       {/* Popular Products Section */}
@@ -142,23 +101,7 @@ const ProductPage = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
           Popular Products
         </h2>
-        <div className="w-11/12 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.slice(4).map((product, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl relative"
-            >
-              {/* Use the ProductCard component for popular products */}
-              <ProductCard
-                imageSrc={product.imageSrc}
-                title={product.title}
-                price={product.price}
-                originalPrice={product.originalPrice}
-                isBestSeller={product.isBestSeller}
-              />
-            </div>
-          ))}
-        </div>
+        <ProductGrid products={products} />
       </section>
     </div>
   );

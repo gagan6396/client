@@ -1,12 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import Product1Image from "@/public/product-1.png";
-import Product2Image from "@/public/product-2.png";
-import Product3Image from "@/public/product-3.png";
-import Product4Image from "@/public/product-4.png";
 import { Heart, Trash2 } from "lucide-react"; // Importing icons from react-lucide
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getWishListAPI } from "../../../apis/wishlistAPIs";
 
 
 
@@ -40,32 +37,20 @@ const WishlistItem = ({
 };
 
 const WishlistPage = () => {
-    const [wishlist, setWishlist] = useState([
-        {
-            imageSrc: Product1Image,
-            title: "Mixed Sweets",
-            price: "₹118.75",
-            originalPrice: "₹125.00",
-        },
-        {
-            imageSrc: Product2Image,
-            title: "Gir Cow Pure Vedic Ghee 500 ml",
-            price: "₹118.75",
-            originalPrice: "₹125.00",
-        },
-        {
-            imageSrc: Product3Image,
-            title: "Buransh Tea 30 gms",
-            price: "₹118.75",
-            originalPrice: "₹125.00",
-        },
-        {
-            imageSrc: Product4Image,
-            title: "Rotana 500 gms",
-            price: "₹118.75",
-            originalPrice: "₹125.00",
-        },
-    ]);
+    const [wishlist, setWishlist] = useState([]);
+
+    const getWishList = async () => {
+        try {
+            const response = await getWishListAPI()
+            setWishlist(response.data.data.product_id)
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+    useEffect(() => {
+        getWishList()
+    }, [])
 
     // Function to remove an item from the wishlist
     const removeFromWishlist = (index) => {
@@ -79,10 +64,15 @@ const WishlistPage = () => {
             </h1>
 
             {/* Wishlist Items */}
-            <div className="grid grid-cols-1 gap-6 mt-8">
-                {wishlist.map((item, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                {wishlist.length > 0 && wishlist.map((item, index) => (
                     <div key={index} className="relative">
-                        <WishlistItem {...item} />
+                        <WishlistItem
+                            imageSrc={item?.images[0]}
+                            title={item?.name}
+                            price={item?.price?.$numberDecimal}
+                            originalPrice={item?.price?.$numberDecimal + 10}
+                        />
                         {/* Remove Item Button */}
                         <button
                             onClick={() => removeFromWishlist(index)}

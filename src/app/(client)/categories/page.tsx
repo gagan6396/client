@@ -1,32 +1,26 @@
 "use client";
 
-import arsa from "@/public/arsa.jpg";
-import buransh from "@/public/buransh-tea.jpg";
-import chamomile from "@/public/chamomile-tea.jpg";
-import ghee from "@/public/ghee.jpg";
-import gujiye from "@/public/gujiye.jpg";
-import honey from "@/public/honey.jpg";
-import millet from "@/public/millet.png";
-import spices from "@/public/spices.png";
+import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import Image from "next/image";
 import Link from "next/link";
-
-const categories = [
-  { name: "Cold Pressed Atta", image: millet },
-  { name: "Ghee & Oils", image: ghee },
-  { name: "Gift Hampers", image: gujiye },
-  { name: "Hand Grounded Products", image: arsa },
-  { name: "Herbal Tea", image: chamomile },
-  { name: "Honey", image: honey },
-  { name: "Offer", image: buransh },
-  { name: "Pulses", image: millet },
-  { name: "Rice & Millets", image: millet },
-  { name: "Seeds & Condiments", image: spices },
-  { name: "Spices", image: spices },
-  { name: "Sweetner", image: honey },
-];
+import { useEffect, useState } from "react";
 
 const CategoriesPage = () => {
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategoriesAPI();
+      console.log(response.data.data);
+      setCategories(response.data.data);
+    } catch (error: any) {
+      // console.log(error.response.data);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   return (
     <section className="container mx-auto px-5 py-10">
       {/* Page Title */}
@@ -36,7 +30,7 @@ const CategoriesPage = () => {
 
       {/* Categories List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category, index) => (
+        {categories.map((category: any, index) => (
           <div
             key={index}
             className="flex items-center bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 p-4"
@@ -44,8 +38,8 @@ const CategoriesPage = () => {
             {/* Image Section */}
             <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
               <Image
-                src={category.image}
-                alt={category.name}
+                src={category?.images[0]}
+                alt={category?.name}
                 layout="fill"
                 className="rounded-full object-cover"
               />

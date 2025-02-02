@@ -1,26 +1,32 @@
 "use client";
-import { RootState } from "@/app/store";
-import {
-  registerFailure,
-  registerStart,
-  registerSuccess,
-} from "@/features/authSlice";
+
+import { RegisterAPI } from "@/apis/AuthAPIs";
 import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
+
+// Define Form Values Type
+interface RegisterFormValues {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone?: string;
+}
+
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const route = useRouter();
-  const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Validation schema with Yup
+  // Validation Schema
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, "Name must be at least 3 characters")
@@ -32,36 +38,52 @@ const RegisterPage = () => {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm Password is required"),
+    phone: Yup.string()
+      .matches(/^\d{10}$/, "Phone number must be 10 digits")
+      .optional(),
   });
 
-  const handleSubmit = async (values: any) => {
-    dispatch(registerStart());
-    // Simulate the registration process (no API call)
-    setTimeout(() => {
-      if (values.name && values.email && values.password) {
-        // Simulate successful registration
-        dispatch(registerSuccess(values));
-        toast.success("Registration successful!", { position: "top-center" });
-        route.push("/");
-      } else {
-        // Simulate error
-        dispatch(registerFailure("Registration failed. Please try again."));
-        toast.error("Registration failed. Please try again.", {
+  const handleSubmit = async (values: RegisterFormValues) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const fullName = values.name.split(" ");
+      const firstName = fullName[0] || "";
+      const lastName = fullName.slice(1).join(" ") || "";
+
+      const response = await RegisterAPI({
+        first_name: firstName,
+        last_name: lastName,
+        email: values.email,
+        password: values.password,
+        phone: values.phone,
+      });
+      localStorage.setItem("accessToken", response.data.data.user.token);
+      toast.success("Registration successful!", { position: "top-center" });
+      router.push("/");
+    } catch (error: any) {
+      setError(error.response.data.message || "Something went wrong!");
+      toast.error(
+        error.response.data.message || "Registration failed. Please try again.",
+        {
           position: "top-center",
-        });
-      }
-    }, 1500);
+        }
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center">
-      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center">
+    <section className="min-h-screen flex items-center justify-center ">
+      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center bg-white">
         {/* Form Container */}
         <div className="md:w-1/2 px-8 md:px-16">
           <h2 className="font-bold text-2xl text-[#002D74]">Register</h2>
-          <p className="text-xs mt-4 text-[#002D74]">Create a new account</p>
+          <p className="text-xs mt-4 text-gray-600">Create a new account</p>
 
           <Formik
             initialValues={{
@@ -69,25 +91,29 @@ const RegisterPage = () => {
               email: "",
               password: "",
               confirmPassword: "",
+              phone: "",
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {() => (
-              <Form className="flex flex-col gap-4 mt-2">
+            {({ isValid, dirty }) => (
+              <Form className="flex flex-col gap-4 mt-4">
+                {/* Name Field */}
                 <Field
-                  className="p-2 rounded-xl border"
+                  className="p-2 rounded-xl border w-full"
                   type="text"
                   name="name"
-                  placeholder="Name"
+                  placeholder="Full Name"
                 />
                 <ErrorMessage
                   name="name"
                   component="div"
                   className="text-red-500 text-xs"
                 />
+
+                {/* Email Field */}
                 <Field
-                  className="p-2 rounded-xl border"
+                  className="p-2 rounded-xl border w-full"
                   type="email"
                   name="email"
                   placeholder="Email"
@@ -97,6 +123,21 @@ const RegisterPage = () => {
                   component="div"
                   className="text-red-500 text-xs"
                 />
+
+                {/* Phone Field */}
+                <Field
+                  className="p-2 rounded-xl border w-full"
+                  type="text"
+                  name="phone"
+                  placeholder="Phone (Optional)"
+                />
+                <ErrorMessage
+                  name="phone"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
+
+                {/* Password Field */}
                 <div className="relative">
                   <Field
                     className="p-2 rounded-xl border w-full"
@@ -120,24 +161,32 @@ const RegisterPage = () => {
                   component="div"
                   className="text-red-500 text-xs"
                 />
-                <Field
-                  className="p-2 rounded-xl border"
-                  type={showPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                />
+
+                {/* Confirm Password Field */}
+                <div className="relative">
+                  <Field
+                    className="p-2 rounded-xl border w-full"
+                    type={showPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                  />
+                </div>
                 <ErrorMessage
                   name="confirmPassword"
                   component="div"
                   className="text-red-500 text-xs"
                 />
+
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"
-                  disabled={loading}
+                  className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled={!isValid || !dirty || loading}
                 >
                   {loading ? "Registering..." : "Register"}
                 </button>
+
+                {/* Error Message */}
                 {error && (
                   <p className="text-red-500 text-sm text-center mt-2">
                     {error}
@@ -146,8 +195,8 @@ const RegisterPage = () => {
               </Form>
             )}
           </Formik>
-          {/* Other sections (Google login, etc.) */}
         </div>
+
         {/* Image Section */}
         <div className="md:block hidden w-1/2">
           <Image className="rounded-2xl" src={bgImage} alt="Register" />

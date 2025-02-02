@@ -1,8 +1,6 @@
 "use client";
 
-import { RootState } from "@/app/store";
 import { Input } from "@/components/ui/input";
-import { logout } from "@/features/authSlice";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,13 +11,11 @@ import {
   AiOutlineShoppingCart,
   AiOutlineUser,
 } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
 
 const Header: React.FC = () => {
   const pathname = usePathname(); // Get the current path
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const accessToken = localStorage.getItem("accessToken");
 
   const getLinkClass = (path: string) => {
     return pathname === path
@@ -28,7 +24,6 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
     router.push("/login");
   };
 
@@ -67,7 +62,7 @@ const Header: React.FC = () => {
 
         {/* Icons Section */}
         <div className="flex items-center space-x-6 text-gray-600">
-          {user ? (
+          {accessToken ? (
             <>
               <AiOutlineUser
                 onClick={() => router.push("/user-account")}
@@ -107,13 +102,6 @@ const Header: React.FC = () => {
                   0
                 </span>
               </div>
-              {/* Logout Button */}
-              {/* <button
-                onClick={handleLogout}
-                className="text-[#2B0504] hover:text-red-500 font-semibold"
-              >
-                Logout
-              </button> */}
             </>
           ) : (
             <>

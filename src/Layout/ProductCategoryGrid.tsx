@@ -1,22 +1,18 @@
 "use client";
+import { getProductsAPI } from "@/apis/products";
+import { addToWishListAPI } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import Product1Image from "@/public/product-1.png";
-import Product2Image from "@/public/product-2.png";
-import Product3Image from "@/public/product-3.png";
-import Product4Image from "@/public/product-4.png";
-import Product5Image from "@/public/product-5.png";
-import Product6Image from "@/public/product-6.png";
-import Product7Image from "@/public/product-7.png";
-import Product8Image from "@/public/product-8.png";
 import Autoplay from "embla-carousel-autoplay";
 import Image, { StaticImageData } from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
+import { toast } from "react-toastify";
 
 // Adjust the type to accept either StaticImageData or string
 type ProductCardProps = {
@@ -25,6 +21,7 @@ type ProductCardProps = {
   price: string;
   originalPrice: string;
   isBestSeller: boolean;
+  productId: string;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -33,13 +30,32 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   price,
   originalPrice,
   isBestSeller,
+  productId,
 }) => {
+  const addToWishList = async () => {
+    try {
+      const response = await addToWishListAPI(productId);
+      toast.success(response.data.message || "Item added to wishlist!");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to add item to wishlist. Try again later."
+      );
+    }
+  };
+  const navigation = useRouter();
   return (
-    <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300">
+    <div
+      className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300"
+      onClick={() => navigation.push(`/products/${productId}`)}
+    >
       {/* Badge and Image */}
       <div className="relative ">
         <Image
           src={imageSrc}
+          height={200}
+          width={200}
           alt={title}
           className="w-full  aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
         />
@@ -85,6 +101,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             Shop Now
           </Button>
           <CiHeart
+            onClick={addToWishList}
             size={30}
             className="hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
           />
@@ -99,64 +116,21 @@ const ProductCategoryGrid: React.FC = () => {
     Autoplay({ delay: 3000, stopOnInteraction: false })
   );
 
-  const products = [
-    {
-      imageSrc: Product1Image,
-      title: "Mixed Sweets",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product2Image,
-      title: "Gir Cow Pure Vedic Ghee 500 ml",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product3Image,
-      title: "Buransh Tea 30 gms",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product4Image,
-      title: "Rotana 500 gms",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product5Image,
-      title: "Makki Nachos",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product6Image,
-      title: "Normal MP Atta",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product7Image,
-      title: "Gujiyas",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-    {
-      imageSrc: Product8Image,
-      title: "Chamomile Tea",
-      price: "₹118.75",
-      originalPrice: "₹125.00",
-      isBestSeller: true,
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const ProductsResponse = await getProductsAPI();
+      console.log(ProductsResponse);
+      setProducts(ProductsResponse.data.data.products);
+    } catch (error: any) {
+      // console.log(error.response.data);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <div className="container mx-auto py-7">
@@ -168,20 +142,37 @@ const ProductCategoryGrid: React.FC = () => {
       <div className="relative sm:hidden">
         <Carousel plugins={[plugin.current]} className="w-full p-4">
           <CarouselContent className="flex space-x-4 py-3">
-            {products.map((product, index) => (
-              <CarouselItem key={index} className=" basis-2/3">
-                <ProductCard {...product} />
-              </CarouselItem>
-            ))}
+            {products.length > 0 &&
+              products.map((product: any, index) => (
+                <CarouselItem key={index} className=" basis-2/3">
+                  <ProductCard
+                    imageSrc={product.images[0]}
+                    title={product.name}
+                    price={product.price?.$numberDecimal || "N/A"}
+                    originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                    isBestSeller={true}
+                    productId={product._id}
+                  />
+                </CarouselItem>
+              ))}
           </CarouselContent>
         </Carousel>
       </div>
 
       {/* Grid for Desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 hidden sm:grid">
-        {products.map((product, index) => (
-          <ProductCard key={index} {...product} />
-        ))}
+        {products.length > 0 &&
+          products.map((product: any, index) => (
+            <ProductCard
+              key={index}
+              imageSrc={product.images[0]}
+              title={product.name}
+              price={product.price?.$numberDecimal || "N/A"}
+              originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+              isBestSeller={true}
+              productId={product._id}
+            />
+          ))}
       </div>
 
       {/* See All Products Button */}
