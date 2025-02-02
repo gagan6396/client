@@ -61,7 +61,9 @@ const RegisterPage = () => {
         password: values.password,
         phone: values.phone,
       });
-      localStorage.setItem("accessToken", response.data.data.user.token);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("accessToken", response.data.data.user.token);
+      }
       toast.success("Registration successful!", { position: "top-center" });
       router.push("/");
     } catch (error: any) {

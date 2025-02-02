@@ -15,8 +15,10 @@ import {
 const Header: React.FC = () => {
   const pathname = usePathname(); // Get the current path
   const router = useRouter();
-  const accessToken = localStorage.getItem("accessToken");
-
+  let accessToken;
+  if (typeof window !== "undefined") {
+    accessToken = localStorage.getItem("accessToken");
+  }
   const getLinkClass = (path: string) => {
     return pathname === path
       ? "text-[#2B0504] font-semibold"

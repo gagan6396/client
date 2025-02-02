@@ -36,12 +36,14 @@ const LoginPage = () => {
         email: values.email,
         password: values.password,
       });
-
-      localStorage.setItem("accessToken", response.data.data.token);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("accessToken", response.data.data.token);
+      }
       toast.success("Login successful!", { position: "top-center" });
       router.replace("/");
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Something went wrong!";
+      const errorMessage =
+        error.response?.data?.message || "Something went wrong!";
       setError(errorMessage);
       toast.error(errorMessage, { position: "top-center" });
     } finally {
@@ -73,7 +75,11 @@ const LoginPage = () => {
                   name="email"
                   placeholder="Email"
                 />
-                <ErrorMessage name="email" component="div" className="text-red-500 text-xs" />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
 
                 <div className="relative">
                   <Field
@@ -86,10 +92,18 @@ const LoginPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                   >
-                    {showPassword ? <EyeOff color="gray" size={16} /> : <Eye color="gray" size={16} />}
+                    {showPassword ? (
+                      <EyeOff color="gray" size={16} />
+                    ) : (
+                      <Eye color="gray" size={16} />
+                    )}
                   </div>
                 </div>
-                <ErrorMessage name="password" component="div" className="text-red-500 text-xs" />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-xs"
+                />
 
                 <button
                   type="submit"
@@ -98,7 +112,11 @@ const LoginPage = () => {
                 >
                   {loading ? "Logging in..." : "Login"}
                 </button>
-                {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
+                {error && (
+                  <p className="text-red-500 text-sm text-center mt-2">
+                    {error}
+                  </p>
+                )}
               </Form>
             )}
           </Formik>
@@ -146,7 +164,10 @@ const LoginPage = () => {
           {/* Register Link */}
           <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">
             <p>Don&apos;t have an account?</p>
-            <Link href="/signup" className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300">
+            <Link
+              href="/signup"
+              className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
+            >
               Register
             </Link>
           </div>
