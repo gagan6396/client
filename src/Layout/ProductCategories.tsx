@@ -106,7 +106,7 @@ const ProductCategories = () => {
                     className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
                   >
                     <div className="bg-white border-gray-200 rounded-lg shadow-lg flex flex-col items-center text-center py-4 px-2 md:py-6 md:px-4 space-y-2 md:space-y-4 hover:shadow-xl transition duration-300">
-                      <Image
+                      <img
                         src={category?.images[0]}
                         alt={category?.name}
                         width={80}

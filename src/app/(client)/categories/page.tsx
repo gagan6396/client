@@ -1,7 +1,6 @@
 "use client";
 
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -37,10 +36,9 @@ const CategoriesPage = () => {
           >
             {/* Image Section */}
             <div className="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 relative">
-              <Image
+              <img
                 src={category?.images[0]}
                 alt={category?.name}
-                layout="fill"
                 className="rounded-full object-cover"
               />
             </div>

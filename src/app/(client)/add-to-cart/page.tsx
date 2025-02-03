@@ -5,7 +5,6 @@ import Product2Image from "@/public/product-2.png";
 import Product3Image from "@/public/product-3.png";
 import Product4Image from "@/public/product-4.png";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import Image from "next/image";
 import React, { useState } from "react";
 
 type CartItemProps = {
@@ -84,10 +83,9 @@ const AddToCartPage: React.FC = () => {
           >
             {/* Image */}
             <div className="w-24 h-24 relative">
-              <Image
+              <img
                 src={item.imageSrc}
                 alt={item.title}
-                layout="fill"
                 className="rounded-lg object-cover"
               />
             </div>

@@ -8,7 +8,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
@@ -16,7 +15,7 @@ import { toast } from "react-toastify";
 
 // Adjust the type to accept either StaticImageData or string
 type ProductCardProps = {
-  imageSrc: StaticImageData | string; // Allow imported images or external URLs
+  imageSrc: string; // Allow imported images or external URLs
   title: string;
   price: string;
   originalPrice: string;
@@ -52,7 +51,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     >
       {/* Badge and Image */}
       <div className="relative ">
-        <Image
+        <img
           src={imageSrc}
           height={200}
           width={200}

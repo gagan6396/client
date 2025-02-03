@@ -1,8 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Heart, Trash2 } from "lucide-react"; // Importing icons from react-lucide
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getWishListAPI } from "../../../apis/wishlistAPIs";
 
 
@@ -17,7 +16,7 @@ const WishlistItem = ({
         <div className="flex bg-white border rounded-lg shadow-lg p-4 gap-4 items-center hover:shadow-xl transition duration-300">
             {/* Image Section */}
             <div className="w-24 h-24 relative flex-shrink-0">
-                <Image
+                <img
                     src={imageSrc}
                     alt={title}
                     layout="fill"

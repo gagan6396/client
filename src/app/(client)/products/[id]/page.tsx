@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
 
@@ -115,7 +114,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                     key={index}
                     className="embla__slide flex-shrink-0 w-full flex justify-center"
                   >
-                    <Image
+                    <img
                       src={image}
                       width={400}
                       height={400}
