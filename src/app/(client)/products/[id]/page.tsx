@@ -9,10 +9,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
 
 interface Product {
@@ -30,9 +28,7 @@ interface Review {
   comment: string;
 }
 
-const ProductDetailPage = () => {
-  const pathname = usePathname();
-  const productId = pathname.split("/").pop();
+const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,20 +39,13 @@ const ProductDetailPage = () => {
     comment: "",
   });
 
-  const autoplay = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
-  // const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay.current]);
-
-  // useEffect(() => {
-  //   if (emblaApi) autoplay.current?.play();
-  // }, [emblaApi]);
-
   const fetchProduct = async () => {
-    if (!productId) return;
-
-    setIsLoading(true);
-    setError(null);
-
     try {
+      const productId = (await params).id;
+      if (!productId) return;
+      setIsLoading(true);
+      setError(null);
+
       const response = await getProductByIdAPI(productId);
       if (response?.data?.data) {
         setProduct(response.data.data);
@@ -73,7 +62,7 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     fetchProduct();
-  }, [productId]);
+  }, [params]);
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -5,19 +5,16 @@ import { ProductCard } from "@/Layout/ProductCategoryGrid";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 const ProductGrid = ({ products }: { products: any[] }) => {
-  console.log("products", products);
-
   return (
     <div className="w-11/12 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {products.length > 0 &&
         products.map((product, index) => {
-          // Add a check to ensure product.images is defined and has at least one element
           if (!product?.images || product.images.length === 0) {
             console.warn(`Product at index ${index} has no images`, product);
-            return null; // Skip rendering this product
+            return null;
           }
 
           return (
@@ -101,10 +98,18 @@ const ProductPage = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
           Popular Products
         </h2>
-        <ProductGrid products={products} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ProductGrid products={products} />
+        </Suspense>
       </section>
     </div>
   );
 };
 
-export default ProductPage;
+export default function SuspenseWrapper() {
+  return (
+    <Suspense fallback={<div>Loading products...</div>}>
+      <ProductPage />
+    </Suspense>
+  );
+}
