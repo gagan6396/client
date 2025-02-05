@@ -1,12 +1,12 @@
 "use client";
 
-import { getProductByIdAPI } from "@/apis/products";
+import { getProductByIdAPI } from "@/apis/productsAPIs";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";

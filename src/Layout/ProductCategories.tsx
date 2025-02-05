@@ -1,10 +1,10 @@
 "use client";
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
-import { getProductsAPI } from "@/apis/products";
+import { getProductsAPI } from "@/apis/productsAPIs";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
+    Carousel,
+    CarouselContent,
+    CarouselItem,
 } from "@/components/ui/carousel";
 import l2 from "@/public/l2.jpg";
 import l4 from "@/public/l4.jpg";

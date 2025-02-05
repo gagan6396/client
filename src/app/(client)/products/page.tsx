@@ -1,6 +1,6 @@
 "use client";
 import { getProductByCategoryAPI } from "@/apis/categoriesAPIs";
-import { getProductsAPI } from "@/apis/products";
+import { getProductsAPI } from "@/apis/productsAPIs";
 import { ProductCard } from "@/Layout/ProductCategoryGrid";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";

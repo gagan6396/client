@@ -1,11 +1,11 @@
 "use client";
-import { getProductsAPI } from "@/apis/products";
+import { getProductsAPI } from "@/apis/productsAPIs";
 import { addToWishListAPI } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
+    Carousel,
+    CarouselContent,
+    CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useRouter } from "next/navigation";
