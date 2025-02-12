@@ -4,15 +4,19 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const OrderConfirmationPage = ({ params }: { params: { orderId: string } }) => {
+const OrderConfirmationPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
   const router = useRouter();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const response = await getOrderByIdAPI(params.orderId);
+        const orderId = (await params).id;
+        const response = await getOrderByIdAPI(orderId);
         setOrder(response.data);
       } catch (error) {
         console.error("Error fetching order details:", error);
@@ -22,7 +26,7 @@ const OrderConfirmationPage = ({ params }: { params: { orderId: string } }) => {
     };
 
     fetchOrderDetails();
-  }, [params.orderId]);
+  }, []);
 
   if (loading) {
     return <div className="text-center mt-10">Loading...</div>;
