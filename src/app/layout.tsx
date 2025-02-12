@@ -33,7 +33,7 @@ export default function RootLayout({
           <MobileNavBar />
           <Footer />
           {/* Toast Notifications */}
-          <ToastContainer />
+          <ToastContainer position="top-center" />
         </Provider>
       </body>
     </html>

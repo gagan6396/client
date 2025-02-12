@@ -1,8 +1,8 @@
 import axiosInstance from ".";
 
-export const addToCartAPI = ({ productId, quantity, skuParameters }) => {
+export const addToCartAPI = ({ productId, quantity }) => {
     const response = axiosInstance.post(`/cart/${productId}`, {
-        quantity, skuParameters
+        quantity
     })
     return response;
 }
@@ -14,9 +14,9 @@ export const deleteToCartAPI = (productId) => {
     const response = axiosInstance.delete(`/cart/${productId}`)
     return response;
 }
-export const updateToCartAPI = () => {
+export const updateToCartAPI = ({ quantity, productId }) => {
     const response = axiosInstance.put(`/cart/${productId}`, {
-        quantity, skuParameters
+        quantity,
     })
     return response;
 }

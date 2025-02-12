@@ -2,9 +2,9 @@
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
 } from "@/components/ui/carousel";
 import l2 from "@/public/l2.jpg";
 import l4 from "@/public/l4.jpg";
@@ -64,6 +64,7 @@ const ProductCategories = () => {
                       <div className="bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl relative">
                         {/* Use ProductCard for each category */}
                         <ProductCard
+                          skuParameters={product.skuParameters}
                           imageSrc={product.images[0]}
                           title={product.name}
                           price={product.price?.$numberDecimal || "N/A"}

@@ -23,6 +23,7 @@ const ProductGrid = ({ products }: { products: any[] }) => {
               className="embla__slide rounded-xl p-4 my-3 relative min-w-[80%] sm:min-w-[50%] md:min-w-[33%] lg:min-w-[25%]"
             >
               <ProductCard
+                skuParameters={product.skuParameters}
                 imageSrc={product.images[0]}
                 title={product.name}
                 price={product.price?.$numberDecimal || "N/A"}

@@ -1,11 +1,12 @@
 "use client";
+import { addToCartAPI } from "@/apis/addToCartAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { addToWishListAPI } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ type ProductCardProps = {
   originalPrice: string;
   isBestSeller: boolean;
   productId: string;
+  skuParameters: any;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -30,6 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   isBestSeller,
   productId,
+  skuParameters,
 }) => {
   const addToWishList = async () => {
     try {
@@ -43,14 +46,44 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       );
     }
   };
+  const addToCart = async () => {
+    try {
+      // Convert skuParameters from array-based to single-value selection
+      // const selectedSku: Record<string, string> = {};
+      // console.log("skuParameters", skuParameters);
+
+      // for (const [param, values] of Object.entries(skuParameters)) {
+      //   if (Array.isArray(values) && values.length > 0) {
+      //     selectedSku[param] = values[0]; // Select the first available item
+      //   }
+      // }
+
+      const response = await addToCartAPI({
+        productId: productId,
+        quantity: 1,
+        // skuParameters: selectedSku, // Send the modified SKU parameters
+      });
+
+      toast.success(response.data.message || "Item added to cart!");
+    } catch (error: any) {
+      console.error(error);
+      console.log(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to add item to cart. Try again later."
+      );
+    }
+  };
+
   const navigation = useRouter();
   return (
-    <div
-      className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300"
-      onClick={() => navigation.push(`/products/${productId}`)}
-    >
+    <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300">
       {/* Badge and Image */}
-      <div className="relative ">
+      <div
+        className="relative "
+        onClick={() => navigation.push(`/products/${productId}`)}
+      >
         <img
           src={imageSrc}
           height={200}
@@ -96,8 +129,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </div>
         </div>
         <div className="flex items-center justify-between gap-3">
-          <Button className="rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white transition">
-            Shop Now
+          <Button
+            className="rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white transition"
+            onClick={addToCart}
+          >
+            Add To Cart
           </Button>
           <CiHeart
             onClick={addToWishList}
@@ -151,6 +187,7 @@ const ProductCategoryGrid: React.FC = () => {
                     originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
                     isBestSeller={true}
                     productId={product._id}
+                    skuParameters={product.skuParameters}
                   />
                 </CarouselItem>
               ))}
@@ -170,6 +207,7 @@ const ProductCategoryGrid: React.FC = () => {
               originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
               isBestSeller={true}
               productId={product._id}
+              skuParameters={product.skuParameters}
             />
           ))}
       </div>
