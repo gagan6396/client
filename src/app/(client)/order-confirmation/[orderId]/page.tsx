@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const OrderConfirmationPage = async ({
+const OrderConfirmationPage = ({
   params,
 }: {
   params: Promise<{ id: string }>;
