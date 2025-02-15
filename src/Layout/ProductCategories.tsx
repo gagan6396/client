@@ -73,6 +73,8 @@ const ProductCategories = () => {
                           }
                           isBestSeller={true}
                           productId={product._id}
+                          inWishlist={product?.inWishlist}
+                          inCart={product?.inCart}
                         />
                       </div>
                     </CarouselItem>
