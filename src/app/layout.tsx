@@ -4,6 +4,7 @@ import Footer from "@/Layout/Footer";
 import Header from "@/Layout/Header";
 import MobileNavBar from "@/Layout/MobileHeader";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
@@ -36,6 +37,10 @@ export default function RootLayout({
           <ToastContainer position="top-center" />
         </Provider>
       </body>
+      <Script
+        id="razorpay-checkout-js"
+        src="https://checkout.razorpay.com/v1/checkout.js"
+      />
     </html>
   );
 }

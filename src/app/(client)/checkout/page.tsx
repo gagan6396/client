@@ -1,6 +1,7 @@
 "use client";
 import { getAddTOCartProductsAPI } from "@/apis/addToCartAPIs";
 import { createOrderAPI } from "@/apis/orderAPIs"; // API to create an order
+import { verifyPaymentAPI } from "@/apis/paymentAPIs";
 import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ type UserProfile = {
   last_name: string;
   email: string;
   phone: string;
+  _id: string;
   shoppingAddress: {
     addressLine1: string;
     addressLine2: string;
@@ -140,12 +142,17 @@ const CheckoutPage = () => {
     setPaymentMethod(method);
   };
 
+  console.log({ key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID });
+
   // Handle order submission
   const handlePlaceOrder = async () => {
     if (
       !shippingAddress.name ||
       !shippingAddress.address ||
-      !shippingAddress.phone
+      !shippingAddress.phone ||
+      !shippingAddress.city ||
+      !shippingAddress.state ||
+      !shippingAddress.pincode
     ) {
       toast.error("Please fill in all shipping details.");
       return;
@@ -165,17 +172,91 @@ const CheckoutPage = () => {
           discount: 0, // Add discount if applicable
           tax: 0, // Add tax if applicable
         })),
-        shippingAddressId: "shipping_address_id_here", // Replace with actual shipping address ID
-        paymentMethod: paymentMethod,
-        addressSnapshot: shippingAddress,
+        shippingAddressId: profile?._id, // Replace with actual shipping address ID
+        paymentMethod: paymentMethod || "Razorpay",
+        addressSnapshot: {
+          addressLine1: shippingAddress.address, // Map address to addressLine1
+          addressLine2: "", // Add addressLine2 if applicable
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          country: "India", // Default country
+          postalCode: shippingAddress.pincode, // Map pincode to postalCode
+        },
       };
 
       // Create order
       const response = await createOrderAPI(orderData);
-      toast.success("Order placed successfully!");
+      console.log("API Response:", response); // Debugging
 
-      // Redirect to order confirmation page
-      router.push(`/order-confirmation/${response.data.order._id}`);
+      // Check if the response structure is valid
+      if (!response.data || !response.data.data || !response.data.data.order) {
+        throw new Error("Invalid API response structure");
+      }
+
+      const { totalAmount, _id: orderId } = response.data.data.order;
+
+      // Handle Razorpay payment
+      if (paymentMethod === "Razorpay") {
+        if (!response.data.data.razorpayOrder) {
+          throw new Error("Invalid API response structure");
+        }
+        const { id: razorpayOrderId } = response.data.data.razorpayOrder;
+        console.log("Razorpay Order ID:", razorpayOrderId); // Debugging
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Use environment variable
+          amount: totalAmount * 100, // Amount in paise
+          currency: "INR",
+          order_id: razorpayOrderId, // Order ID from the backend
+          name: "Your Company Name",
+          description: "Payment for your order",
+          handler: async function (paymentResponse: any) {
+            try {
+              const verifyResponse = await verifyPaymentAPI({
+                razorpay_order_id: razorpayOrderId,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+              });
+
+              const verificationResult = verifyResponse.data.data;
+              console.log("verificationResult", verificationResult);
+
+              if (verificationResult.success) {
+                toast.success("Payment successful!");
+                router.push(`/order-confirmation/${orderId}`);
+              } else {
+                toast.error(
+                  "Payment verification failed. Please contact support."
+                );
+              }
+            } catch (error) {
+              console.error("Error verifying payment:", error);
+              toast.error(
+                "Payment verification failed. Please contact support."
+              );
+            }
+          },
+          prefill: {
+            name: shippingAddress.name,
+            email: profile?.email,
+            contact: shippingAddress.phone,
+          },
+          theme: {
+            color: "#F37254",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (response: any) {
+          console.error("Payment failed:", response);
+          toast.error("Payment failed. Please try again.");
+        });
+        rzp.open();
+      } else {
+        // For COD, redirect to order confirmation page
+        toast.success("Order placed successfully!");
+        router.push(`/order-confirmation/${orderId}`);
+      }
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Failed to place order. Please try again.");

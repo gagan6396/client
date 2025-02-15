@@ -1,8 +1,8 @@
 import axiosInstance from ".";
 
-export const createOrderAPI = ({ products, shippingAddressId, payment_id, addressSnapshot }) => {
+export const createOrderAPI = ({ products, shippingAddressId, paymentMethod, addressSnapshot }) => {
     const response = axiosInstance.post(`/orders/`, {
-        products, shippingAddressId, payment_id, addressSnapshot
+        products, shippingAddressId, paymentMethod, addressSnapshot
     })
     return response;
 }

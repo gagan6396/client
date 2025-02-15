@@ -12,6 +12,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 
 // Adjust the type to accept either StaticImageData or string
@@ -23,6 +24,8 @@ type ProductCardProps = {
   isBestSeller: boolean;
   productId: string;
   skuParameters: any;
+  inWishlist: boolean;
+  inCart: boolean;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -32,11 +35,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   isBestSeller,
   productId,
-  skuParameters,
+  inWishlist,
+  inCart,
 }) => {
+  const [isInWishlist, setIsInWishlist] = useState(inWishlist);
+  const [isInCart, setIsInCart] = useState(inCart);
+
   const addToWishList = async () => {
     try {
       const response = await addToWishListAPI(productId);
+      setIsInWishlist(true);
       toast.success(response.data.message || "Item added to wishlist!");
     } catch (error: any) {
       console.error(error);
@@ -46,24 +54,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       );
     }
   };
+
   const addToCart = async () => {
     try {
-      // Convert skuParameters from array-based to single-value selection
-      // const selectedSku: Record<string, string> = {};
-      // console.log("skuParameters", skuParameters);
-
-      // for (const [param, values] of Object.entries(skuParameters)) {
-      //   if (Array.isArray(values) && values.length > 0) {
-      //     selectedSku[param] = values[0]; // Select the first available item
-      //   }
-      // }
-
       const response = await addToCartAPI({
         productId: productId,
         quantity: 1,
-        // skuParameters: selectedSku, // Send the modified SKU parameters
       });
-
+      setIsInCart(true);
       toast.success(response.data.message || "Item added to cart!");
     } catch (error: any) {
       console.error(error);
@@ -122,24 +120,44 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="flex items-center justify-between py-2">
           {/* Price and Original Price */}
           <div>
-            <span className="text-green-600 font-bold">{price}</span>
+            <span className="text-green-600 font-bold">₹{price}</span>
             <span className="text-gray-500 line-through ml-2">
-              {originalPrice}
+              ₹{originalPrice}
             </span>
           </div>
         </div>
         <div className="flex items-center justify-between gap-3">
           <Button
-            className="rounded-full bg-transparent text-[#2B0504] border border-[#2B0504] w-full hover:bg-[#2B0504] hover:text-white transition"
+            className={`rounded-full w-full transition ${
+              isInCart
+                ? "bg-[#2B0504] text-white"
+                : "bg-transparent text-[#2B0504] border border-[#2B0504] hover:bg-[#2B0504] hover:text-white"
+            }`}
             onClick={addToCart}
           >
-            Add To Cart
+            {isInCart ? "Added to Cart" : "Add To Cart"}
           </Button>
-          <CiHeart
-            onClick={addToWishList}
-            size={30}
-            className="hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
-          />
+          {isInWishlist ? (
+            <FaHeart
+              onClick={addToWishList}
+              size={30}
+              className={`${
+                isInWishlist
+                  ? "text-red-600"
+                  : "text-gray-400 hover:text-red-600"
+              } hover:scale-105 cursor-pointer transition-all duration-300`}
+            />
+          ) : (
+            <CiHeart
+              onClick={addToWishList}
+              size={30}
+              className={`${
+                isInWishlist
+                  ? "text-red-600"
+                  : "text-gray-400 hover:text-red-600"
+              } hover:scale-105 cursor-pointer transition-all duration-300`}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -158,7 +176,6 @@ const ProductCategoryGrid: React.FC = () => {
       console.log(ProductsResponse);
       setProducts(ProductsResponse.data.data.products);
     } catch (error: any) {
-      // console.log(error.response.data);
       console.log(error);
     }
   };
@@ -168,7 +185,7 @@ const ProductCategoryGrid: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto py-7">
+    <div className="container mx-auto py-10">
       <h1 className="text-center text-2xl md:text-4xl font-bold">
         Our Best Seller Products
       </h1>
@@ -188,6 +205,8 @@ const ProductCategoryGrid: React.FC = () => {
                     isBestSeller={true}
                     productId={product._id}
                     skuParameters={product.skuParameters}
+                    inWishlist={product?.inWishlist}
+                    inCart={product?.inCart}
                   />
                 </CarouselItem>
               ))}
@@ -196,7 +215,7 @@ const ProductCategoryGrid: React.FC = () => {
       </div>
 
       {/* Grid for Desktop */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 hidden sm:grid">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6 hidden sm:grid">
         {products.length > 0 &&
           products.map((product: any, index) => (
             <ProductCard
@@ -208,6 +227,8 @@ const ProductCategoryGrid: React.FC = () => {
               isBestSeller={true}
               productId={product._id}
               skuParameters={product.skuParameters}
+              inWishlist={product?.inWishlist}
+              inCart={product?.inCart}
             />
           ))}
       </div>
