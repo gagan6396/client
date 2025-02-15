@@ -30,6 +30,8 @@ const ProductGrid = ({ products }: { products: any[] }) => {
                 originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
                 isBestSeller={true}
                 productId={product._id}
+                inWishlist={product?.inWishlist}
+                inCart={product?.inCart}
               />
             </div>
           );
