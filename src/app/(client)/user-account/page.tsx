@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
 import {
   Card,
   CardContent,
@@ -12,6 +13,8 @@ import Product1Image from "@/public/product-1.png";
 import Product2Image from "@/public/product-2.png";
 import Product3Image from "@/public/product-3.png";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
 const orders = [
   {
     id: "ORD12345",
@@ -50,6 +53,59 @@ const orders = [
 ];
 
 export default function UserAccount() {
+  const [userProfile, setUserProfile] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    profileImage: "",
+    shoppingAddress: {
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      country: "",
+      postalCode: "",
+    },
+  });
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await getUserProfileAPI();
+        if (response.data.success) {
+          setUserProfile(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const handleUpdateProfile = async () => {
+    try {
+      const response = await updateUserProfileAPI(userProfile);
+      if (response.data.success) {
+        setUserProfile(response.data.data);
+        alert("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+    }
+  };
+
+  const handleAddressChange = (field: any, value: any) => {
+    setUserProfile({
+      ...userProfile,
+      shoppingAddress: {
+        ...userProfile.shoppingAddress,
+        [field]: value,
+      },
+    });
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto py-12 px-4">
       <Tabs defaultValue="account" className="w-full">
@@ -71,20 +127,106 @@ export default function UserAccount() {
             <CardContent className="space-y-4">
               <div>
                 <p className="font-semibold">Name:</p>
-                <p>John Doe</p>
+                <input
+                  type="text"
+                  value={`${userProfile.first_name} ${userProfile.last_name}`}
+                  onChange={(e) => {
+                    const [first_name, last_name] = e.target.value.split(" ");
+                    setUserProfile({ ...userProfile, first_name, last_name });
+                  }}
+                  className="w-full p-2 border rounded"
+                />
               </div>
               <div>
                 <p className="font-semibold">Email:</p>
-                <p>johndoe@example.com</p>
+                <input
+                  type="email"
+                  value={userProfile.email}
+                  onChange={(e) =>
+                    setUserProfile({ ...userProfile, email: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                />
               </div>
               <div>
                 <p className="font-semibold">Phone:</p>
-                <p>+91 9876543210</p>
+                <input
+                  type="text"
+                  value={userProfile.phone}
+                  onChange={(e) =>
+                    setUserProfile({ ...userProfile, phone: e.target.value })
+                  }
+                  className="w-full p-2 border rounded"
+                />
               </div>
               <div>
-                <p className="font-semibold">Address:</p>
-                <p>123 Street, City, Country</p>
+                <p className="font-semibold">Address Line 1:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.addressLine1}
+                  onChange={(e) =>
+                    handleAddressChange("addressLine1", e.target.value)
+                  }
+                  className="w-full p-2 border rounded"
+                />
               </div>
+              <div>
+                <p className="font-semibold">Address Line 2:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.addressLine2}
+                  onChange={(e) =>
+                    handleAddressChange("addressLine2", e.target.value)
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <p className="font-semibold">City:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.city}
+                  onChange={(e) => handleAddressChange("city", e.target.value)}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <p className="font-semibold">State:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.state}
+                  onChange={(e) => handleAddressChange("state", e.target.value)}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <p className="font-semibold">Country:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.country}
+                  onChange={(e) =>
+                    handleAddressChange("country", e.target.value)
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <div>
+                <p className="font-semibold">Postal Code:</p>
+                <input
+                  type="text"
+                  value={userProfile.shoppingAddress.postalCode}
+                  onChange={(e) =>
+                    handleAddressChange("postalCode", e.target.value)
+                  }
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+              <button
+                onClick={handleUpdateProfile}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Update Profile
+              </button>
             </CardContent>
           </Card>
         </TabsContent>

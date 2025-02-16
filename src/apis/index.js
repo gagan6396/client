@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_BASE_URL || 'https://server.boostengine.in/api/v1', // API base URL
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://server.boostengine.in/api/v1', // API base URL
     timeout: 10000, // Request timeout (in milliseconds)
 });
 
@@ -10,9 +10,11 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         // Add Authorization token if available
-        const token = localStorage.getItem('accessToken'); // Adjust this according to your token storage method
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (typeof window !== 'undefined') { // Ensure this runs only on the client side
+            const token = localStorage.getItem('accessToken'); // Adjust this according to your token storage method
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -32,8 +34,13 @@ axiosInstance.interceptors.response.use(
         // Handle errors (e.g., 401, 403, etc.)
         if (error.response) {
             if (error.response.status === 401) {
-                // Optional: Redirect to login page
-                console.error('Unauthorized. Redirecting to login...');
+                if (typeof window !== 'undefined') { // Ensure this runs only on the client side
+                    // Remove accessToken from localStorage
+                    localStorage.removeItem('accessToken');
+
+                    // Redirect to login page
+                    window.location.href = '/login'; // Use window.location for redirection
+                }
             }
         }
         return Promise.reject(error);
