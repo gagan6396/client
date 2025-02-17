@@ -1,8 +1,11 @@
 "use client";
 
-import { addToCartAPI } from "@/apis/addToCartAPIs";
+import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
 import { getProductByIdAPI } from "@/apis/productsAPIs";
-import { addToWishListAPI } from "@/apis/wishlistAPIs";
+import {
+  addToWishListAPI,
+  deleteProductFromWishlistAPI,
+} from "@/apis/wishlistAPIs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,6 +90,18 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [selectedImage, setSelectedImage] = useState<any>(
+    product?.images[0] || ""
+  );
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const handleThumbnailClick = (image: string) => {
+    setSelectedImage(image);
+  };
+
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
+  };
 
   // Formik and Yup setup for review form
   const formik = useFormik({
@@ -121,6 +136,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
       const response = await getProductByIdAPI(productId);
       if (response?.data?.data) {
         setProduct(response.data.data);
+        setSelectedImage(response.data.data.images[0]);
       } else {
         throw new Error("Product data not found");
       }
@@ -152,6 +168,25 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   };
 
+  // Remove from Wishlist
+  const deleteProductFromWishlist = async () => {
+    if (!product?._id) return;
+
+    try {
+      const response = await deleteProductFromWishlistAPI(product._id);
+      toast.success(response.data.message || "Item removed from wishlist!");
+      setProduct((prevProduct) =>
+        prevProduct ? { ...prevProduct, inWishlist: false } : null
+      );
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to remove item from wishlist. Try again later."
+      );
+      console.error("Error removing from wishlist:", error);
+    }
+  };
+
   // Add to Cart
   const addToCart = async () => {
     if (!product?._id) return;
@@ -171,6 +206,46 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
           "Failed to add item to cart. Try again later."
       );
       console.error("Error adding to cart:", error);
+    }
+  };
+
+  // Remove from Cart
+  const deleteToCart = async () => {
+    if (!product?._id) return;
+
+    try {
+      const response = await deleteToCartAPI(product._id);
+      toast.success(response.data.message || "Item removed from cart!");
+      setProduct((prevProduct) =>
+        prevProduct ? { ...prevProduct, inCart: false } : null
+      );
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to remove item from cart. Try again later."
+      );
+      console.error("Error removing from cart:", error);
+    }
+  };
+
+  // Buy Now
+  const buyNow = async () => {
+    if (!product?._id) return;
+
+    try {
+      // Add to cart first
+      await addToCartAPI({
+        productId: product._id,
+        quantity: 1,
+      });
+      // Redirect to checkout page
+      window.location.href = "/checkout"; // Update the URL as needed
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to proceed to checkout. Try again later."
+      );
+      console.error("Error during Buy Now:", error);
     }
   };
 
@@ -222,17 +297,54 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
         {/* Product Image Carousel */}
         <div className="w-full">
           {product.images.length ? (
-            product.images.map((image, index) => (
-              <div key={index} className="flex justify-center">
+            <>
+              {/* Main Image */}
+              <div className="relative flex justify-center mb-4">
                 <img
-                  src={image}
+                  src={selectedImage}
                   width={500}
                   height={500}
-                  alt={`Product Image ${index + 1}`}
-                  className="rounded-lg object-cover h-[500px] w-auto"
+                  alt="Main Product Image"
+                  className={`rounded-lg object-cover h-[500px] w-auto cursor-zoom-in ${
+                    isZoomed ? "scale-150 transform origin-center" : ""
+                  }`}
+                  onClick={toggleZoom}
                 />
+                {isZoomed && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <button
+                      className="text-white text-lg bg-black bg-opacity-75 px-4 py-2 rounded-full"
+                      onClick={toggleZoom}
+                    >
+                      Zoom Out
+                    </button>
+                  </div>
+                )}
               </div>
-            ))
+
+              {/* Thumbnail Grid */}
+              <div className="grid grid-cols-4 gap-2">
+                {product.images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`cursor-pointer border-2 rounded-lg overflow-hidden ${
+                      selectedImage === image
+                        ? "border-green-600"
+                        : "border-transparent"
+                    }`}
+                    onClick={() => handleThumbnailClick(image)}
+                  >
+                    <img
+                      src={image}
+                      width={100}
+                      height={100}
+                      alt={`Product Thumbnail ${index + 1}`}
+                      className="h-24 w-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="flex justify-center items-center h-[500px] bg-gray-100 rounded-lg">
               <p className="text-gray-500">No images available</p>
@@ -259,7 +371,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
           <p className="text-gray-700">{product.description}</p>
 
-          {/* Add to Cart and Wishlist Buttons */}
+          {/* Add to Cart, Buy Now, and Wishlist Buttons */}
           <div className="flex items-center space-x-4">
             <Button
               className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white"
@@ -270,10 +382,17 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               {product.inCart ? "Added to Cart" : "Add to Cart"}
             </Button>
             <Button
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={buyNow}
+            >
+              Buy Now
+            </Button>
+            <Button
               variant="outline"
               className="px-6 py-3"
-              onClick={addToWishList}
-              disabled={product.inWishlist}
+              onClick={
+                product.inWishlist ? deleteProductFromWishlist : addToWishList
+              }
             >
               {product.inWishlist ? (
                 <FaHeart className="text-red-600" />
@@ -300,6 +419,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       : "https://placehold.co/50"
                   }
                   alt="Supplier Avatar"
+                  className="object-contain"
                 />
                 <AvatarFallback>
                   {product.supplier_id.username[0]}

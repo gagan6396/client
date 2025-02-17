@@ -1,6 +1,8 @@
 "use client";
 
+import { getUserOrdersAPI } from "@/apis/orderAPIs";
 import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,49 +10,88 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Product1Image from "@/public/product-1.png";
-import Product2Image from "@/public/product-2.png";
-import Product3Image from "@/public/product-3.png";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { format } from "date-fns"; // Add date-fns for consistent date formatting
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as yup from "yup";
 
-const orders = [
-  {
-    id: "ORD12345",
-    date: "2025-01-10",
-    total: "₹1,250.00",
-    items: [
-      {
-        title: "Mixed Sweets",
-        imageSrc: Product1Image,
-        price: "₹118.75",
-        quantity: 2,
-      },
-      {
-        title: "Gir Cow Pure Vedic Ghee 500 ml",
-        imageSrc: Product2Image,
-        price: "₹118.75",
-        quantity: 1,
-      },
-    ],
-    status: "Delivered",
-  },
-  {
-    id: "ORD12346",
-    date: "2025-01-12",
-    total: "₹850.00",
-    items: [
-      {
-        title: "Rotana 500 gms",
-        imageSrc: Product3Image,
-        price: "₹425.00",
-        quantity: 2,
-      },
-    ],
-    status: "Pending",
-  },
-];
+interface User {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  price: { $numberDecimal: string };
+  images: string[];
+}
+
+interface ShippingAddress {
+  shoppingAddress: {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
+}
+
+interface Payment {
+  paymentMethod: string;
+  status: string;
+  amount: { $numberDecimal: string };
+}
+
+interface Order {
+  _id: string;
+  user_id: User;
+  orderDate: string;
+  totalAmount: number;
+  orderStatus: string;
+  shippingStatus: string;
+  products: {
+    productId: Product;
+    quantity: number;
+    skuParameters: Record<string, any>;
+    _id: string;
+  }[];
+  shippingAddressId: ShippingAddress;
+  payment_id: Payment;
+}
+
+const schema = yup.object({
+  first_name: yup.string().required("First name is required"),
+  last_name: yup.string().required("Last name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phone: yup.string().required("Phone number is required"),
+  shoppingAddress: yup.object({
+    addressLine1: yup.string().required("Address Line 1 is required"),
+    addressLine2: yup.string(),
+    city: yup.string().required("City is required"),
+    state: yup.string().required("State is required"),
+    country: yup.string().required("Country is required"),
+    postalCode: yup.string().required("Postal Code is required"),
+  }),
+});
 
 export default function UserAccount() {
   const [userProfile, setUserProfile] = useState({
@@ -69,41 +110,45 @@ export default function UserAccount() {
     },
   });
 
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  const form = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: userProfile,
+  });
+
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getUserProfileAPI();
-        if (response.data.success) {
-          setUserProfile(response.data.data);
+        const profileResponse = await getUserProfileAPI();
+        if (profileResponse.data.success) {
+          setUserProfile(profileResponse.data.data);
+          form.reset(profileResponse.data.data);
+        }
+
+        const ordersResponse = await getUserOrdersAPI();
+        if (ordersResponse.data.success) {
+          setOrders(ordersResponse.data.data.orders);
         }
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
+        console.error("Failed to fetch data:", error);
       }
     };
 
-    fetchUserProfile();
-  }, []);
+    fetchData();
+  }, [form]);
 
-  const handleUpdateProfile = async () => {
+  const handleUpdateProfile = async (data: any) => {
     try {
-      const response = await updateUserProfileAPI(userProfile);
+      const response = await updateUserProfileAPI(data);
       if (response.data.success) {
         setUserProfile(response.data.data);
-        alert("Profile updated successfully!");
+        toast.success("Profile updated successfully!");
       }
     } catch (error) {
       console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile");
     }
-  };
-
-  const handleAddressChange = (field: any, value: any) => {
-    setUserProfile({
-      ...userProfile,
-      shoppingAddress: {
-        ...userProfile.shoppingAddress,
-        [field]: value,
-      },
-    });
   };
 
   return (
@@ -125,108 +170,144 @@ export default function UserAccount() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <p className="font-semibold">Name:</p>
-                <input
-                  type="text"
-                  value={`${userProfile.first_name} ${userProfile.last_name}`}
-                  onChange={(e) => {
-                    const [first_name, last_name] = e.target.value.split(" ");
-                    setUserProfile({ ...userProfile, first_name, last_name });
-                  }}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Email:</p>
-                <input
-                  type="email"
-                  value={userProfile.email}
-                  onChange={(e) =>
-                    setUserProfile({ ...userProfile, email: e.target.value })
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Phone:</p>
-                <input
-                  type="text"
-                  value={userProfile.phone}
-                  onChange={(e) =>
-                    setUserProfile({ ...userProfile, phone: e.target.value })
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Address Line 1:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.addressLine1}
-                  onChange={(e) =>
-                    handleAddressChange("addressLine1", e.target.value)
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Address Line 2:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.addressLine2}
-                  onChange={(e) =>
-                    handleAddressChange("addressLine2", e.target.value)
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">City:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.city}
-                  onChange={(e) => handleAddressChange("city", e.target.value)}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">State:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.state}
-                  onChange={(e) => handleAddressChange("state", e.target.value)}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Country:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.country}
-                  onChange={(e) =>
-                    handleAddressChange("country", e.target.value)
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <div>
-                <p className="font-semibold">Postal Code:</p>
-                <input
-                  type="text"
-                  value={userProfile.shoppingAddress.postalCode}
-                  onChange={(e) =>
-                    handleAddressChange("postalCode", e.target.value)
-                  }
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-              <button
-                onClick={handleUpdateProfile}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Update Profile
-              </button>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(handleUpdateProfile)}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="first_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="last_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.addressLine1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 1</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.addressLine2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 2</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>State</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="shoppingAddress.postalCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Postal Code</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit">Update Profile</Button>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </TabsContent>
@@ -241,50 +322,88 @@ export default function UserAccount() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="bg-white shadow-md rounded-xl p-4 space-y-4"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold">Order ID: {order.id}</p>
-                      <p className="text-sm text-gray-500">
-                        Date: {order.date}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Status: {order.status}
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <div
+                    key={order._id}
+                    className="bg-white shadow-md rounded-xl p-4 space-y-4"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold">Order ID: {order._id}</p>
+                        <p className="text-sm text-gray-500">
+                          Date:{" "}
+                          {format(new Date(order.orderDate), "yyyy-MM-dd")}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Status: {order.orderStatus}
+                        </p>
+                      </div>
+                      <p className="font-bold text-lg">
+                        Total: ₹{order.totalAmount}
                       </p>
                     </div>
-                    <p className="font-bold text-lg">Total: {order.total}</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {order.items.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-4 border rounded-md p-3"
-                      >
-                        <Image
-                          src={item.imageSrc}
-                          alt={item.title}
-                          width={80}
-                          height={80}
-                          className="rounded-md"
-                        />
-                        <div>
-                          <p className="font-semibold">{item.title}</p>
-                          <p className="text-sm text-gray-500">
-                            Price: {item.price}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Quantity: {item.quantity}
-                          </p>
+
+                    {/* Shipping Address */}
+                    <div>
+                      <p className="font-semibold">Shipping Address:</p>
+                      <p className="text-sm text-gray-500">
+                        {order.shippingAddressId.shoppingAddress.addressLine1},{" "}
+                        {order.shippingAddressId.shoppingAddress.addressLine2},{" "}
+                        {order.shippingAddressId.shoppingAddress.city},{" "}
+                        {order.shippingAddressId.shoppingAddress.state},{" "}
+                        {order.shippingAddressId.shoppingAddress.country},{" "}
+                        {order.shippingAddressId.shoppingAddress.postalCode}
+                      </p>
+                    </div>
+
+                    {/* Payment Details */}
+                    <div>
+                      <p className="font-semibold">Payment Details:</p>
+                      <p className="text-sm text-gray-500">
+                        Method: {order.payment_id.paymentMethod}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Status: {order.payment_id.status}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Amount: ₹{order.payment_id.amount.$numberDecimal}
+                      </p>
+                    </div>
+
+                    {/* Products */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {order.products.map((product) => (
+                        <div
+                          key={product._id}
+                          className="flex items-center gap-4 border rounded-md p-3"
+                        >
+                          <Image
+                            src={product.productId.images[0]}
+                            alt={product.productId.name}
+                            width={80}
+                            height={80}
+                            className="rounded-md"
+                          />
+                          <div>
+                            <p className="font-semibold">
+                              {product.productId.name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Price: ₹{product.productId.price.$numberDecimal}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              Quantity: {product.quantity}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p>No orders found.</p>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

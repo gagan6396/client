@@ -1,7 +1,10 @@
 "use client";
-import { addToCartAPI } from "@/apis/addToCartAPIs";
+import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
-import { addToWishListAPI } from "@/apis/wishlistAPIs";
+import {
+  addToWishListAPI,
+  deleteProductFromWishlistAPI,
+} from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -55,6 +58,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const deleteProductFromWishlist = async () => {
+    try {
+      const response = await deleteProductFromWishlistAPI(productId);
+      setIsInWishlist(false);
+      toast.success(response.data.message || "Item removed from wishlist!");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to remove item from wishlist. Try again later."
+      );
+    }
+  };
+
   const addToCart = async () => {
     try {
       const response = await addToCartAPI({
@@ -65,8 +82,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       toast.success(response.data.message || "Item added to cart!");
     } catch (error: any) {
       console.error(error);
-      console.log(error);
-
       toast.error(
         error.response?.data?.message ||
           "Failed to add item to cart. Try again later."
@@ -74,12 +89,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const deleteToCart = async () => {
+    try {
+      const response = await deleteToCartAPI(productId);
+      setIsInCart(false);
+      toast.success(response.data.message || "Item removed from cart!");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to remove item from cart. Try again later."
+      );
+    }
+  };
+
   const navigation = useRouter();
+
   return (
     <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300">
       {/* Badge and Image */}
       <div
-        className="relative "
+        className="relative"
         onClick={() => navigation.push(`/products/${productId}`)}
       >
         <img
@@ -87,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           height={200}
           width={200}
           alt={title}
-          className="w-full  aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
+          className="w-full aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
         />
       </div>
       {isBestSeller && (
@@ -99,7 +129,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         -5%
       </div>
       {/* Content */}
-      <div className=" p-4">
+      <div className="p-4">
         <h3 className="text-[#867916] text-lg font-semibold line-clamp-1">
           {title}
         </h3>
@@ -133,29 +163,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 ? "bg-[#2B0504] text-white"
                 : "bg-transparent text-[#2B0504] border border-[#2B0504] hover:bg-[#2B0504] hover:text-white"
             }`}
-            onClick={addToCart}
+            onClick={isInCart ? deleteToCart : addToCart}
           >
-            {isInCart ? "Added to Cart" : "Add To Cart"}
+            {isInCart ? "Remove from Cart" : "Add To Cart"}
           </Button>
           {isInWishlist ? (
             <FaHeart
-              onClick={addToWishList}
+              onClick={deleteProductFromWishlist}
               size={30}
-              className={`${
-                isInWishlist
-                  ? "text-red-600"
-                  : "text-gray-400 hover:text-red-600"
-              } hover:scale-105 cursor-pointer transition-all duration-300`}
+              className="text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
             />
           ) : (
             <CiHeart
               onClick={addToWishList}
               size={30}
-              className={`${
-                isInWishlist
-                  ? "text-red-600"
-                  : "text-gray-400 hover:text-red-600"
-              } hover:scale-105 cursor-pointer transition-all duration-300`}
+              className="text-gray-400 hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
             />
           )}
         </div>

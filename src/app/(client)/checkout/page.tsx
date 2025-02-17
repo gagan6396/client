@@ -1,12 +1,18 @@
 "use client";
 import { getAddTOCartProductsAPI } from "@/apis/addToCartAPIs";
-import { createOrderAPI } from "@/apis/orderAPIs"; // API to create an order
+import { createOrderAPI } from "@/apis/orderAPIs";
 import { verifyPaymentAPI } from "@/apis/paymentAPIs";
 import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useFormik } from "formik";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
 
 type CartItemProps = {
   id: string;
@@ -37,28 +43,46 @@ const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [shippingAddress, setShippingAddress] = useState({
-    name: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-    phone: "",
-  });
   const [paymentMethod, setPaymentMethod] = useState("Razorpay");
+
+  // Formik and Yup validation schema
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      phone: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("Name is required"),
+      address: Yup.string().required("Address is required"),
+      city: Yup.string().required("City is required"),
+      state: Yup.string().required("State is required"),
+      pincode: Yup.string()
+        .required("Pincode is required")
+        .matches(/^\d{6}$/, "Pincode must be 6 digits"),
+      phone: Yup.string()
+        .required("Phone is required")
+        .matches(/^\d{10}$/, "Phone must be 10 digits"),
+    }),
+    onSubmit: async (values) => {
+      await handlePlaceOrder(values);
+    },
+  });
 
   // Fetch user profile
   const getUserProfile = async () => {
     try {
       const response = await getUserProfileAPI();
-      console.log("User Profile", response.data.data);
       setProfile(response.data.data);
 
-      // Pre-fill shipping address form with profile data
+      // Pre-fill form with profile data
       if (response.data.data) {
         const { first_name, last_name, phone, shoppingAddress } =
           response.data.data;
-        setShippingAddress({
+        formik.setValues({
           name: `${first_name} ${last_name}`,
           address: `${shoppingAddress.addressLine1} ${shoppingAddress.addressLine2}`,
           city: shoppingAddress.city,
@@ -73,42 +97,11 @@ const CheckoutPage = () => {
     }
   };
 
-  // Update user profile with new shipping address
-  const updateProfileAndAddress = async () => {
-    try {
-      const { name, address, city, state, pincode, phone } = shippingAddress;
-      const [first_name, last_name] = name.split(" ");
-
-      const response = await updateUserProfileAPI({
-        first_name,
-        last_name,
-        phone,
-        shoppingAddress: {
-          addressLine1: address,
-          addressLine2: "",
-          city,
-          state,
-          country: "India", // Default country
-          postalCode: pincode,
-        },
-        email: profile?.email || "", // Use existing email
-      });
-
-      console.log("Profile updated:", response.data);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile. Please try again.");
-    }
-  };
-
   // Fetch cart products
   const getAllCartProducts = async () => {
     setLoading(true);
     try {
       const response = await getAddTOCartProductsAPI();
-      console.log("Get All Cart Products", response.data);
-
-      // Map the API response to the CartItemProps type
       const mappedItems = response.data.data.products.map((item: any) => ({
         id: item.productId._id,
         imageSrc: item.productId.images[0],
@@ -116,7 +109,6 @@ const CheckoutPage = () => {
         price: parseFloat(item.productId.price.$numberDecimal),
         quantity: item.quantity,
       }));
-
       setCartItems(mappedItems);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -131,83 +123,65 @@ const CheckoutPage = () => {
     getAllCartProducts();
   }, []);
 
-  // Handle input change for shipping address
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setShippingAddress((prev) => ({ ...prev, [name]: value }));
-  };
-
   // Handle payment method change
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method);
   };
 
-  console.log({ key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID });
-
   // Handle order submission
-  const handlePlaceOrder = async () => {
-    if (
-      !shippingAddress.name ||
-      !shippingAddress.address ||
-      !shippingAddress.phone ||
-      !shippingAddress.city ||
-      !shippingAddress.state ||
-      !shippingAddress.pincode
-    ) {
-      toast.error("Please fill in all shipping details.");
-      return;
-    }
-
+  const handlePlaceOrder = async (values: typeof formik.values) => {
     setLoading(true);
 
     try {
       // Update user profile with new shipping address
-      await updateProfileAndAddress();
+      const [first_name, last_name] = values.name.split(" ");
+      await updateUserProfileAPI({
+        first_name,
+        last_name,
+        phone: values.phone,
+        shoppingAddress: {
+          addressLine1: values.address,
+          addressLine2: "",
+          city: values.city,
+          state: values.state,
+          country: "India",
+          postalCode: values.pincode,
+        },
+        email: profile?.email || "",
+      });
 
       // Prepare order data
       const orderData: any = {
         products: cartItems.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
-          discount: 0, // Add discount if applicable
-          tax: 0, // Add tax if applicable
+          discount: 0,
+          tax: 0,
         })),
-        shippingAddressId: profile?._id, // Replace with actual shipping address ID
+        shippingAddressId: profile?._id,
         paymentMethod: paymentMethod || "Razorpay",
         addressSnapshot: {
-          addressLine1: shippingAddress.address, // Map address to addressLine1
-          addressLine2: "", // Add addressLine2 if applicable
-          city: shippingAddress.city,
-          state: shippingAddress.state,
-          country: "India", // Default country
-          postalCode: shippingAddress.pincode, // Map pincode to postalCode
+          addressLine1: values.address,
+          addressLine2: "",
+          city: values.city,
+          state: values.state,
+          country: "India",
+          postalCode: values.pincode,
         },
       };
 
       // Create order
       const response = await createOrderAPI(orderData);
-      console.log("API Response:", response); // Debugging
-
-      // Check if the response structure is valid
-      if (!response.data || !response.data.data || !response.data.data.order) {
-        throw new Error("Invalid API response structure");
-      }
-
       const { totalAmount, _id: orderId } = response.data.data.order;
 
       // Handle Razorpay payment
       if (paymentMethod === "Razorpay") {
-        if (!response.data.data.razorpayOrder) {
-          throw new Error("Invalid API response structure");
-        }
         const { id: razorpayOrderId } = response.data.data.razorpayOrder;
-        console.log("Razorpay Order ID:", razorpayOrderId); // Debugging
-
         const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Use environment variable
-          amount: totalAmount * 100, // Amount in paise
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: totalAmount * 100,
           currency: "INR",
-          order_id: razorpayOrderId, // Order ID from the backend
+          order_id: razorpayOrderId,
           name: "Your Company Name",
           description: "Payment for your order",
           handler: async function (paymentResponse: any) {
@@ -218,28 +192,21 @@ const CheckoutPage = () => {
                 razorpay_signature: paymentResponse.razorpay_signature,
               });
 
-              const verificationResult = verifyResponse.data.data;
-              console.log("verificationResult", verificationResult);
-
-              if (verificationResult.success) {
+              if (verifyResponse.data.data.success) {
                 toast.success("Payment successful!");
                 router.push(`/order-confirmation/${orderId}`);
               } else {
-                toast.error(
-                  "Payment verification failed. Please contact support."
-                );
+                toast.error("Payment verification failed. Please contact support.");
               }
             } catch (error) {
               console.error("Error verifying payment:", error);
-              toast.error(
-                "Payment verification failed. Please contact support."
-              );
+              toast.error("Payment verification failed. Please contact support.");
             }
           },
           prefill: {
-            name: shippingAddress.name,
+            name: values.name,
             email: profile?.email,
-            contact: shippingAddress.phone,
+            contact: values.phone,
           },
           theme: {
             color: "#F37254",
@@ -279,84 +246,84 @@ const CheckoutPage = () => {
         {/* Shipping Details */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Shipping Details</h2>
-          <form className="space-y-4">
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
                 name="name"
-                value={shippingAddress.name}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.name && formik.errors.name ? (
+                <p className="text-sm text-red-500">{formik.errors.name}</p>
+              ) : null}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Address
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
                 name="address"
-                value={shippingAddress.address}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.address && formik.errors.address ? (
+                <p className="text-sm text-red-500">{formik.errors.address}</p>
+              ) : null}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                City
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
                 name="city"
-                value={shippingAddress.city}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.city}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.city && formik.errors.city ? (
+                <p className="text-sm text-red-500">{formik.errors.city}</p>
+              ) : null}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                State
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="state">State</Label>
+              <Input
+                id="state"
                 name="state"
-                value={shippingAddress.state}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.state}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.state && formik.errors.state ? (
+                <p className="text-sm text-red-500">{formik.errors.state}</p>
+              ) : null}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Pincode
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="pincode">Pincode</Label>
+              <Input
+                id="pincode"
                 name="pincode"
-                value={shippingAddress.pincode}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.pincode}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.pincode && formik.errors.pincode ? (
+                <p className="text-sm text-red-500">{formik.errors.pincode}</p>
+              ) : null}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Phone
-              </label>
-              <input
-                type="text"
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
                 name="phone"
-                value={shippingAddress.phone}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
+              {formik.touched.phone && formik.errors.phone ? (
+                <p className="text-sm text-red-500">{formik.errors.phone}</p>
+              ) : null}
             </div>
           </form>
         </div>
@@ -395,34 +362,29 @@ const CheckoutPage = () => {
             </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-2">Payment Method</h3>
-              <div className="space-y-2">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Razorpay"
-                    checked={paymentMethod === "Razorpay"}
-                    onChange={() => handlePaymentMethodChange("Razorpay")}
-                  />
-                  Razorpay
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="COD"
-                    checked={paymentMethod === "COD"}
-                    onChange={() => handlePaymentMethodChange("COD")}
-                  />
-                  Cash on Delivery (COD)
-                </label>
-              </div>
+              <RadioGroup
+                value={paymentMethod}
+                onValueChange={handlePaymentMethodChange}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Razorpay" id="razorpay" />
+                  <Label htmlFor="razorpay">Razorpay</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="COD" id="cod" />
+                  <Label htmlFor="cod">Cash on Delivery (COD)</Label>
+                </div>
+              </RadioGroup>
             </div>
             <Button
-              onClick={handlePlaceOrder}
+              type="submit"
+              onClick={() => formik.handleSubmit()}
               disabled={loading || cartItems.length === 0}
               className="w-full mt-6 bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
             >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
               {loading ? "Placing Order..." : "Place Order"}
             </Button>
           </div>
