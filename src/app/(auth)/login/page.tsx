@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
@@ -52,12 +53,12 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center">
-      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+      <div className="flex flex-col md:flex-row rounded-2xl shadow-2xl max-w-5xl w-full bg-white overflow-hidden">
         {/* Form Container */}
-        <div className="md:w-1/2 px-8 md:px-16">
-          <h2 className="font-bold text-2xl text-[#002D74]">Login</h2>
-          <p className="text-xs mt-4 text-[#002D74]">
+        <div className="w-full md:w-1/2 p-8 md:p-16">
+          <h2 className="font-bold text-3xl text-[#002D74] mb-2">Login</h2>
+          <p className="text-sm text-[#002D74] mb-8">
             If you are already a member, easily log in
           </p>
 
@@ -68,22 +69,24 @@ const LoginPage = () => {
             onSubmit={handleSubmit}
           >
             {() => (
-              <Form className="flex flex-col gap-4">
-                <Field
-                  className="p-2 mt-8 rounded-xl border"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+              <Form className="flex flex-col gap-6">
+                <div>
+                  <Field
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74] focus:ring-1 focus:ring-[#002D74] transition-all"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
+                </div>
 
                 <div className="relative">
                   <Field
-                    className="p-2 rounded-xl border w-full"
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74] focus:ring-1 focus:ring-[#002D74] transition-all"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Password"
@@ -93,24 +96,24 @@ const LoginPage = () => {
                     className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                   >
                     {showPassword ? (
-                      <EyeOff color="gray" size={16} />
+                      <EyeOff color="gray" size={20} />
                     ) : (
-                      <Eye color="gray" size={16} />
+                      <Eye color="gray" size={20} />
                     )}
                   </div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
 
                 <button
                   type="submit"
-                  className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"
+                  className="bg-[#002D74] rounded-xl text-white py-3 hover:bg-[#004494] transition-all duration-300 mt-4 flex items-center justify-center"
                   disabled={loading}
                 >
-                  {loading ? "Logging in..." : "Login"}
+                  {loading ? <ClipLoader size={20} color="#ffffff" /> : "Login"}
                 </button>
                 {error && (
                   <p className="text-red-500 text-sm text-center mt-2">
@@ -121,52 +124,19 @@ const LoginPage = () => {
             )}
           </Formik>
 
-          {/* Or divider */}
-          <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
-            <hr className="border-gray-400" />
-            <p className="text-center text-sm">OR</p>
-            <hr className="border-gray-400" />
-          </div>
-
-          {/* Google Login */}
-          <button className="bg-white border py-2 w-full rounded-xl mt-5 flex justify-center items-center text-sm hover:scale-105 duration-300 text-[#002D74]">
-            <svg
-              className="mr-3"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 48 48"
-              width="25px"
-            >
-              <path
-                fill="#FFC107"
-                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
-              />
-              <path
-                fill="#FF3D00"
-                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
-              />
-              <path
-                fill="#4CAF50"
-                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
-              />
-              <path
-                fill="#1976D2"
-                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
-              />
-            </svg>
-            Login with Google
-          </button>
-
           {/* Forgot Password */}
-          <div className="mt-5 text-xs border-b border-[#002D74] py-4 text-[#002D74]">
-            <a href="#">Forgot your password?</a>
+          <div className="mt-6 text-sm text-[#002D74] text-center">
+            <Link href="#" className="hover:underline hover:text-[#004494]">
+              Forgot your password?
+            </Link>
           </div>
 
           {/* Register Link */}
-          <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">
+          <div className="mt-6 text-sm text-[#002D74] text-center">
             <p>Don&apos;t have an account?</p>
             <Link
               href="/signup"
-              className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
+              className="inline-block mt-2 py-2 px-6 bg-white border border-[#002D74] rounded-xl hover:bg-[#002D74] hover:text-white transition-all duration-300"
             >
               Register
             </Link>
@@ -174,8 +144,14 @@ const LoginPage = () => {
         </div>
 
         {/* Image Section */}
-        <div className="md:block hidden w-1/2">
-          <Image className="rounded-2xl" src={bgImage} alt="Login" />
+        <div className="w-full md:w-1/2 hidden md:block relative">
+          <Image
+            className="object-cover"
+            src={bgImage}
+            alt="Login"
+            fill
+            priority
+          />
         </div>
       </div>
     </section>

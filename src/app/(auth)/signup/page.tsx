@@ -3,10 +3,13 @@
 import { RegisterAPI } from "@/apis/AuthAPIs";
 import bgImage from "@/public/l1.jpg";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react"; // Import Loader2 for the spinner
 import Image from "next/image";
+import Link from "next/link"; // Import Link from Next.js
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css"; // Import the styles
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
@@ -30,18 +33,23 @@ const RegisterPage = () => {
   const validationSchema = Yup.object({
     name: Yup.string()
       .min(3, "Name must be at least 3 characters")
+      .max(50, "Name must be less than 50 characters")
       .required("Name is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
     password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
+      .min(8, "Password must be at least 8 characters")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      )
       .required("Password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Confirm Password is required"),
     phone: Yup.string()
-      .matches(/^\d{10}$/, "Phone number must be 10 digits")
+      .matches(/^\+\d{1,3}\d{9,14}$/, "Invalid phone number")
       .optional(),
   });
 
@@ -80,12 +88,12 @@ const RegisterPage = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center ">
-      <div className="flex rounded-2xl shadow-lg max-w-5xl p-5 items-center bg-white">
+    <section className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="flex flex-col md:flex-row rounded-2xl shadow-lg max-w-5xl w-full bg-white">
         {/* Form Container */}
-        <div className="md:w-1/2 px-8 md:px-16">
+        <div className="w-full md:w-1/2 p-8 md:p-16">
           <h2 className="font-bold text-2xl text-[#002D74]">Register</h2>
-          <p className="text-xs mt-4 text-gray-600">Create a new account</p>
+          <p className="text-sm mt-4 text-gray-600">Create a new account</p>
 
           <Formik
             initialValues={{
@@ -98,51 +106,59 @@ const RegisterPage = () => {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isValid, dirty }) => (
-              <Form className="flex flex-col gap-4 mt-4">
+            {({ isValid, dirty, setFieldValue, values }) => (
+              <Form className="flex flex-col gap-4 mt-6">
                 {/* Name Field */}
-                <Field
-                  className="p-2 rounded-xl border w-full"
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+                <div>
+                  <Field
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                  />
+                  <ErrorMessage
+                    name="name"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
+                </div>
 
                 {/* Email Field */}
-                <Field
-                  className="p-2 rounded-xl border w-full"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+                <div>
+                  <Field
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
+                </div>
 
                 {/* Phone Field */}
-                <Field
-                  className="p-2 rounded-xl border w-full"
-                  type="text"
-                  name="phone"
-                  placeholder="Phone (Optional)"
-                />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
+                <div>
+                  <PhoneInput
+                    international
+                    defaultCountry="IN"
+                    value={values.phone}
+                    onChange={(value) => setFieldValue("phone", value)}
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
+                    placeholder="Phone (Optional)"
+                  />
+                  <ErrorMessage
+                    name="phone"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
+                </div>
 
                 {/* Password Field */}
                 <div className="relative">
                   <Field
-                    className="p-2 rounded-xl border w-full"
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Password"
@@ -152,39 +168,42 @@ const RegisterPage = () => {
                     className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                   >
                     {showPassword ? (
-                      <EyeOff color="gray" size={16} />
+                      <EyeOff color="gray" size={20} />
                     ) : (
-                      <Eye color="gray" size={16} />
+                      <Eye color="gray" size={20} />
                     )}
                   </div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
 
                 {/* Confirm Password Field */}
                 <div className="relative">
                   <Field
-                    className="p-2 rounded-xl border w-full"
+                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
                     type={showPassword ? "text" : "password"}
                     name="confirmPassword"
                     placeholder="Confirm Password"
                   />
+                  <ErrorMessage
+                    name="confirmPassword"
+                    component="div"
+                    className="text-red-500 text-xs mt-1"
+                  />
                 </div>
-                <ErrorMessage
-                  name="confirmPassword"
-                  component="div"
-                  className="text-red-500 text-xs"
-                />
 
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="bg-[#002D74] rounded-xl text-white py-3 hover:scale-105 duration-300 mt-4 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
                   disabled={!isValid || !dirty || loading}
                 >
+                  {loading ? (
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                  ) : null}
                   {loading ? "Registering..." : "Register"}
                 </button>
 
@@ -194,14 +213,26 @@ const RegisterPage = () => {
                     {error}
                   </p>
                 )}
+
+                {/* Login Link */}
+                <div className="mt-4 text-sm text-center text-[#002D74]">
+                  Already have an account?{" "}
+                  <Link href="/login" className="font-semibold hover:underline">
+                    Login here
+                  </Link>
+                </div>
               </Form>
             )}
           </Formik>
         </div>
 
         {/* Image Section */}
-        <div className="md:block hidden w-1/2">
-          <Image className="rounded-2xl" src={bgImage} alt="Register" />
+        <div className="w-full md:w-1/2 hidden md:block">
+          <Image
+            className="rounded-r-2xl h-full object-cover"
+            src={bgImage}
+            alt="Register"
+          />
         </div>
       </div>
       <ToastContainer />
