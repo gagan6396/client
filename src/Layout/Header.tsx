@@ -26,7 +26,8 @@ const HeroSection = () => {
       <div className="z-10 text-center">
         <h1 className="text-5xl font-bold mb-4">Experience Himalayan Purity</h1>
         <p className="text-xl mb-8">
-          100% Authentic | Superior Quality | Empowering Women's Livelihoods
+          100% Authentic | Superior Quality | Empowering Women&apos;s
+          Livelihoods
         </p>
         <Link href="/shop">
           <div className="bg-[#2B0504] text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-[#3a0706] transition-colors">
