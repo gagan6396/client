@@ -49,7 +49,7 @@ const ProductGrid = ({ products }: { products: any[] }) => {
               No Products Found
             </h3>
             <p className="text-gray-500">
-              We couldn't find any products matching your criteria. Stay tuned
+              We couldn&apos;t find any products matching your criteria. Stay tuned
               for updates!
             </p>
           </div>
@@ -122,7 +122,7 @@ const ProductPage = () => {
             No Products Found
           </h3>
           <p className="text-gray-500">
-            We couldn't find any products matching your criteria. Stay tuned for
+            We couldn&apos;t find any products matching your criteria. Stay tuned for
             updates!
           </p>
         </div>
@@ -143,7 +143,7 @@ const ProductPage = () => {
             Products Coming Soon!
           </h3>
           <p className="text-gray-500">
-            We're working hard to bring you amazing products. Stay tuned!
+            We&apos;re working hard to bring you amazing products. Stay tuned!
           </p>
         </div>
       </div>
