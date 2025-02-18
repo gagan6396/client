@@ -107,7 +107,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const navigation = useRouter();
 
   return (
-    <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300">
+    <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300 w-full">
       {/* Badge and Image */}
       <div
         className="relative"
@@ -115,23 +115,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       >
         <img
           src={imageSrc}
-          height={200}
-          width={200}
           alt={title}
           className="w-full aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
         />
       </div>
       {isBestSeller && (
-        <div className="absolute top-0 right-0 bg-[#2B0504] text-white text-xs px-5 py-1 rounded-md">
+        <div className="absolute top-0 right-0 bg-[#2B0504] text-white text-xs px-2 py-1 rounded-md sm:px-5 sm:py-1">
           Best Seller
         </div>
       )}
-      <div className="absolute top-0 left-0 bg-[#00B412] text-white text-xs px-5 py-1 rounded-md">
+      <div className="absolute top-0 left-0 bg-[#00B412] text-white text-xs px-2 py-1 rounded-md sm:px-5 sm:py-1">
         -5%
       </div>
       {/* Content */}
-      <div className="p-4">
-        <h3 className="text-[#867916] text-lg font-semibold line-clamp-1">
+      <div className="p-2 sm:p-4">
+        <h3 className="text-[#867916] text-sm sm:text-lg font-semibold line-clamp-1">
           {title}
         </h3>
         {/* 5-star Rating */}
@@ -140,7 +138,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-yellow-400"
+              className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -148,18 +146,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </svg>
           ))}
         </div>
-        <div className="flex items-center justify-between py-2">
+        <div className="flex items-center justify-between py-1 sm:py-2">
           {/* Price and Original Price */}
           <div>
-            <span className="text-green-600 font-bold">₹{price}</span>
-            <span className="text-gray-500 line-through ml-2">
+            <span className="text-green-600 font-bold text-sm sm:text-base">
+              ₹{price}
+            </span>
+            <span className="text-gray-500 line-through ml-2 text-xs sm:text-sm">
               ₹{originalPrice}
             </span>
           </div>
         </div>
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3">
           <Button
-            className={`rounded-full w-full transition ${
+            className={`rounded-full w-full transition text-xs sm:text-base ${
               isInCart
                 ? "bg-[#2B0504] text-white"
                 : "bg-transparent text-[#2B0504] border border-[#2B0504] hover:bg-[#2B0504] hover:text-white"
@@ -171,13 +171,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {isInWishlist ? (
             <FaHeart
               onClick={deleteProductFromWishlist}
-              size={30}
+              size={24}
               className="text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
             />
           ) : (
             <CiHeart
               onClick={addToWishList}
-              size={30}
+              size={24}
               className="text-gray-400 hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
             />
           )}
@@ -224,7 +224,7 @@ const ProductCategoryGrid: React.FC = () => {
                     imageSrc={product.images[0]}
                     title={product.name}
                     price={product.price?.$numberDecimal || "N/A"}
-                    originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                    originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
                     isBestSeller={true}
                     productId={product._id}
                     skuParameters={product.skuParameters}
@@ -246,7 +246,7 @@ const ProductCategoryGrid: React.FC = () => {
               imageSrc={product.images[0]}
               title={product.name}
               price={product.price?.$numberDecimal || "N/A"}
-              originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+              originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
               isBestSeller={true}
               productId={product._id}
               skuParameters={product.skuParameters}

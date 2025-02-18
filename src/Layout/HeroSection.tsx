@@ -120,12 +120,12 @@ const HeroSection = () => {
                 </div>
                 <div
                   className="relative cursor-pointer"
-                  onClick={() => router.push("/cart")}
+                  onClick={() => router.push("/add-to-cart")}
                 >
                   <AiOutlineShoppingCart
                     size={24}
                     className={`${getLinkClass(
-                      "/cart"
+                      "/add-to-cart"
                     )} text-white hover:text-[#86790c] transition-colors duration-200`}
                   />
                   <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
@@ -154,12 +154,12 @@ const HeroSection = () => {
                 </div>
                 <div
                   className="relative cursor-pointer"
-                  onClick={() => router.push("/cart")}
+                  onClick={() => router.push("/add-to-cart")}
                 >
                   <AiOutlineShoppingCart
                     size={24}
                     className={`${getLinkClass(
-                      "/cart"
+                      "/add-to-cart"
                     )} text-white hover:text-[#86790c] transition-colors duration-200`}
                   />
                   <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>

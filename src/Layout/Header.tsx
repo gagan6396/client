@@ -1,10 +1,15 @@
 "use client";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"; // Import shadcn dropdown components
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   AiOutlineHeart,
   AiOutlineShoppingCart,
@@ -14,7 +19,6 @@ import {
 const Header: React.FC = () => {
   const pathname = usePathname(); // Get the current path
   const router = useRouter();
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   let accessToken;
   if (typeof window !== "undefined") {
     accessToken = localStorage.getItem("accessToken");
@@ -32,7 +36,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white border-b shadow-sm ">
+    <header className="bg-white border-b shadow-sm">
       {/* Top Section */}
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo Section */}
@@ -74,30 +78,31 @@ const Header: React.FC = () => {
         <div className="flex items-center space-x-6">
           {accessToken ? (
             <>
-              {/* User Dropdown */}
-              <div className="relative">
-                <AiOutlineUser
-                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  size={24}
-                  className="text-gray-700 hover:text-[#2B0504] cursor-pointer transition-colors duration-200"
-                />
-                {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-                    <button
-                      onClick={() => router.push("/user-account")}
-                      className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
-                    >
-                      Profile
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
-                    >
-                      Logout
-                    </button>
+              {/* User Dropdown with shadcn */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="cursor-pointer">
+                    <AiOutlineUser
+                      size={24}
+                      className="text-gray-700 hover:text-[#2B0504] transition-colors duration-200"
+                    />
                   </div>
-                )}
-              </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => router.push("/user-account")}
+                    className="cursor-pointer"
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="cursor-pointer"
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Wishlist */}
               <div

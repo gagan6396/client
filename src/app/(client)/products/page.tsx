@@ -10,7 +10,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 
 const ProductGrid = ({ products }: { products: any[] }) => {
   return (
-    <div className="w-11/12 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {products.length > 0 ? (
         products.map((product, index) => {
           if (!product?.images || product.images.length === 0) {
@@ -21,7 +21,7 @@ const ProductGrid = ({ products }: { products: any[] }) => {
           return (
             <div
               key={index}
-              className="embla__slide rounded-xl p-4 my-3 relative min-w-[80%] sm:min-w-[50%] md:min-w-[33%] lg:min-w-[25%]"
+              className="embla__slide rounded-xl p-2 sm:p-4 my-2 sm:my-3 relative"
             >
               <ProductCard
                 skuParameters={product.skuParameters}
@@ -43,14 +43,14 @@ const ProductGrid = ({ products }: { products: any[] }) => {
             <img
               src="/images/no-products.svg" // Add a relevant image for "No Products Found"
               alt="No Products Found"
-              className="w-48 h-48 mx-auto mb-6"
+              className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
             />
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
               No Products Found
             </h3>
-            <p className="text-gray-500">
-              We couldn&apos;t find any products matching your criteria. Stay tuned
-              for updates!
+            <p className="text-sm sm:text-base text-gray-500">
+              We couldn&apos;t find any products matching your criteria. Stay
+              tuned for updates!
             </p>
           </div>
         </div>
@@ -103,7 +103,9 @@ const ProductPage = () => {
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading products...</p>
+          <p className="text-sm sm:text-base text-gray-700">
+            Loading products...
+          </p>
         </div>
       </div>
     );
@@ -116,14 +118,14 @@ const ProductPage = () => {
           <img
             src={noProductFound.src}
             alt="No Products Found"
-            className="w-48 h-48 mx-auto mb-6"
+            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
           />
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
             No Products Found
           </h3>
-          <p className="text-gray-500">
-            We couldn&apos;t find any products matching your criteria. Stay tuned for
-            updates!
+          <p className="text-sm sm:text-base text-gray-500">
+            We couldn&apos;t find any products matching your criteria. Stay
+            tuned for updates!
           </p>
         </div>
       </div>
@@ -137,12 +139,12 @@ const ProductPage = () => {
           <img
             src="/images/coming-soon.svg" // Add a relevant image for "Products Coming Soon"
             alt="Products Coming Soon"
-            className="w-48 h-48 mx-auto mb-6"
+            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
           />
-          <h3 className="text-2xl font-bold text-gray-800 mb-2">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
             Products Coming Soon!
           </h3>
-          <p className="text-gray-500">
+          <p className="text-sm sm:text-base text-gray-500">
             We&apos;re working hard to bring you amazing products. Stay tuned!
           </p>
         </div>
@@ -153,8 +155,8 @@ const ProductPage = () => {
   return (
     <div>
       {/* Carousel Section */}
-      <section className="my-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+      <section className="my-8 sm:my-12">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6">
           Discover Our Organic Products
         </h2>
         <div ref={emblaRef} className="embla w-11/12 mx-auto">
@@ -165,16 +167,16 @@ const ProductPage = () => {
       </section>
 
       {/* Top Products Section */}
-      <section className="my-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+      <section className="my-8 sm:my-12">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6">
           Top Products
         </h2>
         <ProductGrid products={products} />
       </section>
 
       {/* Popular Products Section */}
-      <section className="my-12 py-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+      <section className="my-8 sm:my-12 py-4 sm:py-8">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6">
           Popular Products
         </h2>
         <Suspense fallback={<div>Loading...</div>}>
