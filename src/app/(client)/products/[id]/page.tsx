@@ -293,7 +293,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
         {/* Product Image Carousel */}
         <div className="w-full">
           {product.images.length ? (
@@ -305,7 +305,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                   width={500}
                   height={500}
                   alt="Main Product Image"
-                  className={`rounded-lg object-cover h-[500px] w-auto cursor-zoom-in ${
+                  className={`rounded-lg object-cover h-[300px] md:h-[500px] w-auto cursor-zoom-in ${
                     isZoomed ? "scale-150 transform origin-center" : ""
                   }`}
                   onClick={toggleZoom}
@@ -313,7 +313,7 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 {isZoomed && (
                   <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <button
-                      className="text-white text-lg bg-black bg-opacity-75 px-4 py-2 rounded-full"
+                      className="text-white text-sm md:text-lg bg-black bg-opacity-75 px-3 py-1 md:px-4 md:py-2 rounded-full"
                       onClick={toggleZoom}
                     >
                       Zoom Out
@@ -339,42 +339,52 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                       width={100}
                       height={100}
                       alt={`Product Thumbnail ${index + 1}`}
-                      className="h-24 w-full object-contain"
+                      className="h-16 md:h-24 w-full object-contain"
                     />
                   </div>
                 ))}
               </div>
             </>
           ) : (
-            <div className="flex justify-center items-center h-[500px] bg-gray-100 rounded-lg">
+            <div className="flex justify-center items-center h-[300px] md:h-[500px] bg-gray-100 rounded-lg">
               <p className="text-gray-500">No images available</p>
             </div>
           )}
         </div>
 
         {/* Product Details */}
-        <div className="flex flex-col space-y-6 justify-center">
-          <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
-          <div className="flex items-center space-x-4">
-            <p className="text-3xl font-semibold text-green-600">
+        <div className="flex flex-col space-y-4 md:space-y-6 justify-center">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900">
+            {product.name}
+          </h1>
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <p className="text-xl md:text-3xl font-semibold text-green-600">
               ₹{product.price?.$numberDecimal || "N/A"}
             </p>
             {product.stock > 0 ? (
-              <Badge variant="outline" className="bg-green-100 text-green-800">
+              <Badge
+                variant="outline"
+                className="bg-green-100 text-green-800 text-xs md:text-sm"
+              >
                 In Stock
               </Badge>
             ) : (
-              <Badge variant="outline" className="bg-red-100 text-red-800">
+              <Badge
+                variant="outline"
+                className="bg-red-100 text-red-800 text-xs md:text-sm"
+              >
                 Out of Stock
               </Badge>
             )}
           </div>
-          <p className="text-gray-700">{product.description}</p>
+          <p className="text-sm md:text-base text-gray-700">
+            {product.description}
+          </p>
 
           {/* Add to Cart, Buy Now, and Wishlist Buttons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
             <Button
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white"
+              className="w-full md:w-auto px-4 py-2 md:px-6 md:py-3 bg-green-600 hover:bg-green-700 text-white text-sm md:text-base"
               onClick={addToCart}
               disabled={product.inCart}
             >
@@ -382,14 +392,14 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
               {product.inCart ? "Added to Cart" : "Add to Cart"}
             </Button>
             <Button
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full md:w-auto px-4 py-2 md:px-6 md:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
               onClick={buyNow}
             >
               Buy Now
             </Button>
             <Button
               variant="outline"
-              className="px-6 py-3"
+              className="w-full md:w-auto px-4 py-2 md:px-6 md:py-3 text-sm md:text-base"
               onClick={
                 product.inWishlist ? deleteProductFromWishlist : addToWishList
               }
@@ -406,9 +416,9 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
           {/* Supplier Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Sold by</CardTitle>
+              <CardTitle className="text-lg md:text-xl">Sold by</CardTitle>
             </CardHeader>
-            <CardContent className="flex items-center space-x-4">
+            <CardContent className="flex items-center space-x-2 md:space-x-4">
               <Avatar>
                 <AvatarImage
                   src={
@@ -426,8 +436,10 @@ const ProductDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold">{product.supplier_id.shop_name}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-semibold text-sm md:text-base">
+                  {product.supplier_id.shop_name}
+                </p>
+                <p className="text-xs md:text-sm text-gray-600">
                   {product.supplier_id.email}
                 </p>
               </div>
