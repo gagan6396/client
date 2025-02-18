@@ -27,7 +27,7 @@ const HeroSection = () => {
   return (
     <div className="relative h-screen">
       <Image
-        src={heroImage}
+        src={heroImage.src}
         alt="Hero Background"
         fill
         className="object-cover"
