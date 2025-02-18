@@ -1,5 +1,5 @@
 "use client";
-import heroImage from "@/public/hero.jpg";
+import heroImage from "@/public/hero1.jpg";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
