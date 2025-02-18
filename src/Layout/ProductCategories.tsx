@@ -7,7 +7,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import l2 from "@/public/l2.jpg";
-import l4 from "@/public/l4.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import Link from "next/link";
@@ -85,9 +84,9 @@ const ProductCategories = () => {
         </div>
       </main>
 
-      <div className="w-full">
+      {/* <div className="w-full">
         <Image src={l4} alt="l4" />
-      </div>
+      </div> */}
 
       {/* Best Product Categories Section */}
       <main className="px-5 md:py-14">

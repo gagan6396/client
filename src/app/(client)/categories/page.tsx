@@ -49,9 +49,7 @@ const CategoriesPage = () => {
                 {category.name}
               </h3>
               <Link
-                href={`/categories/${category.name
-                  .toLowerCase()
-                  .replace(/ /g, "-")}`}
+                href={`/products?category=${category._id}`}
                 className="text-green-600 text-sm md:text-base font-medium mt-2 hover:underline"
               >
                 View Products

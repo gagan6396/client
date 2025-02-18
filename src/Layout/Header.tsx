@@ -1,13 +1,12 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   AiOutlineHeart,
-  AiOutlineSearch,
   AiOutlineShoppingCart,
   AiOutlineUser,
 } from "react-icons/ai";
@@ -15,24 +14,27 @@ import {
 const Header: React.FC = () => {
   const pathname = usePathname(); // Get the current path
   const router = useRouter();
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   let accessToken;
   if (typeof window !== "undefined") {
     accessToken = localStorage.getItem("accessToken");
   }
+
   const getLinkClass = (path: string) => {
     return pathname === path
-      ? "text-[#2B0504] font-semibold"
-      : "hover:text-[#2B0504]";
+      ? "text-[#2B0504] font-semibold border-b-2 border-[#2B0504]"
+      : "text-gray-700 hover:text-[#2B0504] transition-colors duration-200";
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("accessToken");
     router.push("/login");
   };
 
   return (
-    <header className="bg-white border-b shadow-sm md:block top-0 z-50 h-20 md:h-36">
+    <header className="bg-white border-b shadow-sm ">
       {/* Top Section */}
-      <div className="container mx-auto flex items-center justify-between py-3 px-4">
+      <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Logo Section */}
         <div
           className="flex items-center space-x-6 cursor-pointer"
@@ -41,120 +43,15 @@ const Header: React.FC = () => {
           <Image
             src={logoImage}
             alt="Logo"
-            width={80}
-            height={80}
-            className="w-28 md:w-44 h-a cursor-pointer"
+            width={120}
+            height={120}
+            className="w-28 md:w-36 h-auto cursor-pointer"
           />
         </div>
 
-        {/* Search Bar */}
-        <div className="md:flex flex-1 justify-center mx-4 hidden">
-          <div className="relative w-full max-w-xl">
-            <Input
-              type="text"
-              placeholder="Search for products"
-              className="w-full rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#2B0504]"
-            />
-            <AiOutlineSearch
-              className="absolute top-2.5 right-4 text-gray-500"
-              size={20}
-            />
-          </div>
-        </div>
-
-        {/* Icons Section */}
-        <div className="flex items-center space-x-6 text-gray-600">
-          {accessToken ? (
-            <>
-              <AiOutlineUser
-                onClick={() => router.push("/user-account")}
-                size={24}
-                className={
-                  getLinkClass("/user-account") +
-                  " cursor-pointer hover:text-[#2B0504]"
-                }
-              />
-              <div
-                className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/wishlist")}
-              >
-                <AiOutlineHeart
-                  size={24}
-                  className={getLinkClass("/wishlist")}
-                />
-                <span
-                  className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"
-                  style={{ backgroundColor: "#00B412" }}
-                >
-                  0
-                </span>
-              </div>
-              <div
-                className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/add-to-cart")}
-              >
-                <AiOutlineShoppingCart
-                  size={24}
-                  className={getLinkClass("/add-to-cart")}
-                />
-                <span
-                  className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"
-                  style={{ backgroundColor: "#00B412" }}
-                >
-                  0
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <AiOutlineUser
-                onClick={() => router.push("/login")}
-                size={24}
-                className={
-                  getLinkClass("/login") +
-                  " cursor-pointer hover:text-[#2B0504]"
-                }
-              />
-              <div
-                className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/wishlist")}
-              >
-                <AiOutlineHeart
-                  size={24}
-                  className={getLinkClass("/wishlist")}
-                />
-                <span
-                  className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"
-                  style={{ backgroundColor: "#00B412" }}
-                >
-                  0
-                </span>
-              </div>
-              <div
-                className="relative cursor-pointer hover:text-[#2B0504]"
-                onClick={() => router.push("/add-to-cart")}
-              >
-                <AiOutlineShoppingCart
-                  size={24}
-                  className={getLinkClass("/add-to-cart")}
-                />
-                <span
-                  className="absolute -top-2 -right-2 text-white text-xs px-1 rounded-full"
-                  style={{ backgroundColor: "#00B412" }}
-                >
-                  0
-                </span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Navigation Section */}
-      <nav className="bg-white border-t hidden md:block border-b">
-        <div className="container mx-auto flex items-center justify-center py-2 px-4 text-gray-700 ">
-          {/* Centered Links */}
-          <div className="flex space-x-8 items-center pl-12">
+        {/* Navigation Section */}
+        <nav className="hidden md:block">
+          <div className="flex space-x-8">
             <Link href="/" className={getLinkClass("/")}>
               Home
             </Link>
@@ -171,8 +68,97 @@ const Header: React.FC = () => {
               Contact Us
             </Link>
           </div>
+        </nav>
+
+        {/* Icons Section */}
+        <div className="flex items-center space-x-6">
+          {accessToken ? (
+            <>
+              {/* User Dropdown */}
+              <div className="relative">
+                <AiOutlineUser
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  size={24}
+                  className="text-gray-700 hover:text-[#2B0504] cursor-pointer transition-colors duration-200"
+                />
+                {isUserDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <button
+                      onClick={() => router.push("/user-account")}
+                      className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
+                    >
+                      Profile
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full px-4 py-2 text-gray-700 hover:bg-gray-100 text-left"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Wishlist */}
+              <div
+                className="relative cursor-pointer group"
+                onClick={() => router.push("/wishlist")}
+              >
+                <AiOutlineHeart
+                  size={24}
+                  className="text-gray-700 hover:text-[#2B0504] transition-colors duration-200"
+                />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping group-hover:animate-none"></div>
+              </div>
+
+              {/* Cart */}
+              <div
+                className="relative cursor-pointer group"
+                onClick={() => router.push("/add-to-cart")}
+              >
+                <AiOutlineShoppingCart
+                  size={24}
+                  className="text-gray-700 hover:text-[#2B0504] transition-colors duration-200"
+                />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping group-hover:animate-none"></div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Login */}
+              <AiOutlineUser
+                onClick={() => router.push("/login")}
+                size={24}
+                className="text-gray-700 hover:text-[#2B0504] cursor-pointer transition-colors duration-200"
+              />
+
+              {/* Wishlist */}
+              <div
+                className="relative cursor-pointer group"
+                onClick={() => router.push("/wishlist")}
+              >
+                <AiOutlineHeart
+                  size={24}
+                  className="text-gray-700 hover:text-[#2B0504] transition-colors duration-200"
+                />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping group-hover:animate-none"></div>
+              </div>
+
+              {/* Cart */}
+              <div
+                className="relative cursor-pointer group"
+                onClick={() => router.push("/add-to-cart")}
+              >
+                <AiOutlineShoppingCart
+                  size={24}
+                  className="text-gray-700 hover:text-[#2B0504] transition-colors duration-200"
+                />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping group-hover:animate-none"></div>
+              </div>
+            </>
+          )}
         </div>
-      </nav>
+      </div>
     </header>
   );
 };

@@ -12,6 +12,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
@@ -257,9 +258,12 @@ const ProductCategoryGrid: React.FC = () => {
 
       {/* See All Products Button */}
       <div className="flex justify-center mt-8">
-        <Button className="bg-[#2B0504] text-white px-6 py-3 hover:bg-[#3C0606] transition">
+        <Link
+          href={"/products"}
+          className="bg-[#2B0504] text-white px-6 py-3 hover:bg-[#3C0606] transition"
+        >
           See All Our Products
-        </Button>
+        </Link>
       </div>
     </div>
   );
