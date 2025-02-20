@@ -5,16 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  AiOutlineHeart,
-  AiOutlineShoppingCart,
-  AiOutlineUser,
-} from "react-icons/ai";
+import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai";
 
 const HeroSection = () => {
   const pathname = usePathname(); // Get the current path
   const router = useRouter();
   const [isSticky, setIsSticky] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchInput, setShowSearchInput] = useState(false); // State to toggle search input visibility
 
   let accessToken;
   if (typeof window !== "undefined") {
@@ -25,6 +23,18 @@ const HeroSection = () => {
     return pathname === path
       ? "text-[#2B0504] font-semibold"
       : "text-gray-700 hover:text-[#2B0504] transition-colors duration-200";
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
+      setShowSearchInput(false); // Hide search input after submission
+    }
+  };
+
+  const toggleSearchInput = () => {
+    setShowSearchInput((prev) => !prev); // Toggle search input visibility
   };
 
   useEffect(() => {
@@ -139,8 +149,42 @@ const HeroSection = () => {
             </div>
           </nav>
 
-          {/* Icons Section */}
-          <div className="flex items-center space-x-6">
+          {/* Search and Icons Section */}
+          <div className="flex items-center space-x-4 sm:space-x-6">
+            {/* Search Icon and Input */}
+            <div className="flex items-center">
+              {showSearchInput ? (
+                <form onSubmit={handleSearch} className="relative flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`pl-10 pr-4 py-2 w-40 sm:w-56 md:w-64 border ${
+                      isSticky ? "border-gray-300" : "border-white"
+                    } rounded-md focus:outline-none focus:ring-2 focus:ring-[#2B0504] transition-all duration-200 ${
+                      isSticky ? "text-gray-700" : "text-white bg-transparent placeholder-white"
+                    }`}
+                  />
+                  <AiOutlineSearch
+                    className={`absolute left-3 ${
+                      isSticky ? "text-gray-500" : "text-white"
+                    }`}
+                    size={20}
+                  />
+                </form>
+              ) : (
+                <AiOutlineSearch
+                  onClick={toggleSearchInput}
+                  size={24}
+                  className={`cursor-pointer ${
+                    isSticky ? "text-gray-700" : "text-white"
+                  } hover:text-[#86790c] transition-colors duration-200`}
+                />
+              )}
+            </div>
+
+            {/* Icons Section */}
             {accessToken ? (
               <>
                 <AiOutlineUser

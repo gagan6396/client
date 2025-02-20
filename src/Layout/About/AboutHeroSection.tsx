@@ -4,30 +4,10 @@ import { FC } from "react";
 // Images
 import storyImage1 from "@/public/l2.jpg";
 import storyImage2 from "@/public/l3.jpg";
-import slider1 from "@/public/l4.jpg";
 
 const AboutHeroSection: FC = () => {
   return (
     <div className="">
-      {/* Hero Section */}
-      <section
-        className="text-center py-12 bg-white h-screen"
-        style={{
-          backgroundImage: `url(${slider1.src})`,
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "center",
-        }}
-      >
-        <h1 className="text-3xl md:text-4xl font-bold text-green-700">
-          About Gauraaj: Rooted in Sustainability, Growing with Purpose
-        </h1>
-        <p className="text-lg text-gray-700 mt-4 max-w-3xl mx-auto">
-          &quot;Discover Our Journey of Empowering Communities and Delivering
-          Pure, Organic Products from the Heart of Nature.&quot;
-        </p>
-      </section>
-
       {/* "Our Story" Section */}
       <section className="py-12">
         <div className="container mx-auto px-6 md:px-12">
