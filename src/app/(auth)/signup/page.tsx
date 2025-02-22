@@ -1,242 +1,284 @@
 "use client";
 
-import { RegisterAPI } from "@/apis/AuthAPIs";
-import bgImage from "@/public/l1.jpg";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Eye, EyeOff, Loader2 } from "lucide-react"; // Import Loader2 for the spinner
-import Image from "next/image";
-import Link from "next/link"; // Import Link from Next.js
+import { RegisterAPI } from "@/apis/AuthAPIs"; // Assuming renamed to AuthAPIs
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
-import "react-phone-number-input/style.css"; // Import the styles
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-phone-number-input/style.css";
+import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-// Define Form Values Type
-interface RegisterFormValues {
-  name: string;
+// Validation schema with Yup
+const validationSchema = Yup.object({
+  first_name: Yup.string()
+    .min(1, "First name must be at least 1 character")
+    .max(50, "First name must be less than 50 characters")
+    .required("First name is required"),
+  last_name: Yup.string()
+    .min(1, "Last name must be at least 1 character")
+    .max(50, "Last name must be less than 50 characters")
+    .required("Last name is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone: Yup.string()
+    .matches(/^\+\d{1,3}\d{9,14}$/, "Invalid phone number")
+    .optional(),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Confirm password is required"),
+});
+
+type FormData = {
+  first_name: string;
+  last_name: string;
   email: string;
+  phone?: string;
   password: string;
   confirmPassword: string;
-  phone?: string;
-}
+};
 
 const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Validation Schema
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(3, "Name must be at least 3 characters")
-      .max(50, "Name must be less than 50 characters")
-      .required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-      )
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Confirm Password is required"),
-    phone: Yup.string()
-      .matches(/^\+\d{1,3}\d{9,14}$/, "Invalid phone number")
-      .optional(),
+  const form = useForm<FormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const handleSubmit = async (values: RegisterFormValues) => {
+  const handleSubmit = async (values: FormData) => {
     setLoading(true);
-    setError(null);
-
     try {
-      const fullName = values.name.split(" ");
-      const firstName = fullName[0] || "";
-      const lastName = fullName.slice(1).join(" ") || "";
-
       const response = await RegisterAPI({
-        first_name: firstName,
-        last_name: lastName,
+        first_name: values.first_name,
+        last_name: values.last_name,
         email: values.email,
+        phone: values?.phone || "",
         password: values.password,
-        phone: values.phone,
       });
-      if (typeof window !== "undefined") {
-        localStorage.setItem("accessToken", response.data.data.user.token);
-      }
-      toast.success("Registration successful!", { position: "top-center" });
-      router.push("/");
-    } catch (error: any) {
-      setError(error.response.data.message || "Something went wrong!");
-      toast.error(
-        error.response.data.message || "Registration failed. Please try again.",
-        {
-          position: "top-center",
+      if (response.data.success) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("accessToken", response.data.user.token);
         }
-      );
+        toast.success("Registration successful!", { position: "top-center" });
+        router.push("/");
+      } else {
+        toast.error(response.data.message || "Registration failed", {
+          position: "top-center",
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Something went wrong!", {
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="flex flex-col md:flex-row rounded-2xl shadow-lg max-w-5xl w-full bg-white">
-        {/* Form Container */}
-        <div className="w-full md:w-1/2 p-8 md:p-16">
-          <h2 className="font-bold text-2xl text-[#002D74]">Register</h2>
-          <p className="text-sm mt-4 text-gray-600">Create a new account</p>
-
-          <Formik
-            initialValues={{
-              name: "",
-              email: "",
-              password: "",
-              confirmPassword: "",
-              phone: "",
-            }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isValid, dirty, setFieldValue, values }) => (
-              <Form className="flex flex-col gap-4 mt-6">
-                {/* Name Field */}
-                <div>
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
-                    type="text"
-                    name="name"
-                    placeholder="Full Name"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Email Field */}
-                <div>
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Phone Field */}
-                <div>
-                  <PhoneInput
-                    international
-                    defaultCountry="IN"
-                    value={values.phone}
-                    onChange={(value) => setFieldValue("phone", value)}
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
-                    placeholder="Phone (Optional)"
-                  />
-                  <ErrorMessage
-                    name="phone"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Password Field */}
-                <div className="relative">
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Password"
-                  />
-                  <div
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-                  >
-                    {showPassword ? (
-                      <EyeOff color="gray" size={20} />
-                    ) : (
-                      <Eye color="gray" size={20} />
-                    )}
-                  </div>
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Confirm Password Field */}
-                <div className="relative">
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74]"
-                    type={showPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="Confirm Password"
-                  />
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  className="bg-[#002D74] rounded-xl text-white py-3 hover:scale-105 duration-300 mt-4 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-                  disabled={!isValid || !dirty || loading}
-                >
-                  {loading ? (
-                    <Loader2 className="animate-spin mr-2" size={20} />
-                  ) : null}
-                  {loading ? "Registering..." : "Register"}
-                </button>
-
-                {/* Error Message */}
-                {error && (
-                  <p className="text-red-500 text-sm text-center mt-2">
-                    {error}
-                  </p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
+          <CardTitle className="text-2xl font-semibold">Register</CardTitle>
+          <CardDescription className="text-gray-200">
+            Create your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="first_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter your first name"
+                          className="border-gray-300 focus:ring-[#2B0504]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="last_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Enter your last name"
+                          className="border-gray-300 focus:ring-[#2B0504]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="Enter your email"
+                        className="border-gray-300 focus:ring-[#2B0504]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-
-                {/* Login Link */}
-                <div className="mt-4 text-sm text-center text-[#002D74]">
-                  Already have an account?{" "}
-                  <Link href="/login" className="font-semibold hover:underline">
-                    Login here
-                  </Link>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </div>
-
-        {/* Image Section */}
-        <div className="w-full md:w-1/2 hidden md:block">
-          <Image
-            className="rounded-r-2xl h-full object-cover"
-            src={bgImage}
-            alt="Register"
-          />
-        </div>
-      </div>
-      <ToastContainer />
-    </section>
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone (Optional)</FormLabel>
+                    <FormControl>
+                      <PhoneInput
+                        international
+                        defaultCountry="IN"
+                        value={field.value}
+                        onChange={field.onChange}
+                        className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#2B0504] focus:ring-[#2B0504]"
+                        placeholder="Enter your phone"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          className="border-gray-300 focus:ring-[#2B0504]"
+                        />
+                        <div
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeOff color="gray" size={20} />
+                          ) : (
+                            <Eye color="gray" size={20} />
+                          )}
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Confirm your password"
+                        className="border-gray-300 focus:ring-[#2B0504]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <ClipLoader size={20} color="#ffffff" />
+                    Registering...
+                  </div>
+                ) : (
+                  "Register"
+                )}
+              </Button>
+            </form>
+          </Form>
+          <div className="mt-4 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-[#2B0504] font-semibold hover:underline"
+            >
+              Log in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

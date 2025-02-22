@@ -1,160 +1,187 @@
 "use client";
-import { LoginAPI } from "@/apis/AuthAPIs";
-import bgImage from "@/public/l1.jpg";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+
+import { LoginAPI } from "@/apis/AuthAPIs"; // Assuming renamed to AuthAPIs
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ClipLoader } from "react-spinners";
+import { useForm } from "react-hook-form";
+import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+
+// Validation schema with Yup
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Validation schema with Yup
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+  const form = useForm<FormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  // Handle login submission
-  const handleSubmit = async (values: { email: string; password: string }) => {
+  const handleSubmit = async (values: FormData) => {
     setLoading(true);
-    setError(null);
-
     try {
       const response = await LoginAPI({
         email: values.email,
         password: values.password,
       });
-      if (typeof window !== "undefined") {
-        localStorage.setItem("accessToken", response.data.data.token);
+      if (response.data.success) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("accessToken", response.data.token);
+        }
+        toast.success("Login successful!", { position: "top-center" });
+        router.replace("/");
+      } else {
+        toast.error(response.data.message || "Login failed", {
+          position: "top-center",
+        });
       }
-      toast.success("Login successful!", { position: "top-center" });
-      router.replace("/");
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "Something went wrong!";
-      setError(errorMessage);
-      toast.error(errorMessage, { position: "top-center" });
+      toast.error(error.response?.data?.message || "Something went wrong!", {
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 p-4">
-      <div className="flex flex-col md:flex-row rounded-2xl shadow-2xl max-w-5xl w-full bg-white overflow-hidden">
-        {/* Form Container */}
-        <div className="w-full md:w-1/2 p-8 md:p-16">
-          <h2 className="font-bold text-3xl text-[#002D74] mb-2">Login</h2>
-          <p className="text-sm text-[#002D74] mb-8">
-            If you are already a member, easily log in
-          </p>
-
-          {/* Formik Form */}
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {() => (
-              <Form className="flex flex-col gap-6">
-                <div>
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74] focus:ring-1 focus:ring-[#002D74] transition-all"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                <div className="relative">
-                  <Field
-                    className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#002D74] focus:ring-1 focus:ring-[#002D74] transition-all"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder="Password"
-                  />
-                  <div
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-                  >
-                    {showPassword ? (
-                      <EyeOff color="gray" size={20} />
-                    ) : (
-                      <Eye color="gray" size={20} />
-                    )}
-                  </div>
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-xs mt-1"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="bg-[#002D74] rounded-xl text-white py-3 hover:bg-[#004494] transition-all duration-300 mt-4 flex items-center justify-center"
-                  disabled={loading}
-                >
-                  {loading ? <ClipLoader size={20} color="#ffffff" /> : "Login"}
-                </button>
-                {error && (
-                  <p className="text-red-500 text-sm text-center mt-2">
-                    {error}
-                  </p>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
+          <CardTitle className="text-2xl font-semibold">Login</CardTitle>
+          <CardDescription className="text-gray-200">
+            Sign in to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="Enter your email"
+                        className="border-gray-300 focus:ring-[#2B0504]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </Form>
-            )}
-          </Formik>
-
-          {/* Forgot Password */}
-          <div className="mt-6 text-sm text-[#002D74] text-center">
-            <Link href="#" className="hover:underline hover:text-[#004494]">
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          className="border-gray-300 focus:ring-[#2B0504]"
+                        />
+                        <div
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                        >
+                          {showPassword ? (
+                            <EyeOff color="gray" size={20} />
+                          ) : (
+                            <Eye color="gray" size={20} />
+                          )}
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <ClipLoader size={20} color="#ffffff" />
+                    Logging in...
+                  </div>
+                ) : (
+                  "Login"
+                )}
+              </Button>
+            </form>
+          </Form>
+          <div className="mt-4 text-center text-sm text-gray-600">
+            <Link
+              href="/forgot-password"
+              className="text-[#2B0504] hover:underline"
+            >
               Forgot your password?
             </Link>
           </div>
-
-          {/* Register Link */}
-          <div className="mt-6 text-sm text-[#002D74] text-center">
-            <p>Don&apos;t have an account?</p>
+          <div className="mt-4 text-center text-sm text-gray-600">
+            Don’t have an account?{" "}
             <Link
               href="/signup"
-              className="inline-block mt-2 py-2 px-6 bg-white border border-[#002D74] rounded-xl hover:bg-[#002D74] hover:text-white transition-all duration-300"
+              className="text-[#2B0504] font-semibold hover:underline"
             >
-              Register
+              Sign up
             </Link>
           </div>
-        </div>
-
-        {/* Image Section */}
-        <div className="w-full md:w-1/2 hidden md:block relative">
-          <Image
-            className="object-cover"
-            src={bgImage}
-            alt="Login"
-            fill
-            priority
-          />
-        </div>
-      </div>
-    </section>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

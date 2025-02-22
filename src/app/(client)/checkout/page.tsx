@@ -2,7 +2,7 @@
 import { getAddTOCartProductsAPI } from "@/apis/addToCartAPIs";
 import { createOrderAPI } from "@/apis/orderAPIs";
 import { verifyPaymentAPI } from "@/apis/paymentAPIs";
-import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
+import { getUserProfileAPI } from "@/apis/userProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,15 +14,15 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-type CartItemProps = {
+interface CartItem {
   id: string;
   imageSrc: string;
   title: string;
   price: number;
   quantity: number;
-};
+}
 
-type UserProfile = {
+interface UserProfile {
   first_name: string;
   last_name: string;
   email: string;
@@ -30,37 +30,37 @@ type UserProfile = {
   _id: string;
   shoppingAddress: {
     addressLine1: string;
-    addressLine2: string;
+    addressLine2?: string; // Optional field
     city: string;
     state: string;
     country: string;
     postalCode: string;
   };
-};
+}
 
 const CheckoutPage = () => {
   const router = useRouter();
-  const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("Razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">("Razorpay");
 
-  // Formik and Yup validation schema
   const formik = useFormik({
     initialValues: {
       name: "",
-      address: "",
+      addressLine1: "", // Updated to match addressSnapshot
       city: "",
       state: "",
-      pincode: "",
+      postalCode: "", // Updated to match addressSnapshot
       phone: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
-      address: Yup.string().required("Address is required"),
+      addressLine1: Yup.string().required("Address is required"),
       city: Yup.string().required("City is required"),
       state: Yup.string().required("State is required"),
-      pincode: Yup.string()
+      postalCode: Yup.string()
         .required("Pincode is required")
         .matches(/^\d{6}$/, "Pincode must be 6 digits"),
       phone: Yup.string()
@@ -68,182 +68,180 @@ const CheckoutPage = () => {
         .matches(/^\d{10}$/, "Phone must be 10 digits"),
     }),
     onSubmit: async (values) => {
+      if (!cartItems.length) {
+        toast.error("Cart is empty");
+        return;
+      }
       await handlePlaceOrder(values);
     },
   });
 
-  // Fetch user profile
-  const getUserProfile = async () => {
-    try {
-      const response = await getUserProfileAPI();
-      setProfile(response.data.data);
-
-      // Pre-fill form with profile data
-      if (response.data.data) {
-        const { first_name, last_name, phone, shoppingAddress } =
-          response.data.data;
-        formik.setValues({
-          name: `${first_name} ${last_name}`,
-          address: `${shoppingAddress.addressLine1} ${shoppingAddress.addressLine2}`,
-          city: shoppingAddress.city,
-          state: shoppingAddress.state,
-          pincode: shoppingAddress.postalCode,
-          phone: phone,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      toast.error("Failed to fetch user profile. Please try again.");
-    }
-  };
-
-  // Fetch cart products
-  const getAllCartProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await getAddTOCartProductsAPI();
-      const mappedItems = response.data.data.products.map((item: any) => ({
-        id: item.productId._id,
-        imageSrc: item.productId.images[0],
-        title: item.productId.name,
-        price: parseFloat(item.productId.price.$numberDecimal),
-        quantity: item.quantity,
-      }));
-      setCartItems(mappedItems);
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-      toast.error("Failed to fetch cart items. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    getUserProfile();
-    getAllCartProducts();
+    const fetchData = async () => {
+      try {
+        setProfileLoading(true);
+        const [profileRes, cartRes] = await Promise.all([
+          getUserProfileAPI(),
+          getAddTOCartProductsAPI(),
+        ]);
+
+        const profileData = profileRes.data.data;
+        setProfile(profileData);
+
+        if (profileData) {
+          formik.setValues({
+            name: `${profileData.first_name || ""} ${profileData.last_name || ""}`.trim(),
+            addressLine1: profileData?.shoppingAddress?.addressLine1 || "",
+            city: profileData?.shoppingAddress?.city || "",
+            state: profileData.shoppingAddress?.state || "",
+            postalCode: profileData.shoppingAddress?.postalCode || "",
+            phone: profileData.phone || "",
+          });
+        }
+
+        const mappedItems = cartRes.data.data.products.map((item: any) => ({
+          id: item.productId._id,
+          imageSrc: item.productId.images[0],
+          title: item.productId.name,
+          price: parseFloat(item.productId.price.$numberDecimal),
+          quantity: item.quantity,
+        }));
+        setCartItems(mappedItems);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+        toast.error("Failed to load checkout data");
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Handle payment method change
-  const handlePaymentMethodChange = (method: string) => {
-    setPaymentMethod(method);
-  };
-
-  // Handle order submission
   const handlePlaceOrder = async (values: typeof formik.values) => {
     setLoading(true);
-
     try {
-      // Update user profile with new shipping address
-      const [first_name, last_name] = values.name.split(" ");
-      await updateUserProfileAPI({
-        first_name,
-        last_name,
-        phone: values.phone,
-        shoppingAddress: {
-          addressLine1: values.address,
-          addressLine2: "",
-          city: values.city,
-          state: values.state,
-          country: "India",
-          postalCode: values.pincode,
-        },
-        email: profile?.email || "",
-      });
+      const addressSnapshot = {
+        addressLine1: values.addressLine1,
+        city: values.city,
+        state: values.state,
+        country: "India",
+        postalCode: values.postalCode,
+      };
 
-      // Prepare order data
-      const orderData: any = {
+      const orderData = {
         products: cartItems.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
           discount: 0,
           tax: 0,
         })),
-        shippingAddressId: profile?._id,
-        paymentMethod: paymentMethod || "Razorpay",
-        addressSnapshot: {
-          addressLine1: values.address,
-          addressLine2: "",
-          city: values.city,
-          state: values.state,
-          country: "India",
-          postalCode: values.pincode,
+        shippingAddress: addressSnapshot,
+        paymentMethod,
+        userDetails: {
+          name: values.name,
+          phone: values.phone,
+          email: profile?.email || "",
         },
       };
 
-      // Create order
       const response = await createOrderAPI(orderData);
-      const { totalAmount, _id: orderId } = response.data.data.order;
+      const { orderId, totalAmount, razorpayOrderId } = response.data.data;
 
-      // Handle Razorpay payment
-      if (paymentMethod === "Razorpay") {
-        const { id: razorpayOrderId } = response.data.data.razorpayOrder;
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-          amount: totalAmount * 100,
-          currency: "INR",
-          order_id: razorpayOrderId,
-          name: "Your Company Name",
-          description: "Payment for your order",
-          handler: async function (paymentResponse: any) {
-            try {
-              const verifyResponse = await verifyPaymentAPI({
-                razorpay_order_id: razorpayOrderId,
-                razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                razorpay_signature: paymentResponse.razorpay_signature,
-              });
-
-              if (verifyResponse.data.data.success) {
-                toast.success("Payment successful!");
-                router.push(`/order-confirmation/${orderId}`);
-              } else {
-                toast.error("Payment verification failed. Please contact support.");
-              }
-            } catch (error) {
-              console.error("Error verifying payment:", error);
-              toast.error("Payment verification failed. Please contact support.");
-            }
-          },
-          prefill: {
-            name: values.name,
-            email: profile?.email,
-            contact: values.phone,
-          },
-          theme: {
-            color: "#F37254",
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on("payment.failed", function (response: any) {
-          console.error("Payment failed:", response);
-          toast.error("Payment failed. Please try again.");
+      if (paymentMethod === "Razorpay" && razorpayOrderId) {
+        await handleRazorpayPayment({
+          razorpayOrderId,
+          totalAmount,
+          orderId,
+          addressSnapshot,
         });
-        rzp.open();
       } else {
-        // For COD, redirect to order confirmation page
         toast.success("Order placed successfully!");
         router.push(`/order-confirmation/${orderId}`);
       }
-    } catch (error) {
-      console.error("Error placing order:", error);
-      toast.error("Failed to place order. Please try again.");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate total price
+  const handleRazorpayPayment = ({
+    razorpayOrderId,
+    totalAmount,
+    orderId,
+    addressSnapshot,
+  }: {
+    razorpayOrderId: string;
+    totalAmount: number;
+    orderId: string;
+    addressSnapshot: any;
+  }) => {
+    return new Promise((resolve, reject) => {
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: totalAmount * 100,
+        currency: "INR",
+        order_id: razorpayOrderId,
+        name: "Your Company Name",
+        description: "Order Payment",
+        handler: async (paymentResponse: any) => {
+          try {
+            const verifyResponse = await verifyPaymentAPI({
+              orderId,
+              razorpay_order_id: razorpayOrderId,
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+              addressSnapshot,
+            });
+
+            if (verifyResponse.data.success) {
+              toast.success("Payment successful!");
+              router.push(`/order-confirmation/${orderId}`);
+              resolve(true);
+            } else {
+              throw new Error("Payment verification failed");
+            }
+          } catch (error) {
+            toast.error("Payment verification failed");
+            reject(error);
+          }
+        },
+        prefill: {
+          name: formik.values.name,
+          email: profile?.email || "",
+          contact: formik.values.phone,
+        },
+        theme: { color: "#F37254" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", () => {
+        toast.error("Payment failed. Please try again.");
+        reject(new Error("Payment failed"));
+      });
+      rzp.open();
+    });
+  };
+
   const calculateTotal = () => {
     return cartItems
-      .reduce((total: any, item: any) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => total + item.price * item.quantity, 0)
       .toFixed(2);
   };
+
+  if (profileLoading) {
+    return (
+      <div className="container mx-auto py-7 p-3 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-7 p-3">
       <h1 className="text-2xl md:text-4xl font-bold text-center">Checkout</h1>
       <main className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        {/* Shipping Details */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Shipping Details</h2>
           <form onSubmit={formik.handleSubmit} className="space-y-4">
@@ -261,16 +259,16 @@ const CheckoutPage = () => {
               ) : null}
             </div>
             <div>
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="addressLine1">Address</Label>
               <Input
-                id="address"
-                name="address"
-                value={formik.values.address}
+                id="addressLine1"
+                name="addressLine1"
+                value={formik.values.addressLine1}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.address && formik.errors.address ? (
-                <p className="text-sm text-red-500">{formik.errors.address}</p>
+              {formik.touched.addressLine1 && formik.errors.addressLine1 ? (
+                <p className="text-sm text-red-500">{formik.errors.addressLine1}</p>
               ) : null}
             </div>
             <div>
@@ -300,16 +298,16 @@ const CheckoutPage = () => {
               ) : null}
             </div>
             <div>
-              <Label htmlFor="pincode">Pincode</Label>
+              <Label htmlFor="postalCode">Pincode</Label>
               <Input
-                id="pincode"
-                name="pincode"
-                value={formik.values.pincode}
+                id="postalCode"
+                name="postalCode"
+                value={formik.values.postalCode}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.pincode && formik.errors.pincode ? (
-                <p className="text-sm text-red-500">{formik.errors.pincode}</p>
+              {formik.touched.postalCode && formik.errors.postalCode ? (
+                <p className="text-sm text-red-500">{formik.errors.postalCode}</p>
               ) : null}
             </div>
             <div>
@@ -328,11 +326,10 @@ const CheckoutPage = () => {
           </form>
         </div>
 
-        {/* Order Summary */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-4">
-            {cartItems.map((item: any) => (
+            {cartItems.map((item) => (
               <div key={item.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <img
@@ -364,7 +361,9 @@ const CheckoutPage = () => {
               <h3 className="text-lg font-semibold mb-2">Payment Method</h3>
               <RadioGroup
                 value={paymentMethod}
-                onValueChange={handlePaymentMethodChange}
+                onValueChange={(value) =>
+                  setPaymentMethod(value as "Razorpay" | "COD")
+                }
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Razorpay" id="razorpay" />
@@ -372,19 +371,17 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="COD" id="cod" />
-                  <Label htmlFor="cod">Cash on Delivery (COD)</Label>
+                  <Label htmlFor="cod">Cash on Delivery</Label>
                 </div>
               </RadioGroup>
             </div>
             <Button
               type="submit"
               onClick={() => formik.handleSubmit()}
-              disabled={loading || cartItems.length === 0}
-              className="w-full mt-6 bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+              disabled={loading || !cartItems.length}
+              className="w-full mt-6 bg-[#2B0504] text-white hover:bg-[#3C0606]"
             >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Placing Order..." : "Place Order"}
             </Button>
           </div>
