@@ -65,7 +65,7 @@ const LoginPage = () => {
       });
       if (response.data.success) {
         if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", response.data.token);
+          localStorage.setItem("accessToken", response.data.data.user.token);
         }
         toast.success("Login successful!", { position: "top-center" });
         router.replace("/");

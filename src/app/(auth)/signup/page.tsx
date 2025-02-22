@@ -96,7 +96,7 @@ const RegisterPage = () => {
       });
       if (response.data.success) {
         if (typeof window !== "undefined") {
-          localStorage.setItem("accessToken", response.data.user.token);
+          localStorage.setItem("accessToken", response.data.data.user.token);
         }
         toast.success("Registration successful!", { position: "top-center" });
         router.push("/");
