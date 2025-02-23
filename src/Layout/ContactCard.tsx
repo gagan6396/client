@@ -21,11 +21,12 @@ export function ContactCard() {
       {/* Right Section: Content */}
       <div className="w-full md:w-1/2 text-center md:text-left space-y-4 md:space-y-6">
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-gray-700 leading-relaxed">
-          "Have questions or need support? Reach out today and let’s grow something amazing together!"
+          &quot;Have questions or need support? Reach out today and let’s grow
+          something amazing together!&quot;
         </p>
         <Button
           className="mt-2 sm:mt-4 px-6 py-3 sm:px-8 sm:py-4 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-md transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
-          onClick={() => window.location.href = "/contact"} // Adjust navigation as needed
+          onClick={() => (window.location.href = "/contact")} // Adjust navigation as needed
         >
           Contact Now
         </Button>
