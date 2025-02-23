@@ -1,7 +1,7 @@
 import FAQs from "@/Layout/FAQs";
 import ProductCategories from "@/Layout/ProductCategories";
 import ProductCategoryGrid from "@/Layout/ProductCategoryGrid";
-import { ReelsCarousel } from "@/Layout/ReelsCarousel";
+import ReelsCarousel from "@/Layout/ReelsCarousel";
 import Testimonials from "@/Layout/Testimonials";
 export default function Home() {
   return (
