@@ -1,6 +1,6 @@
 "use client";
 
-import { RegisterAPI } from "@/apis/AuthAPIs"; // Assuming renamed to AuthAPIs
+import { RegisterAPI } from "@/apis/AuthAPIs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -115,35 +115,39 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md shadow-lg mx-1">
-        <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
-          <CardTitle className="text-2xl font-semibold">Register</CardTitle>
-          <CardDescription className="text-gray-200">
-            Create your account
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-gray-100 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md sm:max-w-lg shadow-lg rounded-xl border border-gray-100 overflow-hidden mx-2 sm:mx-0 my-2">
+        <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-center">
+            Create Your Account
+          </CardTitle>
+          <CardDescription className="text-gray-100 text-sm sm:text-base text-center">
+            Join Gauraaj and start your organic journey today!
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-6 sm:p-8">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-6"
+              className="space-y-6 sm:space-y-8"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <FormField
                   control={form.control}
                   name="first_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel className="text-sm sm:text-base text-gray-700">
+                        First Name
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="Enter your first name"
-                          className="border-gray-300 focus:ring-[#2B0504]"
+                          className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs sm:text-sm" />
                     </FormItem>
                   )}
                 />
@@ -152,15 +156,17 @@ const RegisterPage = () => {
                   name="last_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                      <FormLabel className="text-sm sm:text-base text-gray-700">
+                        Last Name
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder="Enter your last name"
-                          className="border-gray-300 focus:ring-[#2B0504]"
+                          className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs sm:text-sm" />
                     </FormItem>
                   )}
                 />
@@ -170,16 +176,18 @@ const RegisterPage = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Email
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
                         placeholder="Enter your email"
-                        className="border-gray-300 focus:ring-[#2B0504]"
+                        className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs sm:text-sm" />
                   </FormItem>
                 )}
               />
@@ -188,18 +196,20 @@ const RegisterPage = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone (Optional)</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Phone (Optional)
+                    </FormLabel>
                     <FormControl>
                       <PhoneInput
                         international
                         defaultCountry="IN"
                         value={field.value}
                         onChange={field.onChange}
-                        className="p-3 rounded-xl border w-full focus:outline-none focus:border-[#2B0504] focus:ring-[#2B0504]"
-                        placeholder="Enter your phone"
+                        className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 w-full transition-all duration-300"
+                        placeholder="Enter your phone number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs sm:text-sm" />
                   </FormItem>
                 )}
               />
@@ -208,28 +218,30 @@ const RegisterPage = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           {...field}
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
-                          className="border-gray-300 focus:ring-[#2B0504]"
+                          className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                         />
                         <div
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                          className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700 transition-colors duration-200"
                         >
                           {showPassword ? (
-                            <EyeOff color="gray" size={20} />
+                            <EyeOff size={20} className="sm:size-4" />
                           ) : (
-                            <Eye color="gray" size={20} />
+                            <Eye size={20} className="sm:size-4" />
                           )}
                         </div>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs sm:text-sm" />
                   </FormItem>
                 )}
               />
@@ -238,23 +250,37 @@ const RegisterPage = () => {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Confirm Password
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Confirm your password"
-                        className="border-gray-300 focus:ring-[#2B0504]"
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Confirm your password"
+                          className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
+                        />
+                        <div
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} className="sm:size-4" />
+                          ) : (
+                            <Eye size={20} className="sm:size-4" />
+                          )}
+                        </div>
+                      </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs sm:text-sm" />
                   </FormItem>
                 )}
               />
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+                className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -267,11 +293,11 @@ const RegisterPage = () => {
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm text-gray-600">
+          <div className="mt-4 sm:mt-6 text-center text-sm sm:text-base text-gray-600">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-[#2B0504] font-semibold hover:underline"
+              className="text-green-600 font-semibold hover:text-green-700 hover:underline transition-colors duration-200"
             >
               Log in
             </Link>
