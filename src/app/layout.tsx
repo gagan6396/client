@@ -36,7 +36,7 @@ export default function RootLayout({
         <Provider store={store}>
           {!isHome && <Header />}
           {isHome && <HeroSection />}
-          <div className=" pb-14">{children}</div>
+          <div className="pt-20">{children}</div>
           <MobileNavBar />
           <Footer />
           {/* Toast Notifications */}

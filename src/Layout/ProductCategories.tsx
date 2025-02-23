@@ -1,35 +1,27 @@
 "use client";
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button"; // Assuming you have this component
 import l2 from "@/public/l2.jpg";
-import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ProductCard } from "./ProductCategoryGrid";
 
 const ProductCategories = () => {
+  const navigate = useRouter();
   const [categories, setCategories] = useState([]);
-  const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
-
   const [products, setProducts] = useState([]);
+
   const fetchCategories = async () => {
     try {
       const response = await getCategoriesAPI();
-      console.log(response.data.data);
       setCategories(response.data.data);
 
       const ProductsResponse = await getProductsAPI();
-      console.log(ProductsResponse);
-
       setProducts(ProductsResponse.data.data.products);
     } catch (error: any) {
-      // console.log(error.response.data);
       console.log(error);
     }
   };
@@ -39,121 +31,110 @@ const ProductCategories = () => {
   }, []);
 
   return (
-    <section>
-      {/* Top Categories Section */}
-      <main className="px-5">
+    <section className="bg-gradient-to-b from-white to-gray-50">
+      {/* Top Products Section */}
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="container mx-auto">
-          <h1 className="text-2xl md:text-4xl text-center font-bold py-5">
+          <h1 className="text-3xl md:text-5xl text-center font-extrabold text-gray-900 mb-10 tracking-tight">
             Popular Products
           </h1>
-          <div className="relative">
-            <Carousel
-              plugins={[plugin.current]}
-              className="w-full"
-              onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.reset}
-            >
-              <CarouselContent className="flex space-x-4 py-3">
-                {products.length > 0 &&
-                  products.map((product: any, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-2/3 md:basis-1/4 lg:basis-1/5"
-                    >
-                      <div className="bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl relative">
-                        {/* Use ProductCard for each category */}
-                        <ProductCard
-                          skuParameters={product.skuParameters}
-                          imageSrc={product.images[0]}
-                          title={product.name}
-                          price={product.price?.$numberDecimal || "N/A"}
-                          originalPrice={
-                            (product.price?.$numberDecimal ?? 0) + 10
-                          }
-                          isBestSeller={true}
-                          productId={product._id}
-                          inWishlist={product?.inWishlist}
-                          inCart={product?.inCart}
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-              </CarouselContent>
-            </Carousel>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            {products.length > 0 &&
+              products.slice(0, 10).map((product: any, index) => (
+                <div
+                  key={index}
+                  className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
+                >
+                  <ProductCard
+                    skuParameters={product.skuParameters}
+                    imageSrc={product.images[0]}
+                    title={product.name}
+                    price={product.price?.$numberDecimal || "N/A"}
+                    originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                    isBestSeller={true}
+                    productId={product._id}
+                    inWishlist={product?.inWishlist}
+                    inCart={product?.inCart}
+                  />
+                </div>
+              ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/products">
+              <Button className="bg-green-600 text-white hover:bg-green-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
+                View All Products
+              </Button>
+            </Link>
           </div>
         </div>
       </main>
 
-      {/* <div className="w-full">
-        <Image src={l4} alt="l4" />
-      </div> */}
-
       {/* Best Product Categories Section */}
-      <main className="px-5 md:py-14">
-        <div className="container mx-auto my-12">
-          <h2 className="text-2xl md:text-4xl text-center font-bold text-gray-800 py-5">
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-5xl text-center font-extrabold text-gray-900 mb-10 tracking-tight">
             Best Product Categories
           </h2>
-          <div className="relative">
-            <Carousel
-              plugins={[plugin.current]}
-              className="w-full"
-              onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.reset}
-            >
-              <CarouselContent className="flex space-x-4 py-4">
-                {categories.map((category: any, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="flex-shrink-0 w-[120px] sm:w-[150px] md:w-[180px] basis-1/2 md:basis-1/4 lg:basis-1/5"
-                  >
-                    <div className="bg-white border-gray-200 rounded-lg shadow-lg flex flex-col items-center text-center py-4 px-2 md:py-6 md:px-4 space-y-2 md:space-y-4 hover:shadow-xl transition duration-300">
-                      <img
-                        src={category?.images[0]}
-                        alt={category?.name}
-                        width={80}
-                        height={80}
-                        className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-full"
-                      />
-                      <h3 className="text-sm md:text-lg font-semibold text-gray-800 line-clamp-1">
-                        {category.name}
-                      </h3>
-                      <p className="text-xs md:text-sm text-gray-600 line-clamp-1">
-                        {category.description}
-                      </p>
-                      <Link
-                        href={`/products?category=${category._id}`}
-                        className="text-green-600 font-medium hover:underline text-xs md:text-sm"
-                      >
-                        View More
-                      </Link>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            {categories.slice(0, 10).map((category: any, index) => (
+              <div
+                key={index}
+                className="group bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 md:p-6 transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
+              >
+                <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                  <img
+                    src={category?.images[0]}
+                    alt={category?.name}
+                    className="w-full h-full object-cover rounded-full border-2 border-green-100 group-hover:border-green-300 transition-colors"
+                  />
+                  <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
+                </div>
+                <h3 className="text-base md:text-lg font-semibold text-gray-800 line-clamp-1">
+                  {category.name}
+                </h3>
+                <p className="text-xs md:text-sm text-gray-500 line-clamp-2 leading-relaxed">
+                  {category.description}
+                </p>
+                <Link
+                  href={`/products?category=${category._id}`}
+                  className="mt-3 inline-block text-green-600 font-medium text-sm md:text-base hover:text-green-700 transition-colors"
+                >
+                  Explore Now →
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </main>
 
       {/* Video and Description Section */}
-      <main className="px-5 md:py-14">
-        <div className="container mx-auto py-14">
-          <div className="flex flex-col md:flex-row md:items-center gap-5">
-            <div className="flex-1">
-              <Image src={l2} alt="l2" />
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center bg-white rounded-3xl shadow-lg p-6 md:p-10">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src={l2}
+                alt="Nature Essence"
+                className="w-full h-auto object-cover transform transition-all hover:scale-105 duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent" />
             </div>
-
-            <div className="flex-1">
-              <h2 className="font-bold text-2xl md:text-4xl py-4">
-                Discover the Essence of Nature!
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                Discover the Essence of Nature
               </h2>
-              <p className="text-gray-600 mt-4 text-sm md:text-xl">
-                At Gauraaj, we&apos;re dedicated to bringing you pure, organic
-                products straight from the heart of nature. Experience the
-                goodness of sustainable living and join us in creating a
-                healthier, greener planet.
+              <p className="text-gray-600 text-base md:text-lg lg:text-xl leading-relaxed">
+                At Gauraaj, we’re passionate about delivering pure, organic
+                products sourced directly from nature’s heart. Embrace
+                sustainable living and join us in nurturing a healthier, greener
+                planet.
               </p>
+              <Button
+                onClick={() => navigate.push("/about")}
+                className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-full text-lg font-semibold shadow-md transition-all duration-300"
+              >
+                Learn More
+              </Button>
             </div>
           </div>
         </div>

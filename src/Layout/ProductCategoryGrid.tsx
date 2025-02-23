@@ -6,12 +6,6 @@ import {
   deleteProductFromWishlistAPI,
 } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,7 +15,7 @@ import { toast } from "react-toastify";
 
 // Adjust the type to accept either StaticImageData or string
 type ProductCardProps = {
-  imageSrc: string; // Allow imported images or external URLs
+  imageSrc: string;
   title: string;
   price: string;
   originalPrice: string;
@@ -44,6 +38,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const [isInWishlist, setIsInWishlist] = useState(inWishlist);
   const [isInCart, setIsInCart] = useState(inCart);
+  const navigation = useRouter();
 
   const addToWishList = async () => {
     try {
@@ -104,41 +99,43 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const navigation = useRouter();
-
   return (
-    <div className="bg-white border rounded-lg shadow-lg group relative cursor-pointer transition-all duration-300 w-full">
+    <div className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
       {/* Badge and Image */}
       <div
-        className="relative"
+        className="relative overflow-hidden"
         onClick={() => navigation.push(`/products/${productId}`)}
       >
         <img
           src={imageSrc}
           alt={title}
-          className="w-full aspect-square object-cover rounded-tl-lg rounded-tr-lg transition-all duration-300"
+          className="w-full aspect-square object-cover rounded-t-2xl transition-transform duration-500 group-hover:scale-105"
         />
-      </div>
-      {isBestSeller && (
-        <div className="absolute top-0 right-0 bg-[#2B0504] text-white text-xs px-2 py-1 rounded-md sm:px-5 sm:py-1">
-          Best Seller
+        {/* Badges */}
+        {isBestSeller && (
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+            Best Seller
+          </div>
+        )}
+        <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+          -5%
         </div>
-      )}
-      <div className="absolute top-0 left-0 bg-[#00B412] text-white text-xs px-2 py-1 rounded-md sm:px-5 sm:py-1">
-        -5%
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
       </div>
+
       {/* Content */}
-      <div className="p-2 sm:p-4">
-        <h3 className="text-[#867916] text-sm sm:text-lg font-semibold line-clamp-1">
+      <div className="p-4 md:p-6 space-y-3">
+        <h3 className="text-gray-800 text-base md:text-lg font-semibold line-clamp-1 group-hover:text-green-700 transition-colors">
           {title}
         </h3>
-        {/* 5-star Rating */}
+        {/* Rating */}
         <div className="flex">
           {[...Array(5)].map((_, index) => (
             <svg
               key={index}
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-400"
+              className="h-4 w-4 md:h-5 md:w-5 text-yellow-400"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -146,39 +143,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </svg>
           ))}
         </div>
-        <div className="flex items-center justify-between py-1 sm:py-2">
-          {/* Price and Original Price */}
-          <div>
-            <span className="text-green-600 font-bold text-sm sm:text-base">
+        {/* Price */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-green-600 font-bold text-lg md:text-xl">
               ₹{price}
             </span>
-            <span className="text-gray-500 line-through ml-2 text-xs sm:text-sm">
+            <span className="text-gray-400 line-through text-sm md:text-base">
               ₹{originalPrice}
             </span>
           </div>
         </div>
-        <div className="flex items-center justify-between gap-2 sm:gap-3">
+        {/* Actions */}
+        <div className="flex items-center justify-between gap-3">
           <Button
-            className={`rounded-full w-full transition text-xs sm:text-base ${
+            className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
               isInCart
-                ? "bg-[#2B0504] text-white"
-                : "bg-transparent text-[#2B0504] border border-[#2B0504] hover:bg-[#2B0504] hover:text-white"
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-green-500 text-white hover:bg-green-600"
             }`}
             onClick={isInCart ? deleteToCart : addToCart}
           >
-            {isInCart ? "Remove from Cart" : "Add To Cart"}
+            {isInCart ? "Remove" : "Add to Cart"}
           </Button>
           {isInWishlist ? (
             <FaHeart
               onClick={deleteProductFromWishlist}
               size={24}
-              className="text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
+              className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300 cursor-pointer"
             />
           ) : (
             <CiHeart
               onClick={addToWishList}
               size={24}
-              className="text-gray-400 hover:text-red-600 hover:scale-105 cursor-pointer transition-all duration-300"
+              className="text-gray-500 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
             />
           )}
         </div>
@@ -188,11 +186,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 const ProductCategoryGrid: React.FC = () => {
-  const plugin = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
-  );
-
   const [products, setProducts] = useState([]);
+
   const fetchCategories = async () => {
     try {
       const ProductsResponse = await getProductsAPI();
@@ -208,39 +203,15 @@ const ProductCategoryGrid: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-center text-2xl md:text-4xl font-bold">
+    <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+      <h1 className="text-center text-3xl md:text-5xl font-extrabold text-gray-900 mb-10 md:mb-12 tracking-tight">
         Our Best Seller Products
       </h1>
 
-      {/* Carousel for Mobile */}
-      <div className="relative sm:hidden">
-        <Carousel plugins={[plugin.current]} className="w-full p-4">
-          <CarouselContent className="flex space-x-4 py-3">
-            {products.length > 0 &&
-              products.map((product: any, index) => (
-                <CarouselItem key={index} className=" basis-2/3">
-                  <ProductCard
-                    imageSrc={product.images[0]}
-                    title={product.name}
-                    price={product.price?.$numberDecimal || "N/A"}
-                    originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
-                    isBestSeller={true}
-                    productId={product._id}
-                    skuParameters={product.skuParameters}
-                    inWishlist={product?.inWishlist}
-                    inCart={product?.inCart}
-                  />
-                </CarouselItem>
-              ))}
-          </CarouselContent>
-        </Carousel>
-      </div>
-
-      {/* Grid for Desktop */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6 hidden sm:grid">
+      {/* Responsive Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
         {products.length > 0 &&
-          products.map((product: any, index) => (
+          products.slice(0, 10).map((product: any, index) => (
             <ProductCard
               key={index}
               imageSrc={product.images[0]}
@@ -257,12 +228,11 @@ const ProductCategoryGrid: React.FC = () => {
       </div>
 
       {/* See All Products Button */}
-      <div className="flex justify-center mt-8">
-        <Link
-          href={"/products"}
-          className="bg-[#2B0504] text-white px-6 py-3 hover:bg-[#3C0606] transition"
-        >
-          See All Our Products
+      <div className="flex justify-center mt-10 md:mt-12">
+        <Link href="/products">
+          <Button className="bg-green-600 text-white hover:bg-green-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
+            See All Products
+          </Button>
         </Link>
       </div>
     </div>
