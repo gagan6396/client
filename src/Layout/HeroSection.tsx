@@ -130,14 +130,14 @@ const HeroSection = () => {
               >
                 Our Products
               </Link>
-              <Link
+              {/* <Link
                 href="/blogs"
                 className={`${getLinkClass(
                   "/blogs"
                 )} ${isSticky ? "text-gray-700" : "text-white"} hover:text-[#86790c] transition-colors duration-200`}
               >
                 Blogs
-              </Link>
+              </Link> */}
               <Link
                 href="/contact"
                 className={`${getLinkClass(

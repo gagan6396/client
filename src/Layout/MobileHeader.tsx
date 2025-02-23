@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Home, List, ShoppingBag, User } from "lucide-react";
+import { Heart, Home, List, ShoppingBag, Store, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -28,11 +28,7 @@ const MobileNavBar = () => {
   // Effect to handle scroll event
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -43,10 +39,10 @@ const MobileNavBar = () => {
     <div
       className={`w-full h-20 px-5 py-2 fixed bottom-0 left-0 flex justify-between items-center border-t border-gray-200 shadow-lg md:hidden z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/80 backdrop-blur-sm" // Blur effect with semi-transparent white background
+          ? "bg-white/80 backdrop-blur-sm"
           : isHomePage
-          ? "bg-transparent" // Transparent background on home page (no blur)
-          : "bg-white/80 backdrop-blur-sm" // Blur effect on other pages
+          ? "bg-transparent"
+          : "bg-white/80 backdrop-blur-sm"
       }`}
     >
       <Link href={"/"}>
@@ -67,6 +63,16 @@ const MobileNavBar = () => {
         >
           <List size={24} />
           <span className="text-xs mt-1">Categories</span>
+        </div>
+      </Link>
+      <Link href={"/products"}>
+        <div
+          className={`flex flex-col items-center ${getLinkClass(
+            "/products"
+          )} transition-colors duration-200`}
+        >
+          <Store size={24} />
+          <span className="text-xs mt-1">Shop</span>
         </div>
       </Link>
       <Link href={"/wishlist"}>

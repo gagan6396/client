@@ -80,9 +80,9 @@ const Header: React.FC = () => {
             <Link href="/products" className={getLinkClass("/products")}>
               Our Products
             </Link>
-            <Link href="/blogs" className={getLinkClass("/blogs")}>
+            {/* <Link href="/blogs" className={getLinkClass("/blogs")}>
               Blogs
-            </Link>
+            </Link> */}
             <Link href="/contact" className={getLinkClass("/contact")}>
               Contact Us
             </Link>
