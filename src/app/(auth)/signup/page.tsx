@@ -116,7 +116,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md shadow-lg">
+      <Card className="w-full max-w-md shadow-lg px-1">
         <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
           <CardTitle className="text-2xl font-semibold">Register</CardTitle>
           <CardDescription className="text-gray-200">
