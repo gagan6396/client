@@ -83,7 +83,7 @@ const ResetPasswordForm = () => {
 
   if (!token) {
     return (
-      <Card className="w-full max-w-md shadow-lg px-1">
+      <Card className="w-full max-w-md shadow-lg mx-1">
         <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
           <CardTitle className="text-2xl font-semibold">Invalid Link</CardTitle>
         </CardHeader>
