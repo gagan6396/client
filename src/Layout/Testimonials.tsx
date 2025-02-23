@@ -87,7 +87,7 @@ const Testimonials: React.FC = () => {
 
                 {/* Comment */}
                 <p className="text-gray-700 text-base md:text-lg leading-relaxed line-clamp-4 italic mb-6">
-                  "{review?.comment}"
+                  &quot;{review?.comment}&quot;
                 </p>
 
                 {/* User Info */}
