@@ -289,12 +289,8 @@ export default function UserAccount() {
   const handleTrackOrder = async (orderId: string) => {
     try {
       const response = await trackOrderAPI(orderId);
-      console.log("response.data.success", response.success);
-
       if (response.success) {
         const trackingKey = Object.keys(response.data);
-        console.log("response.data.data", trackingKey);
-
         setTrackingData(response.data[trackingKey[0]]);
         setSelectedOrder(orders.find((o) => o._id === orderId) || null);
         toast.success("Tracking details retrieved!");
@@ -308,28 +304,28 @@ export default function UserAccount() {
   if (!isClient) return null;
 
   return (
-    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
       {/* Header */}
-      <div className="mb-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+      <div className="mb-10 sm:mb-12 md:mb-16 text-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
           My Account
         </h1>
-        <p className="mt-2 text-gray-600">
-          Manage your profile and track your orders.
+        <p className="mt-2 sm:mt-3 text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
+          Manage your profile and explore your order journey.
         </p>
       </div>
 
       <Tabs defaultValue="account" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 rounded-lg p-1">
+        <TabsList className="grid w-full grid-cols-2 mb-8 sm:mb-10 bg-gray-100 rounded-lg p-1 shadow-sm">
           <TabsTrigger
             value="account"
-            className="py-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-md transition-all"
+            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md rounded-md transition-all duration-200"
           >
             Account
           </TabsTrigger>
           <TabsTrigger
             value="history"
-            className="py-2 text-gray-700 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-md transition-all"
+            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md rounded-md transition-all duration-200"
           >
             Order History
           </TabsTrigger>
@@ -337,34 +333,36 @@ export default function UserAccount() {
 
         {/* Account Tab */}
         <TabsContent value="account">
-          <Card className="shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
-              <CardTitle className="text-xl font-semibold">
+          <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
                 Profile Details
               </CardTitle>
-              <CardDescription className="text-gray-200">
-                Update your personal information below.
+              <CardDescription className="text-gray-100 text-sm sm:text-base">
+                Keep your personal information up to date.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6 md:p-8">
               <Form {...profileForm}>
                 <form
                   onSubmit={profileForm.handleSubmit(handleUpdateProfile)}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8"
                 >
                   <FormField
                     control={profileForm.control}
                     name="first_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          First Name
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -373,14 +371,16 @@ export default function UserAccount() {
                     name="last_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Last Name</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Last Name
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -389,14 +389,16 @@ export default function UserAccount() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Email
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -405,14 +407,16 @@ export default function UserAccount() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Phone
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -421,14 +425,16 @@ export default function UserAccount() {
                     name="shoppingAddress.addressLine1"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address Line 1</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Address Line 1
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -437,14 +443,16 @@ export default function UserAccount() {
                     name="shoppingAddress.addressLine2"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address Line 2</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Address Line 2
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -453,14 +461,16 @@ export default function UserAccount() {
                     name="shoppingAddress.city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>City</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          City
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -469,14 +479,16 @@ export default function UserAccount() {
                     name="shoppingAddress.state"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>State</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          State
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -485,14 +497,16 @@ export default function UserAccount() {
                     name="shoppingAddress.country"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Country</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Country
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
@@ -501,21 +515,23 @@ export default function UserAccount() {
                     name="shoppingAddress.postalCode"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Postal Code</FormLabel>
+                        <FormLabel className="text-sm sm:text-base text-gray-700">
+                          Postal Code
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="border-gray-300 focus:ring-[#2B0504]"
+                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs sm:text-sm" />
                       </FormItem>
                     )}
                   />
                   <div className="md:col-span-2">
                     <Button
                       type="submit"
-                      className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                     >
                       Update Profile
                     </Button>
@@ -528,60 +544,62 @@ export default function UserAccount() {
 
         {/* Order History Tab */}
         <TabsContent value="history">
-          <Card className="shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-[#2B0504] to-[#3C0606] text-white rounded-t-lg">
-              <CardTitle className="text-xl font-semibold">
+          <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
                 Order History
               </CardTitle>
-              <CardDescription className="text-gray-200">
+              <CardDescription className="text-gray-100 text-sm sm:text-base">
                 View and manage your past orders.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
               {orders.length > 0 ? (
                 orders.map((order) => (
                   <Card
                     key={order._id}
-                    className="shadow-md hover:shadow-lg transition-shadow"
+                    className="shadow-md hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-100 overflow-hidden"
                   >
-                    <CardContent className="p-6">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                        <div>
-                          <p className="text-gray-800 font-semibold">
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
+                        <div className="space-y-1 sm:space-y-2">
+                          <p className="text-gray-800 font-semibold text-sm sm:text-base md:text-lg">
                             Order ID: {order._id}
                           </p>
-                          <p className="text-sm text-gray-600">
-                            Date:{" "}
-                            {format(new Date(order.orderDate), "yyyy-MM-dd")}
+                          <p className="text-xs sm:text-sm text-gray-600">
+                            Date: {format(new Date(order.orderDate), "yyyy-MM-dd")}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-xs sm:text-sm text-gray-600">
                             Status:{" "}
                             <span
                               className={
                                 order.orderStatus === "Delivered"
-                                  ? "text-green-600"
-                                  : "text-yellow-600"
+                                  ? "text-green-600 font-medium"
+                                  : order.orderStatus === "Cancelled"
+                                  ? "text-red-600 font-medium"
+                                  : "text-yellow-600 font-medium"
                               }
                             >
                               {order.orderStatus}
                             </span>
                           </p>
-                          <p className="text-sm text-gray-600">
-                            Shipping Status: {order.shippingStatus}
+                          <p className="text-xs sm:text-sm text-gray-600">
+                            Shipping: {order.shippingStatus}
                           </p>
                         </div>
-                        <p className="text-xl font-bold text-gray-900">
+                        <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                           ₹{order.totalAmount}
                         </p>
                       </div>
 
                       {/* Shipping Address */}
-                      <div className="mb-4">
-                        <p className="text-gray-800 font-medium">
+                      <div className="mb-4 sm:mb-6">
+                        <p className="text-gray-800 font-medium text-sm sm:text-base">
                           Shipping Address:
                         </p>
-                        <p className="text-sm text-gray-600">
-                          {userProfile.shoppingAddress.addressLine1},{" "}
+                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                          {userProfile.shoppingAddress.addressLine1}
+                          {userProfile.shoppingAddress.addressLine2 && ", "}
                           {userProfile.shoppingAddress.addressLine2},{" "}
                           {userProfile.shoppingAddress.city},{" "}
                           {userProfile.shoppingAddress.state},{" "}
@@ -591,34 +609,44 @@ export default function UserAccount() {
                       </div>
 
                       {/* Payment Details */}
-                      <div className="mb-4">
-                        <p className="text-gray-800 font-medium">Payment:</p>
-                        <p className="text-sm text-gray-600">
+                      <div className="mb-4 sm:mb-6">
+                        <p className="text-gray-800 font-medium text-sm sm:text-base">
+                          Payment:
+                        </p>
+                        <p className="text-xs sm:text-sm text-gray-600">
                           {order.payment_id.paymentMethod} -{" "}
-                          {order.payment_id.status} - ₹
-                          {order.payment_id.amount.$numberDecimal}
+                          <span
+                            className={
+                              order.payment_id.status === "Paid"
+                                ? "text-green-600"
+                                : "text-yellow-600"
+                            }
+                          >
+                            {order.payment_id.status}
+                          </span>{" "}
+                          - ₹{order.payment_id.amount.$numberDecimal}
                         </p>
                       </div>
 
                       {/* Products */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                         {order.products.map((product) => (
                           <div
                             key={product._id}
-                            className="flex items-center gap-4 border-b py-2"
+                            className="flex items-center gap-3 sm:gap-4 border-b py-2 sm:py-3"
                           >
                             <Image
                               src={product.productId.images[0]}
                               alt={product.productId.name}
-                              width={80}
-                              height={80}
-                              className="rounded-md object-cover"
+                              width={60}
+                              height={60}
+                              className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
                             />
-                            <div>
-                              <p className="text-gray-800 font-medium">
+                            <div className="flex-1">
+                              <p className="text-gray-800 font-medium text-sm sm:text-base">
                                 {product.productId.name}
                               </p>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-xs sm:text-sm text-gray-600">
                                 Qty: {product.quantity} | ₹
                                 {product.productId.price.$numberDecimal}
                               </p>
@@ -628,12 +656,12 @@ export default function UserAccount() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 sm:gap-3">
                         {order.orderStatus === "Pending" && (
                           <Button
                             variant="destructive"
                             onClick={() => handleCancelOrder(order._id)}
-                            className="hover:bg-red-700 transition"
+                            className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
                           >
                             Cancel Order
                           </Button>
@@ -645,42 +673,46 @@ export default function UserAccount() {
                                 <Button
                                   variant="outline"
                                   onClick={() => setSelectedOrder(order)}
-                                  className="border-[#2B0504] text-[#2B0504] hover:bg-[#2B0504] hover:text-white transition"
+                                  className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
                                 >
                                   Return Order
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent className="rounded-xl shadow-lg">
                                 <DialogHeader>
-                                  <DialogTitle>Request Return</DialogTitle>
+                                  <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                                    Request Return
+                                  </DialogTitle>
                                 </DialogHeader>
                                 <Form {...returnExchangeForm}>
                                   <form
                                     onSubmit={returnExchangeForm.handleSubmit(
                                       handleReturnOrder
                                     )}
-                                    className="space-y-4"
+                                    className="space-y-4 sm:space-y-6"
                                   >
                                     <FormField
                                       control={returnExchangeForm.control}
                                       name="reason"
                                       render={({ field }) => (
                                         <FormItem>
-                                          <FormLabel>Reason</FormLabel>
+                                          <FormLabel className="text-sm sm:text-base text-gray-700">
+                                            Reason
+                                          </FormLabel>
                                           <FormControl>
                                             <Input
                                               {...field}
-                                              className="border-gray-300 focus:ring-[#2B0504]"
+                                              className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                                             />
                                           </FormControl>
-                                          <FormMessage />
+                                          <FormMessage className="text-xs sm:text-sm" />
                                         </FormItem>
                                       )}
                                     />
                                     {order.products.map((product, index) => (
                                       <div
                                         key={product._id}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 sm:gap-3"
                                       >
                                         <FormField
                                           control={returnExchangeForm.control}
@@ -701,7 +733,7 @@ export default function UserAccount() {
                                           name={`products.${index}.quantity`}
                                           render={({ field }) => (
                                             <FormItem className="flex-1">
-                                              <FormLabel>
+                                              <FormLabel className="text-sm sm:text-base text-gray-700">
                                                 {product.productId.name}
                                               </FormLabel>
                                               <FormControl>
@@ -710,10 +742,10 @@ export default function UserAccount() {
                                                   min={1}
                                                   max={product.quantity}
                                                   {...field}
-                                                  className="border-gray-300 focus:ring-[#2B0504]"
+                                                  className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                                                 />
                                               </FormControl>
-                                              <FormMessage />
+                                              <FormMessage className="text-xs sm:text-sm" />
                                             </FormItem>
                                           )}
                                         />
@@ -721,7 +753,7 @@ export default function UserAccount() {
                                     ))}
                                     <Button
                                       type="submit"
-                                      className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+                                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                                     >
                                       Submit Return
                                     </Button>
@@ -734,42 +766,46 @@ export default function UserAccount() {
                                 <Button
                                   variant="outline"
                                   onClick={() => setSelectedOrder(order)}
-                                  className="border-[#2B0504] text-[#2B0504] hover:bg-[#2B0504] hover:text-white transition"
+                                  className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
                                 >
                                   Exchange Order
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent className="rounded-xl shadow-lg">
                                 <DialogHeader>
-                                  <DialogTitle>Request Exchange</DialogTitle>
+                                  <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                                    Request Exchange
+                                  </DialogTitle>
                                 </DialogHeader>
                                 <Form {...returnExchangeForm}>
                                   <form
                                     onSubmit={returnExchangeForm.handleSubmit(
                                       handleExchangeOrder
                                     )}
-                                    className="space-y-4"
+                                    className="space-y-4 sm:space-y-6"
                                   >
                                     <FormField
                                       control={returnExchangeForm.control}
                                       name="reason"
                                       render={({ field }) => (
                                         <FormItem>
-                                          <FormLabel>Reason</FormLabel>
+                                          <FormLabel className="text-sm sm:text-base text-gray-700">
+                                            Reason
+                                          </FormLabel>
                                           <FormControl>
                                             <Input
                                               {...field}
-                                              className="border-gray-300 focus:ring-[#2B0504]"
+                                              className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                                             />
                                           </FormControl>
-                                          <FormMessage />
+                                          <FormMessage className="text-xs sm:text-sm" />
                                         </FormItem>
                                       )}
                                     />
                                     {order.products.map((product, index) => (
                                       <div
                                         key={product._id}
-                                        className="flex items-center gap-2"
+                                        className="flex items-center gap-2 sm:gap-3"
                                       >
                                         <FormField
                                           control={returnExchangeForm.control}
@@ -790,7 +826,7 @@ export default function UserAccount() {
                                           name={`products.${index}.quantity`}
                                           render={({ field }) => (
                                             <FormItem className="flex-1">
-                                              <FormLabel>
+                                              <FormLabel className="text-sm sm:text-base text-gray-700">
                                                 {product.productId.name}
                                               </FormLabel>
                                               <FormControl>
@@ -799,10 +835,10 @@ export default function UserAccount() {
                                                   min={1}
                                                   max={product.quantity}
                                                   {...field}
-                                                  className="border-gray-300 focus:ring-[#2B0504]"
+                                                  className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
                                                 />
                                               </FormControl>
-                                              <FormMessage />
+                                              <FormMessage className="text-xs sm:text-sm" />
                                             </FormItem>
                                           )}
                                         />
@@ -810,7 +846,7 @@ export default function UserAccount() {
                                     ))}
                                     <Button
                                       type="submit"
-                                      className="w-full bg-[#2B0504] text-white hover:bg-[#3C0606] transition"
+                                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                                     >
                                       Submit Exchange
                                     </Button>
@@ -823,7 +859,7 @@ export default function UserAccount() {
                         <Button
                           variant="secondary"
                           onClick={() => handleTrackOrder(order._id)}
-                          className="bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+                          className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
                         >
                           Track Order
                         </Button>
@@ -831,24 +867,23 @@ export default function UserAccount() {
 
                       {/* Tracking Details */}
                       {trackingData && selectedOrder?._id === order._id && (
-                        <div className="mt-6 p-4 bg-gray-50 rounded-md border">
-                          <p className="text-lg font-semibold text-gray-800 mb-4">
+                        <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                          <p className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
                             Tracking Details
                           </p>
                           {trackingData.tracking_data.error ? (
-                            <p className="text-sm text-red-600">
+                            <p className="text-sm sm:text-base text-red-600">
                               {trackingData.tracking_data.error}
                             </p>
                           ) : (
                             <>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                                 <div>
                                   <p className="text-sm font-medium text-gray-700">
                                     AWB Code:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.awb_code ||
+                                    {trackingData.tracking_data.shipment_track[0]?.awb_code ||
                                       "Not Available"}
                                   </p>
                                 </div>
@@ -857,8 +892,7 @@ export default function UserAccount() {
                                     Courier:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.courier_name ||
+                                    {trackingData.tracking_data.shipment_track[0]?.courier_name ||
                                       "Not Assigned"}
                                   </p>
                                 </div>
@@ -867,8 +901,7 @@ export default function UserAccount() {
                                     Current Status:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.current_status ||
+                                    {trackingData.tracking_data.shipment_track[0]?.current_status ||
                                       "Pending"}
                                   </p>
                                 </div>
@@ -877,34 +910,30 @@ export default function UserAccount() {
                                     Estimated Delivery:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.edd ||
+                                    {trackingData.tracking_data.shipment_track[0]?.edd ||
                                       "Not Available"}
                                   </p>
                                 </div>
                               </div>
-                              <p className="text-sm font-medium text-gray-700 mb-2">
+                              <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">
                                 Tracking Updates:
                               </p>
-                              {trackingData.tracking_data
-                                .shipment_track_activities &&
-                              trackingData.tracking_data
-                                .shipment_track_activities.length > 0 ? (
-                                <ul className="space-y-3">
+                              {trackingData.tracking_data.shipment_track_activities &&
+                              trackingData.tracking_data.shipment_track_activities.length > 0 ? (
+                                <ul className="space-y-2 sm:space-y-3">
                                   {trackingData.tracking_data.shipment_track_activities.map(
                                     (activity, index) => (
                                       <li
                                         key={index}
-                                        className="flex items-start gap-3"
+                                        className="flex items-start gap-2 sm:gap-3"
                                       >
-                                        <span className="w-2 h-2 bg-[#2B0504] rounded-full mt-2"></span>
+                                        <span className="w-2 h-2 bg-green-600 rounded-full mt-1.5 sm:mt-2"></span>
                                         <div>
                                           <p className="text-sm font-medium text-gray-800">
                                             {activity.activity}
                                           </p>
                                           <p className="text-xs text-gray-500">
-                                            {activity.date} -{" "}
-                                            {activity.location}
+                                            {activity.date} - {activity.location}
                                           </p>
                                         </div>
                                       </li>
@@ -924,7 +953,9 @@ export default function UserAccount() {
                   </Card>
                 ))
               ) : (
-                <p className="text-center text-gray-600">No orders found.</p>
+                <p className="text-center text-gray-600 text-sm sm:text-base md:text-lg">
+                  No orders found. Start shopping to see your history!
+                </p>
               )}
             </CardContent>
           </Card>

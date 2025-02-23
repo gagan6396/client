@@ -60,7 +60,7 @@ const Testimonials: React.FC = () => {
 
         {/* Responsive Grid for Testimonials */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {reviews.map((review: any, index) => (
+          {reviews?.slice(0, 3).map((review: any, index) => (
             <div
               key={review?._id}
               className="group relative bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer border border-gray-100"

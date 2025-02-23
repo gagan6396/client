@@ -40,7 +40,7 @@ const WishlistItem = ({ imageSrc, title, price, originalPrice, onRemove }) => {
           className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"
           aria-label="Remove from Wishlist"
         >
-          <Trash2 size={20} className="md:size-24" />
+          <Trash2 size={20} className="md:size-7" />
         </button>
       </div>
     </div>
