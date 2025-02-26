@@ -32,11 +32,16 @@ const ProductDetails = ({
         {product.name}
       </h1>
 
-      {/* Price and Stock Status */}
-      <div className="flex items-center gap-3 sm:gap-4">
-        <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
-          ₹{product.price?.$numberDecimal || "N/A"}
-        </p>
+      {/* Price, Weight and Stock Status */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
+            ₹{product.price?.$numberDecimal || "N/A"}
+          </p>
+          <p className="text-sm sm:text-base text-gray-600">
+            Weight: {product.weight ? `${product.weight}kg` : "N/A"}
+          </p>
+        </div>
         <Badge
           variant="outline"
           className={`text-xs sm:text-sm ${
@@ -58,9 +63,6 @@ const ProductDetails = ({
       {/* Related Products (Subcategory Products) */}
       {subCategoryProducts.length > 0 && (
         <div className="mt-4 sm:mt-6">
-          {/* <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
-            Related Products
-          </h2> */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {subCategoryProducts.slice(0, 6).map((item) => (
               <div
@@ -71,8 +73,13 @@ const ProductDetails = ({
                 <div className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                   {item.name}
                 </div>
-                <div className="text-xs sm:text-sm text-gray-600">
-                  ₹{item.price?.$numberDecimal || "N/A"}
+                <div className="flex gap-3">
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    ₹{item.price?.$numberDecimal || "N/A"}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    {item.weight ? `${item.weight}kg` : "N/A"}
+                  </div>
                 </div>
               </div>
             ))}

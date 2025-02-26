@@ -50,6 +50,7 @@ export interface Product {
   description: string;
   price: { $numberDecimal: string };
   stock: number;
+  weight: number;
   images: string[];
   rating: number;
   brand: string;
