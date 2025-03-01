@@ -50,7 +50,7 @@ const BlogSection: FC = () => {
           Our Blogs and Articles
         </h2>
         <p className="text-center text-gray-600 mb-8">
-          "Insights, Tips, and Stories from the World of Organic Farming"
+          Insights, Tips, and Stories from the World of Organic Farming
         </p>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-green-600 mx-auto mb-4"></div>
@@ -67,7 +67,7 @@ const BlogSection: FC = () => {
           Our Blogs and Articles
         </h2>
         <p className="text-center text-gray-600 mb-8">
-          "Insights, Tips, and Stories from the World of Organic Farming"
+          Insights, Tips, and Stories from the World of Organic Farming
         </p>
         <div className="text-center">
           <p className="text-red-600">{error}</p>
@@ -82,7 +82,7 @@ const BlogSection: FC = () => {
         Our Blogs and Articles
       </h2>
       <p className="text-center text-gray-600 mb-8">
-        "Insights, Tips, and Stories from the World of Organic Farming"
+        Insights, Tips, and Stories from the World of Organic Farming
       </p>
       <div className="embla overflow-hidden" ref={emblaRef}>
         <div className="embla__container flex space-x-6">

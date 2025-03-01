@@ -1,6 +1,7 @@
 "use client";
 import { getBlogByIdAPI } from "@/apis/blogAPIs";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -151,12 +152,12 @@ const BlogDetailPage = ({ params }: BlogDetailPageProps) => {
         </div>
 
         {/* Back Button */}
-        <a
+        <Link
           href="/blogs"
           className="mt-8 inline-block text-green-700 font-medium underline"
         >
           Back to Blogs
-        </a>
+        </Link>
       </article>
     </div>
   );
