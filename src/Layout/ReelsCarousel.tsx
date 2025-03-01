@@ -9,12 +9,38 @@ import {
 } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
+
+// Skeleton Card Component
+const SkeletonVideoCard = () => (
+  <Card className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
+    <CardContent className="p-0">
+      <div className="w-full aspect-[9/16] bg-gray-300 rounded-t-2xl" />
+      <div className="p-4 md:p-6 space-y-3">
+        <div className="h-4 bg-gray-300 rounded w-3/4" />
+        <div className="flex space-x-1">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="h-4 w-4 bg-gray-300 rounded-full" />
+          ))}
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-baseline gap-2">
+            <div className="h-5 bg-gray-300 rounded w-16" />
+            <div className="h-4 bg-gray-300 rounded w-12" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex-1 h-10 bg-gray-300 rounded-full" />
+          <div className="h-6 w-6 bg-gray-300 rounded-full" />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 export function ProductsVideoCarousel() {
   const [productsWithVideos, setProductsWithVideos] = useState([]);
@@ -24,6 +50,7 @@ export function ProductsVideoCarousel() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await getProductsAPI();
         const products = response.data.data.products || [];
         const videoProducts = products.filter((product: any) => product.video);
@@ -122,7 +149,7 @@ export function ProductsVideoCarousel() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {[...Array(4)].map((_, index) => (
-              <Skeleton key={index} className="w-full h-[28rem] rounded-2xl" />
+              <SkeletonVideoCard key={index} />
             ))}
           </div>
         ) : productsWithVideos.length === 0 ? (

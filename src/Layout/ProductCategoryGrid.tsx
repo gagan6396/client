@@ -13,7 +13,32 @@ import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-// Adjust the type to accept either StaticImageData or string
+// Skeleton Product Card
+const SkeletonProductCard = () => (
+  <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
+    <div className="w-full aspect-square bg-gray-300 rounded-t-2xl" />
+    <div className="p-4 md:p-6 space-y-3">
+      <div className="h-4 bg-gray-300 rounded w-3/4" />
+      <div className="flex space-x-1">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-4 w-4 bg-gray-300 rounded-full" />
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          <div className="h-5 bg-gray-300 rounded w-16" />
+          <div className="h-4 bg-gray-300 rounded w-12" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1 h-10 bg-gray-300 rounded-full" />
+        <div className="h-6 w-6 bg-gray-300 rounded-full" />
+      </div>
+    </div>
+  </div>
+);
+
+// ProductCard Component
 type ProductCardProps = {
   imageSrc: string;
   title: string;
@@ -185,16 +210,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
+// ProductCategoryGrid Component
 const ProductCategoryGrid: React.FC = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   const fetchCategories = async () => {
     try {
+      setLoading(true);
       const ProductsResponse = await getProductsAPI();
       console.log(ProductsResponse);
       setProducts(ProductsResponse.data.data.products);
     } catch (error: any) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -210,21 +240,27 @@ const ProductCategoryGrid: React.FC = () => {
 
       {/* Responsive Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-        {products.length > 0 &&
-          products.slice(0, 10).map((product: any, index) => (
-            <ProductCard
-              key={index}
-              imageSrc={product.images[0]}
-              title={product.name}
-              price={product.price?.$numberDecimal || "N/A"}
-              originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
-              isBestSeller={true}
-              productId={product._id}
-              skuParameters={product.skuParameters}
-              inWishlist={product?.inWishlist}
-              inCart={product?.inCart}
-            />
-          ))}
+        {loading
+          ? Array(10)
+              .fill(0)
+              .map((_, index) => <SkeletonProductCard key={index} />)
+          : products.length > 0 &&
+            products
+              .slice(0, 10)
+              .map((product: any, index) => (
+                <ProductCard
+                  key={index}
+                  imageSrc={product.images[0]}
+                  title={product.name}
+                  price={product.price?.$numberDecimal || "N/A"}
+                  originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
+                  isBestSeller={true}
+                  productId={product._id}
+                  skuParameters={product.skuParameters}
+                  inWishlist={product?.inWishlist}
+                  inCart={product?.inCart}
+                />
+              ))}
       </div>
 
       {/* See All Products Button */}

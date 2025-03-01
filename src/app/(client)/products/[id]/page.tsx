@@ -21,6 +21,26 @@ import ReviewsSection from "@/Layout/ProductDetails/ReviewsSection";
 import SupplierDetails from "@/Layout/ProductDetails/SupplierDetails";
 import { Product, Review } from "@/types";
 
+// Skeleton for Reviews Section
+const SkeletonReviewsSection = () => (
+  <div className="mt-12 space-y-6">
+    <Skeleton className="h-8 w-1/3" />
+    {[...Array(3)].map((_, index) => (
+      <div key={index} className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+    ))}
+  </div>
+);
+
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
 }
@@ -203,16 +223,31 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
+          {/* Product Image Carousel Skeleton */}
           <Skeleton className="w-full h-[500px] rounded-lg" />
-          <div className="space-y-6">
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-12 w-1/2" />
+          {/* Product Details Skeleton */}
+          <div className="flex flex-col space-y-6">
+            <Skeleton className="h-10 w-3/4" /> {/* Title */}
+            <Skeleton className="h-6 w-1/2" /> {/* Price */}
+            <Skeleton className="h-4 w-full" /> {/* Description */}
+            <Skeleton className="h-4 w-full" /> {/* Description */}
+            <div className="flex gap-4">
+              <Skeleton className="h-12 w-1/3" /> {/* Add to Cart */}
+              <Skeleton className="h-12 w-1/3" /> {/* Buy Now */}
+            </div>
+            <Skeleton className="h-16 w-full" /> {/* Supplier Details */}
           </div>
         </div>
+        {/* Product Description Skeleton */}
+        <div className="mt-12 space-y-4">
+          <Skeleton className="h-8 w-1/4" /> {/* Heading */}
+          <Skeleton className="h-4 w-full" /> {/* Text */}
+          <Skeleton className="h-4 w-3/4" /> {/* Text */}
+          <Skeleton className="h-4 w-1/2" /> {/* Text */}
+        </div>
+        {/* Reviews Section Skeleton */}
+        <SkeletonReviewsSection />
       </div>
     );
   }

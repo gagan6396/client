@@ -17,14 +17,14 @@ import {
   AiOutlineSearch,
   AiOutlineShoppingCart,
   AiOutlineUser,
-} from "react-icons/ai"; // Added AiOutlineMenu for mobile menu
+} from "react-icons/ai";
 
 const Header: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   let accessToken;
   if (typeof window !== "undefined") {
@@ -84,6 +84,9 @@ const Header: React.FC = () => {
           </Link>
           <Link href="/products" className={`${getLinkClass("/products")} text-base lg:text-lg font-medium`}>
             Products
+          </Link>
+          <Link href="/blogs" className={`${getLinkClass("/blogs")} text-base lg:text-lg font-medium`}>
+            Blogs
           </Link>
           <Link href="/contact" className={`${getLinkClass("/contact")} text-base lg:text-lg font-medium`}>
             Contact Us
@@ -225,6 +228,9 @@ const Header: React.FC = () => {
             </Link>
             <Link href="/products" className={`${getLinkClass("/products")} text-lg font-medium`} onClick={toggleMobileMenu}>
               Products
+            </Link>
+            <Link href="/blogs" className={`${getLinkClass("/blogs")} text-lg font-medium`} onClick={toggleMobileMenu}>
+              Blogs
             </Link>
             <Link href="/contact" className={`${getLinkClass("/contact")} text-lg font-medium`} onClick={toggleMobileMenu}>
               Contact Us

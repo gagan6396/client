@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button"; // Assuming you have this component
+import { Button } from "@/components/ui/button";
 import heroImage from "@/public/hero1.jpg";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
@@ -44,7 +44,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > 50); // Trigger sticky at 50px scroll
+      setIsSticky(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -131,6 +131,14 @@ const HeroSection = () => {
               } text-base lg:text-lg font-medium`}
             >
               Products
+            </Link>
+            <Link
+              href="/blogs"
+              className={`${getLinkClass("/blogs")} ${
+                isSticky ? "text-gray-700" : "text-white"
+              } text-base lg:text-lg font-medium`}
+            >
+              Blogs
             </Link>
             <Link
               href="/contact"
