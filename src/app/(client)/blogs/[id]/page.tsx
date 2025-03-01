@@ -78,12 +78,12 @@ const BlogDetailPage = ({ params }: BlogDetailPageProps) => {
               ? "Something went wrong while fetching the blog."
               : "The blog you are looking for does not exist."}
           </p>
-          <a
+          <Link
             href="/blogs"
             className="mt-4 inline-block text-green-700 font-medium underline"
           >
             Back to Blogs
-          </a>
+          </Link>
         </div>
       </div>
     );
