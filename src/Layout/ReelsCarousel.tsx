@@ -1,4 +1,3 @@
-// components/ProductsVideoCarousel.tsx
 "use client";
 
 import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
@@ -13,10 +12,30 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
-import Slider from "react-slick"; // Import react-slick
+import Slider from "react-slick";
 import { toast } from "react-toastify";
-import "slick-carousel/slick/slick-theme.css"; // Import slick theme styles
-import "slick-carousel/slick/slick.css"; // Import slick styles
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+
+// Define Product interface based on API response
+interface Product {
+  _id: string;
+  name: string;
+  price: { $numberDecimal: string };
+  video: string;
+  variants: {
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    dimensions: { height: number; length: number; width: number };
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  inWishlist?: boolean;
+  inCart?: boolean;
+}
 
 // Skeleton Card Component
 const SkeletonVideoCard = () => (
@@ -45,7 +64,7 @@ const SkeletonVideoCard = () => (
   </Card>
 );
 
-// Product Card Component (Extracted for reusability)
+// Product Card Component
 const ProductCard = ({
   product,
   handleVideoClick,
@@ -53,92 +72,104 @@ const ProductCard = ({
   handleDeleteFromCart,
   handleAddToWishlist,
   handleDeleteFromWishlist,
-}: any) => (
-  <Card className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
-    <CardContent className="p-0">
-      <div className="relative overflow-hidden cursor-pointer" onClick={() => handleVideoClick(product._id)}>
-        <video
-          src={product.video}
-          className="w-full rounded-t-2xl aspect-[9/16] object-cover transition-transform duration-500 group-hover:scale-105"
-          muted
-          autoPlay
-          loop
-          playsInline
-          title={`${product.name} Video`}
-        />
-        {product.isBestSeller && (
+}: {
+  product: Product;
+  handleVideoClick: (productId: string) => void;
+  handleAddToCart: (productId: string, variantId: string) => void;
+  handleDeleteFromCart: (productId: string, variantId: string) => void;
+  handleAddToWishlist: (productId: string) => void;
+  handleDeleteFromWishlist: (productId: string) => void;
+}) => {
+  const firstVariant = product.variants[0]; // Use first variant for price and ID
+
+  return (
+    <Card className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
+      <CardContent className="p-0">
+        <div
+          className="relative overflow-hidden cursor-pointer"
+          onClick={() => handleVideoClick(product._id)}
+        >
+          <video
+            src={product.video}
+            className="w-full rounded-t-2xl aspect-[9/16] object-cover transition-transform duration-500 group-hover:scale-105"
+            muted
+            autoPlay
+            loop
+            playsInline
+            title={`${product.name} Video`}
+          />
           <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
             Best Seller
           </div>
-        )}
-        <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
-          -5%
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+            -5%
+          </div>
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
         </div>
-        <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
-      </div>
-      <div className="p-4 md:p-6 space-y-3">
-        <h3 className="text-gray-800 text-base md:text-lg font-semibold line-clamp-1 group-hover:text-green-700 transition-colors">
-          {product.name}
-        </h3>
-        <div className="flex">
-          {[...Array(5)].map((_, index) => (
-            <svg
-              key={index}
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 md:h-5 md:w-5 text-yellow-400"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+        <div className="p-4 md:p-6 space-y-3">
+          <h3 className="text-gray-800 text-base md:text-lg font-semibold line-clamp-1 group-hover:text-green-700 transition-colors">
+            {product.name}
+          </h3>
+          <div className="flex">
+            {[...Array(5)].map((_, index) => (
+              <svg
+                key={index}
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 md:h-5 md:w-5 text-yellow-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.908c.969 0 1.372 1.24.588 1.81l-3.974 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.974-2.89a1 1 0 00-1.176 0l-3.974 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.147 9.101c-.784-.57-.381-1.81.588-1.81h4.908a1 1 0 00.95-.69l1.518-4.674z" />
+              </svg>
+            ))}
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span className="text-green-600 font-bold text-lg md:text-xl">
+                ₹{firstVariant.price.$numberDecimal}
+              </span>
+              <span className="text-gray-400 line-through text-sm md:text-base">
+                ₹{parseFloat(firstVariant.price.$numberDecimal) + 10}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <Button
+              className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
+                product.inCart
+                  ? "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-green-500 text-white hover:bg-green-600"
+              }`}
+              onClick={
+                product.inCart
+                  ? () => handleDeleteFromCart(product._id, firstVariant._id)
+                  : () => handleAddToCart(product._id, firstVariant._id)
+              }
             >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.908c.969 0 1.372 1.24.588 1.81l-3.974 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.974-2.89a1 1 0 00-1.176 0l-3.974 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.147 9.101c-.784-.57-.381-1.81.588-1.81h4.908a1 1 0 00.95-.69l1.518-4.674z" />
-            </svg>
-          ))}
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-green-600 font-bold text-lg md:text-xl">
-              ₹{product.price?.$numberDecimal || "N/A"}
-            </span>
-            <span className="text-gray-400 line-through text-sm md:text-base">
-              ₹{(product.price?.$numberDecimal ?? 0) + "0"}
-            </span>
+              {product.inCart ? "Remove" : "Add to Cart"}
+            </Button>
+            {product.inWishlist ? (
+              <FaHeart
+                onClick={() => handleDeleteFromWishlist(product._id)}
+                size={24}
+                className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300 cursor-pointer"
+              />
+            ) : (
+              <CiHeart
+                onClick={() => handleAddToWishlist(product._id)}
+                size={24}
+                className="text-gray-500 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
+              />
+            )}
           </div>
         </div>
-        <div className="flex items-center justify-between gap-3">
-          <Button
-            className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
-              product.inCart
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-green-500 text-white hover:bg-green-600"
-            }`}
-            onClick={
-              product.inCart
-                ? () => handleDeleteFromCart(product._id)
-                : () => handleAddToCart(product._id)
-            }
-          >
-            {product.inCart ? "Remove" : "Add to Cart"}
-          </Button>
-          {product.inWishlist ? (
-            <FaHeart
-              onClick={() => handleDeleteFromWishlist(product._id)}
-              size={24}
-              className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300 cursor-pointer"
-            />
-          ) : (
-            <CiHeart
-              onClick={() => handleAddToWishlist(product._id)}
-              size={24}
-              className="text-gray-500 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
-            />
-          )}
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardContent>
+    </Card>
+  );
+};
 
 export function ProductsVideoCarousel() {
-  const [productsWithVideos, setProductsWithVideos] = useState([]);
+  const [productsWithVideos, setProductsWithVideos] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -160,10 +191,10 @@ export function ProductsVideoCarousel() {
     fetchProducts();
   }, []);
 
-  const handleAddToCart = async (productId: string) => {
+  const handleAddToCart = async (productId: string, variantId: string) => {
     try {
-      const response = await addToCartAPI({ productId, quantity: 1 });
-      const updatedProducts: any = productsWithVideos.map((p: any) =>
+      const response = await addToCartAPI({ productId, variantId, quantity: 1 });
+      const updatedProducts = productsWithVideos.map((p) =>
         p._id === productId ? { ...p, inCart: true } : p
       );
       setProductsWithVideos(updatedProducts);
@@ -176,10 +207,10 @@ export function ProductsVideoCarousel() {
     }
   };
 
-  const handleDeleteFromCart = async (productId: string) => {
+  const handleDeleteFromCart = async (productId: string, variantId: string) => {
     try {
-      const response = await deleteToCartAPI(productId);
-      const updatedProducts: any = productsWithVideos.map((p: any) =>
+      const response = await deleteToCartAPI({ productId, variantId });
+      const updatedProducts = productsWithVideos.map((p) =>
         p._id === productId ? { ...p, inCart: false } : p
       );
       setProductsWithVideos(updatedProducts);
@@ -195,7 +226,7 @@ export function ProductsVideoCarousel() {
   const handleAddToWishlist = async (productId: string) => {
     try {
       const response = await addToWishListAPI(productId);
-      const updatedProducts: any = productsWithVideos.map((p: any) =>
+      const updatedProducts = productsWithVideos.map((p) =>
         p._id === productId ? { ...p, inWishlist: true } : p
       );
       setProductsWithVideos(updatedProducts);
@@ -211,7 +242,7 @@ export function ProductsVideoCarousel() {
   const handleDeleteFromWishlist = async (productId: string) => {
     try {
       const response = await deleteProductFromWishlistAPI(productId);
-      const updatedProducts: any = productsWithVideos.map((p: any) =>
+      const updatedProducts = productsWithVideos.map((p) =>
         p._id === productId ? { ...p, inWishlist: false } : p
       );
       setProductsWithVideos(updatedProducts);
@@ -284,7 +315,7 @@ export function ProductsVideoCarousel() {
           </p>
         ) : (
           <Slider {...sliderSettings}>
-            {productsWithVideos.map((product: any) => (
+            {productsWithVideos.map((product) => (
               <div key={product._id} className="px-2">
                 <ProductCard
                   product={product}
