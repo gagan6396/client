@@ -41,7 +41,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
-// Interfaces based on API responses
+// Interfaces based on updated API response
 interface User {
   _id: string;
   first_name: string;
@@ -51,10 +51,13 @@ interface User {
 }
 
 interface Product {
+  productId: { _id: string; name: string; images: string[] };
+  variantId: string;
+  quantity: number;
+  price: number; // Variant-specific price
+  name: string; // Variant-specific name (e.g., "Test Product - 1 Kg")
+  skuParameters: { weight: string };
   _id: string;
-  name: string;
-  price: { $numberDecimal: string };
-  images: string[];
 }
 
 interface Payment {
@@ -71,7 +74,7 @@ interface Order {
   totalAmount: number;
   orderStatus: string;
   shippingStatus: string;
-  products: { productId: Product; quantity: number; _id: string }[];
+  products: Product[];
   shippingAddressId: string | null;
   payment_id: Payment;
   shipRocketOrderId?: number;
@@ -95,7 +98,7 @@ interface UserProfile {
 
 interface ReturnExchangeFormData {
   reason: string;
-  products: { productId: string; quantity: number }[];
+  products: { productId: string; variantId: string; quantity: number }[];
 }
 
 interface TrackingData {
@@ -141,6 +144,7 @@ const returnExchangeSchema = yup.object({
     .of(
       yup.object({
         productId: yup.string().required("Product ID is required"),
+        variantId: yup.string().required("Variant ID is required"),
         quantity: yup
           .number()
           .min(1, "Quantity must be at least 1")
@@ -234,7 +238,7 @@ export default function UserAccount() {
     }
   };
 
-  const handleReturnOrder = async (data: any) => {
+  const handleReturnOrder = async (data: ReturnExchangeFormData) => {
     if (!selectedOrder) return;
     try {
       const response = await returnOrderAPI(
@@ -260,7 +264,7 @@ export default function UserAccount() {
     }
   };
 
-  const handleExchangeOrder = async (data: any) => {
+  const handleExchangeOrder = async (data: ReturnExchangeFormData) => {
     if (!selectedOrder) return;
     try {
       const response = await exchangeOrderAPI(
@@ -567,7 +571,8 @@ export default function UserAccount() {
                             Order ID: {order._id}
                           </p>
                           <p className="text-xs sm:text-sm text-gray-600">
-                            Date: {format(new Date(order.orderDate), "yyyy-MM-dd")}
+                            Date:{" "}
+                            {format(new Date(order.orderDate), "yyyy-MM-dd")}
                           </p>
                           <p className="text-xs sm:text-sm text-gray-600">
                             Status:{" "}
@@ -588,7 +593,7 @@ export default function UserAccount() {
                           </p>
                         </div>
                         <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                          ₹{order.totalAmount}
+                          ₹{order.totalAmount.toFixed(2)}
                         </p>
                       </div>
 
@@ -624,7 +629,10 @@ export default function UserAccount() {
                           >
                             {order.payment_id.status}
                           </span>{" "}
-                          - ₹{order.payment_id.amount.$numberDecimal}
+                          - ₹
+                          {parseFloat(
+                            order.payment_id.amount.$numberDecimal
+                          ).toFixed(2)}
                         </p>
                       </div>
 
@@ -637,18 +645,18 @@ export default function UserAccount() {
                           >
                             <Image
                               src={product.productId.images[0]}
-                              alt={product.productId.name}
+                              alt={product.name}
                               width={60}
                               height={60}
                               className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
                             />
                             <div className="flex-1">
                               <p className="text-gray-800 font-medium text-sm sm:text-base">
-                                {product.productId.name}
+                                {product.name}
                               </p>
                               <p className="text-xs sm:text-sm text-gray-600">
                                 Qty: {product.quantity} | ₹
-                                {product.productId.price.$numberDecimal}
+                                {product.price.toFixed(2)}
                               </p>
                             </div>
                           </div>
@@ -730,11 +738,25 @@ export default function UserAccount() {
                                         />
                                         <FormField
                                           control={returnExchangeForm.control}
+                                          name={`products.${index}.variantId`}
+                                          render={() => (
+                                            <FormItem>
+                                              <FormControl>
+                                                <Input
+                                                  type="hidden"
+                                                  value={product.variantId}
+                                                />
+                                              </FormControl>
+                                            </FormItem>
+                                          )}
+                                        />
+                                        <FormField
+                                          control={returnExchangeForm.control}
                                           name={`products.${index}.quantity`}
                                           render={({ field }) => (
                                             <FormItem className="flex-1">
                                               <FormLabel className="text-sm sm:text-base text-gray-700">
-                                                {product.productId.name}
+                                                {product.name}
                                               </FormLabel>
                                               <FormControl>
                                                 <Input
@@ -823,11 +845,25 @@ export default function UserAccount() {
                                         />
                                         <FormField
                                           control={returnExchangeForm.control}
+                                          name={`products.${index}.variantId`}
+                                          render={() => (
+                                            <FormItem>
+                                              <FormControl>
+                                                <Input
+                                                  type="hidden"
+                                                  value={product.variantId}
+                                                />
+                                              </FormControl>
+                                            </FormItem>
+                                          )}
+                                        />
+                                        <FormField
+                                          control={returnExchangeForm.control}
                                           name={`products.${index}.quantity`}
                                           render={({ field }) => (
                                             <FormItem className="flex-1">
                                               <FormLabel className="text-sm sm:text-base text-gray-700">
-                                                {product.productId.name}
+                                                {product.name}
                                               </FormLabel>
                                               <FormControl>
                                                 <Input
@@ -883,7 +919,8 @@ export default function UserAccount() {
                                     AWB Code:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data.shipment_track[0]?.awb_code ||
+                                    {trackingData.tracking_data
+                                      .shipment_track[0]?.awb_code ||
                                       "Not Available"}
                                   </p>
                                 </div>
@@ -892,7 +929,8 @@ export default function UserAccount() {
                                     Courier:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data.shipment_track[0]?.courier_name ||
+                                    {trackingData.tracking_data
+                                      .shipment_track[0]?.courier_name ||
                                       "Not Assigned"}
                                   </p>
                                 </div>
@@ -901,7 +939,8 @@ export default function UserAccount() {
                                     Current Status:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data.shipment_track[0]?.current_status ||
+                                    {trackingData.tracking_data
+                                      .shipment_track[0]?.current_status ||
                                       "Pending"}
                                   </p>
                                 </div>
@@ -910,7 +949,8 @@ export default function UserAccount() {
                                     Estimated Delivery:
                                   </p>
                                   <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data.shipment_track[0]?.edd ||
+                                    {trackingData.tracking_data
+                                      .shipment_track[0]?.edd ||
                                       "Not Available"}
                                   </p>
                                 </div>
@@ -918,8 +958,10 @@ export default function UserAccount() {
                               <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">
                                 Tracking Updates:
                               </p>
-                              {trackingData.tracking_data.shipment_track_activities &&
-                              trackingData.tracking_data.shipment_track_activities.length > 0 ? (
+                              {trackingData.tracking_data
+                                .shipment_track_activities &&
+                              trackingData.tracking_data
+                                .shipment_track_activities.length > 0 ? (
                                 <ul className="space-y-2 sm:space-y-3">
                                   {trackingData.tracking_data.shipment_track_activities.map(
                                     (activity, index) => (
@@ -933,7 +975,8 @@ export default function UserAccount() {
                                             {activity.activity}
                                           </p>
                                           <p className="text-xs text-gray-500">
-                                            {activity.date} - {activity.location}
+                                            {activity.date} -{" "}
+                                            {activity.location}
                                           </p>
                                         </div>
                                       </li>

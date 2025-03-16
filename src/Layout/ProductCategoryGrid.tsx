@@ -14,11 +14,18 @@ import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-// Define Product type based on provided data
+// Define Product type based on provided API response
 interface Product {
   _id: string;
   name: string;
   description: string;
+  price: { $numberDecimal: string };
+  stock: number;
+  images: string[];
+  rating: number;
+  brand: string;
+  sku: string;
+  createdAt: string;
   variants: {
     name: string;
     price: { $numberDecimal: string };
@@ -29,10 +36,6 @@ interface Product {
     images: string[];
     _id: string;
   }[];
-  images: string[];
-  rating: number;
-  brand: string;
-  createdAt: string;
   inWishlist?: boolean;
   inCart?: boolean;
 }
@@ -70,8 +73,9 @@ type ProductCardProps = {
   originalPrice: number;
   isBestSeller: boolean;
   productId: string;
-  inWishlist: any;
-  inCart: any;
+  variantId: string; // Added variantId
+  inWishlist?: boolean;
+  inCart?: boolean;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -81,6 +85,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   isBestSeller,
   productId,
+  variantId,
   inWishlist,
   inCart,
 }) => {
@@ -119,7 +124,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const addToCart = async () => {
     try {
       const response = await addToCartAPI({
-        productId: productId,
+        productId,
+        variantId,
         quantity: 1,
       });
       setIsInCart(true);
@@ -135,7 +141,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const deleteToCart = async () => {
     try {
-      const response = await deleteToCartAPI(productId);
+      const response = await deleteToCartAPI({ productId, variantId });
       setIsInCart(false);
       toast.success(response.data.message || "Item removed from cart!");
     } catch (error: any) {
@@ -274,14 +280,15 @@ const ProductCategoryGrid: React.FC = () => {
                 key={product._id}
                 imageSrc={product.images[0] || "/placeholder-image.jpg"}
                 title={product.name}
-                price={firstVariant?.price.$numberDecimal || "N/A"}
+                price={firstVariant.price.$numberDecimal}
                 originalPrice={
-                  parseFloat(firstVariant?.price.$numberDecimal || "0") + 10
+                  parseFloat(firstVariant.price.$numberDecimal) + 10
                 }
                 isBestSeller={true}
                 productId={product._id}
-                inWishlist={product?.inWishlist || false}
-                inCart={product?.inCart || false}
+                variantId={firstVariant._id} // Pass variantId
+                inWishlist={product.inWishlist || false}
+                inCart={product.inCart || false}
               />
             );
           })

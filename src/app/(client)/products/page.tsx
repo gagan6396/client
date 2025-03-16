@@ -22,7 +22,7 @@ import { FilterIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-// Define Product type based on provided data
+// Define Product type based on provided API response
 interface Product {
   _id: string;
   category_id: { _id: string; name: string; description: string; slug: string };
@@ -34,6 +34,13 @@ interface Product {
   };
   name: string;
   description: string;
+  price: { $numberDecimal: string };
+  stock: number;
+  images: string[];
+  rating: number;
+  brand: string;
+  sku: string;
+  createdAt: string;
   variants: {
     name: string;
     price: { $numberDecimal: string };
@@ -44,10 +51,6 @@ interface Product {
     images: string[];
     _id: string;
   }[];
-  images: string[];
-  rating: number;
-  brand: string;
-  createdAt: string;
   inWishlist?: boolean;
   inCart?: boolean;
 }
@@ -100,15 +103,12 @@ const ProductGrid = ({
           </div>
         ) : products.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-            {products.map((product, index) => {
+            {products.map((product) => {
               if (!product?.images || product.images.length === 0) {
-                console.warn(
-                  `Product at index ${index} has no images`,
-                  product
-                );
+                console.warn(`Product ${product._id} has no images`, product);
                 return null;
               }
-              const firstVariant = product.variants[0]; // Use the first variant for price and SKU
+              const firstVariant = product.variants[0]; // Use the first variant for display
               return (
                 <div
                   key={product._id}
@@ -117,14 +117,15 @@ const ProductGrid = ({
                   <ProductCard
                     imageSrc={product.images[0]}
                     title={product.name}
-                    price={firstVariant?.price.$numberDecimal || "N/A"}
+                    price={firstVariant.price.$numberDecimal}
                     originalPrice={
-                      parseFloat(firstVariant?.price.$numberDecimal || "0") + 10
+                      parseFloat(firstVariant.price.$numberDecimal) + 10
                     }
                     isBestSeller={true}
                     productId={product._id}
-                    inWishlist={product?.inWishlist}
-                    inCart={product?.inCart}
+                    variantId={firstVariant._id} // Pass variantId
+                    inWishlist={product.inWishlist}
+                    inCart={product.inCart}
                   />
                 </div>
               );
@@ -202,9 +203,7 @@ const ProductPage = () => {
 
     // Filter by price range (using the first variant's price)
     filtered = filtered.filter((product) => {
-      const price = parseFloat(
-        product.variants[0]?.price.$numberDecimal || "0"
-      );
+      const price = parseFloat(product.variants[0].price.$numberDecimal || "0");
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
@@ -226,14 +225,14 @@ const ProductPage = () => {
     if (sortOption === "price-asc") {
       filtered.sort(
         (a, b) =>
-          parseFloat(a.variants[0]?.price.$numberDecimal || "0") -
-          parseFloat(b.variants[0]?.price.$numberDecimal || "0")
+          parseFloat(a.variants[0].price.$numberDecimal || "0") -
+          parseFloat(b.variants[0].price.$numberDecimal || "0")
       );
     } else if (sortOption === "price-desc") {
       filtered.sort(
         (a, b) =>
-          parseFloat(b.variants[0]?.price.$numberDecimal || "0") -
-          parseFloat(a.variants[0]?.price.$numberDecimal || "0")
+          parseFloat(b.variants[0].price.$numberDecimal || "0") -
+          parseFloat(a.variants[0].price.$numberDecimal || "0")
       );
     } else if (sortOption === "rating-desc") {
       filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -363,15 +362,9 @@ const ProductPage = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="price-asc">
-                      Price: Low to High
-                    </SelectItem>
-                    <SelectItem value="price-desc">
-                      Price: High to Low
-                    </SelectItem>
-                    <SelectItem value="rating-desc">
-                      Rating: High to Low
-                    </SelectItem>
+                    <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                    <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                    <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

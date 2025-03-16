@@ -1,4 +1,5 @@
 "use client";
+
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ const ProductCategories = () => {
   const navigate = useRouter();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
     try {
@@ -40,8 +41,8 @@ const ProductCategories = () => {
       const response = await getCategoriesAPI();
       setCategories(response.data.data);
 
-      const ProductsResponse = await getProductsAPI();
-      setProducts(ProductsResponse.data.data.products);
+      const productsResponse = await getProductsAPI();
+      setProducts(productsResponse.data.data.products);
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -66,24 +67,29 @@ const ProductCategories = () => {
               ? Array(10)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
-              : products.slice(0, 10).map((product: any, index) => (
-                  <div
-                    key={index}
-                    className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
-                  >
-                    <ProductCard
-                      skuParameters={product.skuParameters}
-                      imageSrc={product.images[0]}
-                      title={product.name}
-                      price={product.price?.$numberDecimal || "N/A"}
-                      originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
-                      isBestSeller={true}
-                      productId={product._id}
-                      inWishlist={product?.inWishlist}
-                      inCart={product?.inCart}
-                    />
-                  </div>
-                ))}
+              : products.slice(0, 10).map((product: any) => {
+                  const firstVariant = product.variants[0]; // Use first variant for price and ID
+                  return (
+                    <div
+                      key={product._id}
+                      className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
+                    >
+                      <ProductCard
+                        imageSrc={product.images[0] || "/placeholder-image.jpg"}
+                        title={product.name}
+                        price={firstVariant.price.$numberDecimal || "N/A"}
+                        originalPrice={
+                          parseFloat(firstVariant.price.$numberDecimal || "0") + 10
+                        }
+                        isBestSeller={true}
+                        productId={product._id}
+                        variantId={firstVariant._id} // Pass variantId
+                        inWishlist={product.inWishlist}
+                        inCart={product.inCart}
+                      />
+                    </div>
+                  );
+                })}
           </div>
           <div className="mt-10 text-center">
             <Link href="/products">
@@ -106,15 +112,15 @@ const ProductCategories = () => {
               ? Array(10)
                   .fill(0)
                   .map((_, index) => <SkeletonCategoryCard key={index} />)
-              : categories.slice(0, 10).map((category: any, index) => (
+              : categories.slice(0, 10).map((category: any) => (
                   <div
-                    key={index}
+                    key={category._id}
                     className="group bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 md:p-6 transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
                   >
                     <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
                       <img
-                        src={category?.images[0]}
-                        alt={category?.name}
+                        src={category.images?.[0] || "/placeholder-category.jpg"}
+                        alt={category.name}
                         className="w-full h-full object-cover rounded-full border-2 border-green-100 group-hover:border-green-300 transition-colors"
                       />
                       <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />

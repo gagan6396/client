@@ -1,5 +1,5 @@
 "use client";
-import { getAddTOCartProductsAPI } from "@/apis/addToCartAPIs";
+import { getAddToCartProductsAPI } from "@/apis/addToCartAPIs";
 import { createOrderAPI } from "@/apis/orderAPIs";
 import { verifyPaymentAPI } from "@/apis/paymentAPIs";
 import { getUserProfileAPI } from "@/apis/userProfile";
@@ -15,10 +15,11 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 
 interface CartItem {
-  id: string;
+  id: string; // Product ID
+  variantId: string; // Variant SKU or ID
   imageSrc: string;
-  title: string;
-  price: number;
+  title: string; // Product name + variant name
+  price: number; // Variant price
   quantity: number;
 }
 
@@ -30,7 +31,7 @@ interface UserProfile {
   _id: string;
   shoppingAddress: {
     addressLine1: string;
-    addressLine2?: string; // Optional field
+    addressLine2?: string;
     city: string;
     state: string;
     country: string;
@@ -44,15 +45,17 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">("Razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">(
+    "Razorpay"
+  );
 
   const formik = useFormik({
     initialValues: {
       name: "",
-      addressLine1: "", // Updated to match addressSnapshot
+      addressLine1: "",
       city: "",
       state: "",
-      postalCode: "", // Updated to match addressSnapshot
+      postalCode: "",
       phone: "",
     },
     validationSchema: Yup.object({
@@ -82,7 +85,7 @@ const CheckoutPage = () => {
         setProfileLoading(true);
         const [profileRes, cartRes] = await Promise.all([
           getUserProfileAPI(),
-          getAddTOCartProductsAPI(),
+          getAddToCartProductsAPI(),
         ]);
 
         const profileData = profileRes.data.data;
@@ -90,7 +93,9 @@ const CheckoutPage = () => {
 
         if (profileData) {
           formik.setValues({
-            name: `${profileData.first_name || ""} ${profileData.last_name || ""}`.trim(),
+            name: `${profileData.first_name || ""} ${
+              profileData.last_name || ""
+            }`.trim(),
             addressLine1: profileData?.shoppingAddress?.addressLine1 || "",
             city: profileData?.shoppingAddress?.city || "",
             state: profileData.shoppingAddress?.state || "",
@@ -99,11 +104,16 @@ const CheckoutPage = () => {
           });
         }
 
+        // Map cart items based on the provided API response
         const mappedItems = cartRes.data.data.products.map((item: any) => ({
-          id: item.productId._id,
-          imageSrc: item.productId.images[0],
-          title: item.productId.name,
-          price: parseFloat(item.productId.price.$numberDecimal),
+          id: item.productId,
+          variantId: item.variantId,
+          imageSrc:
+            item.productDetails.variant.images.length > 0
+              ? item.productDetails.variant.images[0]
+              : item.productDetails.images[0],
+          title: `${item.productDetails.name} - ${item.productDetails.variant.name}`,
+          price: parseFloat(item.productDetails.variant.price.$numberDecimal),
           quantity: item.quantity,
         }));
         setCartItems(mappedItems);
@@ -132,6 +142,7 @@ const CheckoutPage = () => {
       const orderData = {
         products: cartItems.map((item) => ({
           productId: item.id,
+          variantId: item.variantId, // Include variantId
           quantity: item.quantity,
           discount: 0,
           tax: 0,
@@ -268,7 +279,9 @@ const CheckoutPage = () => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.addressLine1 && formik.errors.addressLine1 ? (
-                <p className="text-sm text-red-500">{formik.errors.addressLine1}</p>
+                <p className="text-sm text-red-500">
+                  {formik.errors.addressLine1}
+                </p>
               ) : null}
             </div>
             <div>
@@ -307,7 +320,9 @@ const CheckoutPage = () => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.postalCode && formik.errors.postalCode ? (
-                <p className="text-sm text-red-500">{formik.errors.postalCode}</p>
+                <p className="text-sm text-red-500">
+                  {formik.errors.postalCode}
+                </p>
               ) : null}
             </div>
             <div>
@@ -330,7 +345,10 @@ const CheckoutPage = () => {
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between">
+              <div
+                key={`${item.id}-${item.variantId}`}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-4">
                   <img
                     src={item.imageSrc}

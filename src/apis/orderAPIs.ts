@@ -1,5 +1,5 @@
 import axiosInstance from ".";
-// Define types for better TypeScript support
+
 interface OrderResponse {
   status: number;
   success: boolean;
@@ -9,12 +9,13 @@ interface OrderResponse {
 
 interface ReturnExchangePayload {
   reason: string;
-  products: { productId: string; quantity: number }[];
+  products: { productId: string; variantId: string; quantity: number }[];
 }
 
 export const createOrderAPI = (data: {
   products: {
     productId: string;
+    variantId: string; // Added variantId
     quantity: number;
     discount?: number;
     tax?: number;
@@ -31,6 +32,7 @@ export const createOrderAPI = (data: {
 }) => {
   return axiosInstance.post("/orders", data);
 };
+
 // paymentAPIs.ts
 export const verifyPaymentAPI = (data: {
   orderId: string;
@@ -94,7 +96,7 @@ export const cancelOrderAPI = async (
 export const returnOrderAPI = async (
   orderId: string,
   reason: string,
-  products: { productId: string; quantity: number }[]
+  products: { productId: string; variantId: string; quantity: number }[]
 ): Promise<OrderResponse> => {
   try {
     const payload: ReturnExchangePayload = { reason, products };
@@ -113,7 +115,7 @@ export const returnOrderAPI = async (
 export const exchangeOrderAPI = async (
   orderId: string,
   reason: string,
-  products: { productId: string; quantity: number }[]
+  products: { productId: string; variantId: string; quantity: number }[]
 ): Promise<OrderResponse> => {
   try {
     const payload: ReturnExchangePayload = { reason, products };
