@@ -8,8 +8,28 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 
+// Define Product interface based on API response
+interface Product {
+  _id: string;
+  name: string;
+  price: { $numberDecimal: string };
+  images: string[];
+  variants: {
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    dimensions: { height: number; length: number; width: number };
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  inWishlist?: boolean;
+  inCart?: boolean;
+}
+
 // Reusable ProductGrid Component
-const ProductGrid = ({ products }: { products: any[] }) => {
+const ProductGrid = ({ products }: { products: Product[] }) => {
   return (
     <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {products.length > 0 ? (
@@ -19,19 +39,21 @@ const ProductGrid = ({ products }: { products: any[] }) => {
             return null;
           }
 
+          const firstVariant = product.variants[0]; // Use first variant for price and ID
+
           return (
             <div
-              key={index}
+              key={product._id}
               className="embla__slide rounded-xl p-2 sm:p-4 my-2 sm:my-3 relative hover:shadow-lg transition-shadow duration-300"
             >
               <ProductCard
-                skuParameters={product.skuParameters}
                 imageSrc={product.images[0]}
                 title={product.name}
-                price={product.price?.$numberDecimal || "N/A"}
-                originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                price={firstVariant.price.$numberDecimal || "N/A"}
+                originalPrice={parseFloat(firstVariant.price.$numberDecimal || "0") + 10}
                 isBestSeller={true}
                 productId={product._id}
+                variantId={firstVariant._id} // Pass variantId
                 inWishlist={product?.inWishlist}
                 inCart={product?.inCart}
               />
@@ -50,7 +72,7 @@ const ProductGrid = ({ products }: { products: any[] }) => {
               No Products Found
             </h3>
             <p className="text-sm sm:text-base text-gray-500">
-              We couldn&apos;t find any products matching your criteria. Stay
+              We couldn't find any products matching your criteria. Stay
               tuned for updates!
             </p>
           </div>
@@ -62,8 +84,8 @@ const ProductGrid = ({ products }: { products: any[] }) => {
 
 // Custom Hook for Fetching and Filtering Products
 const useProducts = () => {
-  const [allProducts, setAllProducts] = useState<any[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -141,8 +163,7 @@ const SearchPage = () => {
             No Products Found
           </h3>
           <p className="text-sm sm:text-base text-gray-500">
-            We couldn&apos;t find any products matching your criteria. Stay
-            tuned for updates!
+            {error}
           </p>
         </div>
       </div>
@@ -162,7 +183,7 @@ const SearchPage = () => {
             Products Coming Soon!
           </h3>
           <p className="text-sm sm:text-base text-gray-500">
-            We&apos;re working hard to bring you amazing products. Stay tuned!
+            We're working hard to bring you amazing products. Stay tuned!
           </p>
         </div>
       </div>
