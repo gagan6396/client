@@ -1,4 +1,5 @@
 "use client";
+
 import {
   getCategoriesAPI,
   getProductByCategoryAPI,
@@ -20,6 +21,36 @@ import noProductFound from "@/public/notfound.jpg";
 import { FilterIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+
+// Define Product type based on provided data
+interface Product {
+  _id: string;
+  category_id: { _id: string; name: string; description: string; slug: string };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  name: string;
+  description: string;
+  variants: {
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    dimensions: { height: number; length: number; width: number };
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  images: string[];
+  rating: number;
+  brand: string;
+  createdAt: string;
+  inWishlist?: boolean;
+  inCart?: boolean;
+}
 
 // Skeleton Product Card
 const SkeletonProductCard = () => (
@@ -51,7 +82,7 @@ const ProductGrid = ({
   title,
   isLoading,
 }: {
-  products: any[];
+  products: Product[];
   title: string;
   isLoading: boolean;
 }) => {
@@ -77,17 +108,19 @@ const ProductGrid = ({
                 );
                 return null;
               }
+              const firstVariant = product.variants[0]; // Use the first variant for price and SKU
               return (
                 <div
-                  key={index}
+                  key={product._id}
                   className="group rounded-2xl overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
                 >
                   <ProductCard
-                    skuParameters={product.skuParameters}
                     imageSrc={product.images[0]}
                     title={product.name}
-                    price={product.price?.$numberDecimal || "N/A"}
-                    originalPrice={(product.price?.$numberDecimal ?? 0) + 10}
+                    price={firstVariant?.price.$numberDecimal || "N/A"}
+                    originalPrice={
+                      parseFloat(firstVariant?.price.$numberDecimal || "0") + 10
+                    }
                     isBestSeller={true}
                     productId={product._id}
                     inWishlist={product?.inWishlist}
@@ -121,8 +154,8 @@ const ProductGrid = ({
 };
 
 const ProductPage = () => {
-  const [products, setProducts] = useState<any[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -144,9 +177,9 @@ const ProductPage = () => {
           setProducts(response.data.data);
           setFilteredProducts(response.data.data);
         } else {
-          const ProductsResponse = await getProductsAPI();
-          setProducts(ProductsResponse.data.data.products);
-          setFilteredProducts(ProductsResponse.data.data.products);
+          const productsResponse = await getProductsAPI();
+          setProducts(productsResponse.data.data.products);
+          setFilteredProducts(productsResponse.data.data.products);
         }
 
         const categoriesResponse = await getCategoriesAPI();
@@ -167,34 +200,40 @@ const ProductPage = () => {
   const applyFilters = () => {
     let filtered = [...products];
 
+    // Filter by price range (using the first variant's price)
     filtered = filtered.filter((product) => {
-      const price = parseFloat(product.price?.$numberDecimal || 0);
+      const price = parseFloat(
+        product.variants[0]?.price.$numberDecimal || "0"
+      );
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
+    // Filter by selected categories
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((product) =>
-        selectedCategories.includes(product.category_id?.name)
+        selectedCategories.includes(product.category_id.name)
       );
     }
 
+    // Filter by minimum rating
     if (minRating > 0) {
       filtered = filtered.filter(
         (product) => (product.rating || 0) >= minRating
       );
     }
 
+    // Sort products
     if (sortOption === "price-asc") {
       filtered.sort(
         (a, b) =>
-          parseFloat(a.price?.$numberDecimal || 0) -
-          parseFloat(b.price?.$numberDecimal || 0)
+          parseFloat(a.variants[0]?.price.$numberDecimal || "0") -
+          parseFloat(b.variants[0]?.price.$numberDecimal || "0")
       );
     } else if (sortOption === "price-desc") {
       filtered.sort(
         (a, b) =>
-          parseFloat(b.price?.$numberDecimal || 0) -
-          parseFloat(a.price?.$numberDecimal || 0)
+          parseFloat(b.variants[0]?.price.$numberDecimal || "0") -
+          parseFloat(a.variants[0]?.price.$numberDecimal || "0")
       );
     } else if (sortOption === "rating-desc") {
       filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -241,13 +280,10 @@ const ProductPage = () => {
           <SheetTrigger asChild>
             <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 md:px-4 md:py-2">
               <FilterIcon className="w-5 h-5" />
-              {/* Show text only on medium screens and above */}
               <span className="hidden md:inline">Filter Products</span>
             </Button>
           </SheetTrigger>
-          <SheetContent
-            className="w-[90%] sm:w-[400px] max-w-[400px] overflow-y-auto"
-          >
+          <SheetContent className="w-[90%] sm:w-[400px] max-w-[400px] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-6">Filter Products</h3>
             <div className="space-y-8">
               {/* Price Range Filter */}
@@ -264,8 +300,8 @@ const ProductPage = () => {
                   className="w-full"
                 />
                 <div className="flex justify-between text-sm text-gray-600 mt-2">
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
+                  <span>₹{priceRange[0]}</span>
+                  <span>₹{priceRange[1]}</span>
                 </div>
               </div>
 

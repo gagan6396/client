@@ -1,6 +1,8 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -14,7 +16,6 @@ import {
   addToWishListAPI,
   deleteProductFromWishlistAPI,
 } from "@/apis/wishlistAPIs";
-import ProductDescriptionAndDetails from "@/Layout/ProductDetails/ProductDescriptionAndDetails";
 import ProductDetails from "@/Layout/ProductDetails/ProductDetails";
 import ProductImageCarousel from "@/Layout/ProductDetails/ProductImageCarousel";
 import ReviewsSection from "@/Layout/ProductDetails/ReviewsSection";
@@ -41,6 +42,126 @@ const SkeletonReviewsSection = () => (
   </div>
 );
 
+// Product Description and Details Component
+const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
+  return (
+    <div className="mt-10 md:mt-16">
+      <Tabs defaultValue="description" className="w-full">
+        {/* Tabs Navigation */}
+        <TabsList className="grid w-full grid-cols-2 rounded-lg bg-gray-100 p-1 shadow-sm">
+          <TabsTrigger
+            value="description"
+            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Description
+          </TabsTrigger>
+          <TabsTrigger
+            value="details"
+            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md transition-all duration-200"
+          >
+            Details
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Description Tab */}
+        <TabsContent value="description" className="mt-6">
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+              <CardTitle className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
+                Product Description
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 md:p-8">
+              <div
+                className="prose prose-sm md:prose-base max-w-none text-gray-700 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Details Tab */}
+        <TabsContent value="details" className="mt-6">
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+              <CardTitle className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
+                Product Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 md:p-8">
+              <dl className="space-y-4 md:space-y-5 text-sm md:text-base text-gray-700">
+                {/* Category */}
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                  <dt className="font-semibold text-gray-800">Category</dt>
+                  <dd className="text-gray-600">
+                    {product.category_id && typeof product.category_id !== "string"
+                      ? product.category_id.name
+                      : "N/A"}
+                  </dd>
+                </div>
+
+                {/* Subcategory */}
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                  <dt className="font-semibold text-gray-800">Subcategory</dt>
+                  <dd className="text-gray-600">
+                    {product.subcategory_id && typeof product.subcategory_id !== "string"
+                      ? product.subcategory_id.name
+                      : "N/A"}
+                  </dd>
+                </div>
+
+                {/* Brand */}
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                  <dt className="font-semibold text-gray-800">Brand</dt>
+                  <dd className="text-gray-600">{product.brand || "N/A"}</dd>
+                </div>
+
+                {/* Variants */}
+                {product.variants && product.variants.length > 0 && (
+                  <div className="border-b border-gray-100 pb-3">
+                    <dt className="font-semibold text-gray-800 mb-2">Variants</dt>
+                    <dd className="text-gray-600">
+                      <ul className="space-y-2">
+                        {product.variants.map((variant) => (
+                          <li
+                            key={variant._id}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
+                          >
+                            <span>
+                              {variant.name} - ₹
+                              {variant.price && typeof variant.price === "object"
+                                ? variant.price.$numberDecimal
+                                : variant.price}{" "}
+                              ({variant.stock} in stock)
+                              {variant.weight ? `, ${variant.weight} kg` : ""}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+
+                {/* Created At */}
+                <div className="flex items-center justify-between pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                  <dt className="font-semibold text-gray-800">Created At</dt>
+                  <dd className="text-gray-600">
+                    {new Date(product.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </dd>
+                </div>
+              </dl>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
 }
@@ -66,9 +187,13 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       const response = await getProductByIdAPI(productId);
       if (response?.data?.data) {
         setProduct(response.data.data);
-        await fetchAllProductsBySubCategory(
-          response.data.data.subcategory_id._id
-        );
+        const subcategoryId =
+          typeof response.data.data.subcategory_id === "string"
+            ? response.data.data.subcategory_id
+            : response.data.data.subcategory_id?._id;
+        if (subcategoryId) {
+          await fetchAllProductsBySubCategory(subcategoryId);
+        }
       } else {
         throw new Error("Product data not found");
       }
@@ -88,7 +213,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     try {
       setIsReviewsLoading(true);
       const response = await getAllReviewsByProduct(product._id);
-      setReviews(response.data.data);
+      setReviews(response.data.data || []);
     } catch (error: any) {
       console.error("Error fetching reviews:", error);
       toast.error("Failed to load reviews. Please try again later.");
@@ -107,7 +232,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
           comment: review.comment,
         });
         toast.success("Review submitted successfully!");
-        await fetchReviews(); // Refresh reviews after submission
+        await fetchReviews();
       } catch (error: any) {
         console.error("Error adding review:", error);
         toast.error("Failed to submit review. Please try again later.");
@@ -185,7 +310,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
         productId: product._id,
         quantity: 1,
       });
-      window.location.href = "/checkout";
+      router.push("/checkout");
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
@@ -193,14 +318,14 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       );
       console.error("Error during Buy Now:", error);
     }
-  }, [product]);
+  }, [product, router]);
 
   // Fetch products by subcategory
   const fetchAllProductsBySubCategory = useCallback(
     async (subcategoryId: string) => {
       try {
         const response: any = await getProductBySubCategoryAPI(subcategoryId);
-        setSubCategoryProducts(response.data.data);
+        setSubCategoryProducts(response.data.data || []);
       } catch (error: any) {
         console.error("Error fetching subcategory products:", error);
       }
@@ -224,29 +349,25 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
-          {/* Product Image Carousel Skeleton */}
           <Skeleton className="w-full h-[500px] rounded-lg" />
-          {/* Product Details Skeleton */}
           <div className="flex flex-col space-y-6">
-            <Skeleton className="h-10 w-3/4" /> {/* Title */}
-            <Skeleton className="h-6 w-1/2" /> {/* Price */}
-            <Skeleton className="h-4 w-full" /> {/* Description */}
-            <Skeleton className="h-4 w-full" /> {/* Description */}
+            <Skeleton className="h-10 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
             <div className="flex gap-4">
-              <Skeleton className="h-12 w-1/3" /> {/* Add to Cart */}
-              <Skeleton className="h-12 w-1/3" /> {/* Buy Now */}
+              <Skeleton className="h-12 w-1/3" />
+              <Skeleton className="h-12 w-1/3" />
             </div>
-            <Skeleton className="h-16 w-full" /> {/* Supplier Details */}
+            <Skeleton className="h-16 w-full" />
           </div>
         </div>
-        {/* Product Description Skeleton */}
         <div className="mt-12 space-y-4">
-          <Skeleton className="h-8 w-1/4" /> {/* Heading */}
-          <Skeleton className="h-4 w-full" /> {/* Text */}
-          <Skeleton className="h-4 w-3/4" /> {/* Text */}
-          <Skeleton className="h-4 w-1/2" /> {/* Text */}
+          <Skeleton className="h-8 w-1/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
         </div>
-        {/* Reviews Section Skeleton */}
         <SkeletonReviewsSection />
       </div>
     );
@@ -288,7 +409,6 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       </div>
 
       <ProductDescriptionAndDetails product={product} />
-
       <ReviewsSection
         reviews={reviews}
         addReview={addReview}

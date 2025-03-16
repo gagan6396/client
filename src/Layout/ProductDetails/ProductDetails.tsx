@@ -2,14 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 
 interface ProductDetailsProps {
   product: Product;
-  addToCart: () => void;
-  buyNow: () => void;
+  addToCart: (variantId?: string) => void; // Updated to accept variantId
+  buyNow: (variantId?: string) => void; // Updated to accept variantId
   addToWishList: () => void;
   deleteProductFromWishlist: () => void;
   subCategoryProducts: Product[];
@@ -21,9 +22,23 @@ const ProductDetails = ({
   buyNow,
   addToWishList,
   deleteProductFromWishlist,
-  subCategoryProducts,
 }: ProductDetailsProps) => {
   const router = useRouter();
+  const [selectedVariant, setSelectedVariant] = useState(
+    product.variants?.[0] || null
+  ); // Default to first variant if available
+
+  // Fallback to product price/stock if no variants, otherwise use selected variant
+  const displayPrice =
+    selectedVariant?.price?.$numberDecimal ||
+    product.price?.$numberDecimal ||
+    "N/A";
+  const displayStock = selectedVariant?.stock ?? product.stock;
+
+  // Handle variant selection
+  const handleVariantChange = (variant: typeof selectedVariant) => {
+    setSelectedVariant(variant);
+  };
 
   return (
     <div className="flex flex-col space-y-4 sm:space-y-6">
@@ -35,69 +50,68 @@ const ProductDetails = ({
       {/* Price and Stock Status */}
       <div className="flex items-center gap-3 sm:gap-4">
         <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
-          ₹{product.price?.$numberDecimal || "N/A"}
+          ₹{displayPrice}
         </p>
         <Badge
           variant="outline"
           className={`text-xs sm:text-sm ${
-            product.stock > 0
+            displayStock > 0
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
           }`}
         >
-          {product.stock > 0 ? "In Stock" : "Out of Stock"}
+          {displayStock > 0 ? `In Stock (${displayStock})` : "Out of Stock"}
         </Badge>
       </div>
 
-      {/* Product Description */}
-      <div
-        className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed line-clamp-1 overflow-hidden"
-        dangerouslySetInnerHTML={{ __html: product.description }}
-      />
-
-      {/* Related Products (Subcategory Products) */}
-      {subCategoryProducts.length > 0 && (
-        <div className="mt-4 sm:mt-6">
-          {/* <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
-            Related Products
-          </h2> */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-            {subCategoryProducts.slice(0, 6).map((item) => (
-              <div
-                key={item._id}
-                className="cursor-pointer border rounded-lg p-2 sm:p-3 hover:shadow-md transition-shadow"
-                onClick={() => router.push(`/products/${item._id}`)}
+      {/* Variant Selection */}
+      {product.variants && product.variants.length > 1 && (
+        <div className="mt-4">
+          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
+            Select Variant:
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {product.variants.map((variant) => (
+              <Button
+                key={variant._id}
+                variant={
+                  selectedVariant?._id === variant._id ? "default" : "outline"
+                }
+                className={`text-xs sm:text-sm px-3 py-1 ${
+                  selectedVariant?._id === variant._id
+                    ? "bg-green-600 text-white"
+                    : "border-gray-300 hover:bg-gray-100"
+                }`}
+                onClick={() => handleVariantChange(variant)}
               >
-                <div className="text-xs sm:text-sm font-medium text-gray-900 truncate">
-                  {item.name}
-                </div>
-                <div className="flex gap-3">
-                  <div className="text-xs sm:text-sm text-gray-600">
-                    ₹{item.price?.$numberDecimal || "N/A"}
-                  </div>
-                  <div className="text-xs sm:text-sm text-gray-600">
-                    {item.weight ? `${item.weight}kg` : "N/A"}
-                  </div>
-                </div>
-              </div>
+                {variant.name} - ₹{variant.price.$numberDecimal}
+                {variant.weight ? ` (${variant.weight}kg)` : ""}
+              </Button>
             ))}
           </div>
         </div>
       )}
 
+      {/* Product Description */}
+      <div
+        className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed line-clamp-2 overflow-hidden"
+        dangerouslySetInnerHTML={{ __html: product.description }}
+      />
+
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={addToCart}
-          disabled={product.inCart}
+          onClick={() => addToCart(selectedVariant?._id)}
+          disabled={product.inCart || displayStock <= 0}
         >
           <AiOutlineShoppingCart className="mr-1 sm:mr-2" />
           {product.inCart ? "Added to Cart" : "Add to Cart"}
         </Button>
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={buyNow}
+          onClick={() => buyNow(selectedVariant?._id)}
+          disabled={displayStock <= 0}
         >
           Buy Now
         </Button>

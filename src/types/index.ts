@@ -59,6 +59,24 @@ export interface Product {
   createdAt: string;
   inWishlist: boolean;
   inCart: boolean;
+  variants: Variant[];
+}
+
+export interface Variant {
+  _id: string;
+  name: string;
+  price: {
+    $numberDecimal: string;
+  };
+  stock: number;
+  weight: number;
+  sku: string;
+  images: string[];
+  dimensions: {
+    height: number;
+    length: number;
+    width: number;
+  };
 }
 
 // Props for ProductImageCarousel Component

@@ -1,4 +1,5 @@
 "use client";
+
 import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import {
@@ -12,6 +13,29 @@ import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
+
+// Define Product type based on provided data
+interface Product {
+  _id: string;
+  name: string;
+  description: string;
+  variants: {
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    dimensions: { height: number; length: number; width: number };
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  images: string[];
+  rating: number;
+  brand: string;
+  createdAt: string;
+  inWishlist?: boolean;
+  inCart?: boolean;
+}
 
 // Skeleton Product Card
 const SkeletonProductCard = () => (
@@ -43,12 +67,11 @@ type ProductCardProps = {
   imageSrc: string;
   title: string;
   price: string;
-  originalPrice: string;
+  originalPrice: number;
   isBestSeller: boolean;
   productId: string;
-  skuParameters: any;
-  inWishlist: boolean;
-  inCart: boolean;
+  inWishlist: any;
+  inCart: any;
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -212,17 +235,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
 // ProductCategoryGrid Component
 const ProductCategoryGrid: React.FC = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const ProductsResponse = await getProductsAPI();
-      console.log(ProductsResponse);
-      setProducts(ProductsResponse.data.data.products);
+      const productsResponse = await getProductsAPI();
+      setProducts(productsResponse.data.data.products);
     } catch (error: any) {
-      console.log(error);
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
@@ -240,27 +262,34 @@ const ProductCategoryGrid: React.FC = () => {
 
       {/* Responsive Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-        {loading
-          ? Array(10)
-              .fill(0)
-              .map((_, index) => <SkeletonProductCard key={index} />)
-          : products.length > 0 &&
-            products
-              .slice(0, 10)
-              .map((product: any, index) => (
-                <ProductCard
-                  key={index}
-                  imageSrc={product.images[0]}
-                  title={product.name}
-                  price={product.price?.$numberDecimal || "N/A"}
-                  originalPrice={(product.price?.$numberDecimal ?? 0) + "0"}
-                  isBestSeller={true}
-                  productId={product._id}
-                  skuParameters={product.skuParameters}
-                  inWishlist={product?.inWishlist}
-                  inCart={product?.inCart}
-                />
-              ))}
+        {loading ? (
+          Array(10)
+            .fill(0)
+            .map((_, index) => <SkeletonProductCard key={index} />)
+        ) : products.length > 0 ? (
+          products.slice(0, 10).map((product) => {
+            const firstVariant = product.variants[0]; // Use first variant for price
+            return (
+              <ProductCard
+                key={product._id}
+                imageSrc={product.images[0] || "/placeholder-image.jpg"}
+                title={product.name}
+                price={firstVariant?.price.$numberDecimal || "N/A"}
+                originalPrice={
+                  parseFloat(firstVariant?.price.$numberDecimal || "0") + 10
+                }
+                isBestSeller={true}
+                productId={product._id}
+                inWishlist={product?.inWishlist || false}
+                inCart={product?.inCart || false}
+              />
+            );
+          })
+        ) : (
+          <p className="text-center col-span-full text-gray-500">
+            No products available.
+          </p>
+        )}
       </div>
 
       {/* See All Products Button */}

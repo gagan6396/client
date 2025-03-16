@@ -56,26 +56,91 @@ const ProductDescriptionAndDetails = ({
             </CardHeader>
             <CardContent className="p-6 md:p-8">
               <dl className="space-y-4 md:space-y-5 text-sm md:text-base text-gray-700">
+                {/* Category */}
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Category</dt>
-                  <dd className="text-gray-600">{product.category_id.name}</dd>
+                  <dd className="text-gray-600">
+                    {typeof product.category_id === "string"
+                      ? product.category_id
+                      : product.category_id?.name || "N/A"}
+                  </dd>
                 </div>
+
+                {/* Subcategory */}
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Subcategory</dt>
-                  <dd className="text-gray-600">{product.subcategory_id.name}</dd>
+                  <dd className="text-gray-600">
+                    {typeof product.subcategory_id === "string"
+                      ? product.subcategory_id
+                      : product.subcategory_id?.name || "N/A"}
+                  </dd>
                 </div>
+
+                {/* Brand */}
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Brand</dt>
-                  <dd className="text-gray-600">{product.brand}</dd>
+                  <dd className="text-gray-600">{product.brand || "N/A"}</dd>
                 </div>
+
+                {/* SKU (Base Product) */}
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">SKU</dt>
-                  <dd className="text-gray-600">{product.sku}</dd>
+                  <dd className="text-gray-600">{product.sku || "N/A"}</dd>
                 </div>
+
+                {/* Stock (Base Product) */}
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Stock</dt>
-                  <dd className="text-gray-600">{product.stock}</dd>
+                  <dd className="text-gray-600">{product.stock ?? "N/A"}</dd>
                 </div>
+
+                {/* Weight (Base Product) */}
+                {product.weight && (
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                    <dt className="font-semibold text-gray-800">Weight</dt>
+                    <dd className="text-gray-600">{`${product.weight} kg`}</dd>
+                  </div>
+                )}
+
+                {/* Dimensions (Base Product) */}
+                {/* {product.dimensions && (
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
+                    <dt className="font-semibold text-gray-800">Dimensions</dt>
+                    <dd className="text-gray-600">{`${product.dimensions.height} x ${product.dimensions.length} x ${product.dimensions.width} cm`}</dd>
+                  </div>
+                )} */}
+
+                {/* Variants (if available) */}
+                {product.variants && product.variants.length > 0 && (
+                  <div className="border-b border-gray-100 pb-3">
+                    <dt className="font-semibold text-gray-800 mb-2">Variants</dt>
+                    <dd className="text-gray-600">
+                      <ul className="space-y-2">
+                        {product.variants.map((variant) => (
+                          <li
+                            key={variant._id}
+                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
+                          >
+                            <span>
+                              {variant.name} - ₹{variant.price.$numberDecimal} (
+                              {variant.stock} in stock)
+                              {variant.weight ? `, ${variant.weight} kg` : ""}
+                            </span>
+                            {variant.dimensions && (
+                              <span className="text-sm text-gray-500">
+                                Dimensions: {variant.dimensions.height} x{" "}
+                                {variant.dimensions.length} x{" "}
+                                {variant.dimensions.width} cm
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                )}
+
+                {/* Created At */}
                 <div className="flex items-center justify-between pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Created At</dt>
                   <dd className="text-gray-600">
