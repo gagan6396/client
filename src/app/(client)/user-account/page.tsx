@@ -179,7 +179,7 @@ export default function UserAccount() {
     resolver: yupResolver(profileSchema),
     defaultValues: userProfile,
   });
-  const returnExchangeForm = useForm({
+  const returnExchangeForm: any = useForm({
     resolver: yupResolver(returnExchangeSchema),
     defaultValues: { reason: "", products: [] },
   });
