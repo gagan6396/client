@@ -1,7 +1,7 @@
 "use client";
 import {
   deleteToCartAPI,
-  getAddTOCartProductsAPI,
+  getAddToCartProductsAPI,
   updateToCartAPI,
 } from "@/apis/addToCartAPIs";
 import { Button } from "@/components/ui/button";
@@ -11,26 +11,32 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type CartItemProps = {
-  id: string;
+  productId: string;
+  variantId: string;
   imageSrc: string;
   title: string;
   price: number;
   quantity: number;
+  variantName: string; // Added to display variant name
   onQuantityChange: (amount: number) => void;
   onRemove: () => void;
   isUpdating: boolean;
 };
 
 const CartItem: React.FC<CartItemProps> = ({
-  id,
+  productId,
+  variantId,
   imageSrc,
   title,
   price,
   quantity,
+  variantName,
   onQuantityChange,
   onRemove,
   isUpdating,
 }) => {
+  console.log(productId, variantId);
+
   return (
     <div className="group flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
       {/* Image */}
@@ -48,6 +54,7 @@ const CartItem: React.FC<CartItemProps> = ({
           <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
             {title}
           </h3>
+          <p className="text-sm text-gray-600">{variantName}</p>
           <p className="text-green-600 font-bold text-sm md:text-base mt-1">
             ₹{price.toFixed(2)}
           </p>
@@ -96,13 +103,15 @@ const AddToCartPage: React.FC = () => {
   const getAllCartProducts = async () => {
     setLoading(true);
     try {
-      const response = await getAddTOCartProductsAPI();
+      const response = await getAddToCartProductsAPI();
       const mappedItems = response.data.data.products.map((item: any) => ({
-        id: item.productId._id,
-        imageSrc: item.productId.images[0],
-        title: item.productId.name,
-        price: parseFloat(item.productId.price.$numberDecimal),
+        productId: item.productId,
+        variantId: item.variantId,
+        imageSrc: item.productDetails.images[0] || "/placeholder-image.jpg",
+        title: item.productDetails.name,
+        price: parseFloat(item.productDetails.variant.price.$numberDecimal),
         quantity: item.quantity,
+        variantName: item.productDetails.variant.name, // Added variant name
       }));
       setCartItems(mappedItems);
     } catch (error) {
@@ -118,16 +127,25 @@ const AddToCartPage: React.FC = () => {
   }, []);
 
   // Update quantity of an item
-  const updateQuantity = async (productId: string, amount: number) => {
-    if (updatingItemId === productId) return;
-    setUpdatingItemId(productId);
+  const updateQuantity = async (
+    productId: string,
+    variantId: string,
+    amount: number
+  ) => {
+    console.log(productId, variantId, amount);
+
+    const itemKey = `${productId}-${variantId}`;
+    if (updatingItemId === itemKey) return;
+    setUpdatingItemId(itemKey);
 
     try {
-      const item = cartItems.find((item) => item.id === productId);
+      const item = cartItems.find(
+        (i) => i.productId === productId && i.variantId === variantId
+      );
       if (!item) return;
 
       const newQuantity = Math.max(1, item.quantity + amount);
-      await updateToCartAPI({ productId, quantity: newQuantity });
+      await updateToCartAPI({ productId, variantId, quantity: newQuantity });
       await getAllCartProducts();
       toast.success("Quantity updated!");
     } catch (error) {
@@ -139,12 +157,13 @@ const AddToCartPage: React.FC = () => {
   };
 
   // Remove an item from the cart
-  const removeItem = async (productId: string) => {
-    if (updatingItemId === productId) return;
-    setUpdatingItemId(productId);
+  const removeItem = async (productId: string, variantId: string) => {
+    const itemKey = `${productId}-${variantId}`;
+    if (updatingItemId === itemKey) return;
+    setUpdatingItemId(itemKey);
 
     try {
-      await deleteToCartAPI(productId);
+      await deleteToCartAPI({ productId, variantId });
       await getAllCartProducts();
       toast.success("Item removed from cart!");
     } catch (error) {
@@ -195,17 +214,24 @@ const AddToCartPage: React.FC = () => {
             <div className="grid grid-cols-1 gap-6 md:gap-8">
               {cartItems.map((item) => (
                 <CartItem
-                  key={item.id}
+                  key={`${item.productId}-${item.variantId}`}
                   {...item}
-                  onQuantityChange={(amount) => updateQuantity(item.id, amount)}
-                  onRemove={() => removeItem(item.id)}
-                  isUpdating={updatingItemId === item.id}
+                  onQuantityChange={(amount) =>
+                    updateQuantity(item.productId, item.variantId, amount)
+                  }
+                  onRemove={() => removeItem(item.productId, item.variantId)}
+                  isUpdating={
+                    updatingItemId === `${item.productId}-${item.variantId}`
+                  }
                 />
               ))}
             </div>
           ) : (
             <div className="text-center mt-12 md:mt-16">
-              <ShoppingBag size={80} className="text-gray-200 mx-auto mb-6 animate-bounce" />
+              <ShoppingBag
+                size={80}
+                className="text-gray-200 mx-auto mb-6 animate-bounce"
+              />
               <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
                 Your Cart is Empty
               </h3>
@@ -229,7 +255,9 @@ const AddToCartPage: React.FC = () => {
               Cart Summary
             </h2>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-600 text-base md:text-lg">Subtotal:</span>
+              <span className="text-gray-600 text-base md:text-lg">
+                Subtotal:
+              </span>
               <span className="text-green-600 font-bold text-lg md:text-xl">
                 ₹{calculateTotal()}
               </span>

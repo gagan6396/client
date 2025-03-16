@@ -9,11 +9,13 @@ import { FaHeart } from "react-icons/fa";
 
 interface ProductDetailsProps {
   product: Product;
-  addToCart: (variantId?: string) => void; // Updated to accept variantId
-  buyNow: (variantId?: string) => void; // Updated to accept variantId
+  addToCart: () => void; // Updated to not require variantId here, handled via state
+  buyNow: () => void; // Updated to not require variantId here, handled via state
   addToWishList: () => void;
   deleteProductFromWishlist: () => void;
   subCategoryProducts: Product[];
+  selectedVariantId: string | null; // Added from ProductDetailPage
+  setSelectedVariantId: (variantId: string | null) => void; // Added from ProductDetailPage
 }
 
 const ProductDetails = ({
@@ -22,11 +24,18 @@ const ProductDetails = ({
   buyNow,
   addToWishList,
   deleteProductFromWishlist,
+  subCategoryProducts,
+  selectedVariantId,
+  setSelectedVariantId,
 }: ProductDetailsProps) => {
   const router = useRouter();
+
+  // Set initial selected variant based on selectedVariantId or default to first variant
   const [selectedVariant, setSelectedVariant] = useState(
-    product.variants?.[0] || null
-  ); // Default to first variant if available
+    product.variants.find((v) => v._id === selectedVariantId) ||
+      product.variants?.[0] ||
+      null
+  );
 
   // Fallback to product price/stock if no variants, otherwise use selected variant
   const displayPrice =
@@ -38,6 +47,7 @@ const ProductDetails = ({
   // Handle variant selection
   const handleVariantChange = (variant: typeof selectedVariant) => {
     setSelectedVariant(variant);
+    setSelectedVariantId(variant._id); // Sync with parent state
   };
 
   return (
@@ -65,7 +75,7 @@ const ProductDetails = ({
       </div>
 
       {/* Variant Selection */}
-      {product.variants && product.variants.length > 1 && (
+      {product.variants && (
         <div className="mt-4">
           <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
             Select Variant:
@@ -102,7 +112,7 @@ const ProductDetails = ({
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={() => addToCart(selectedVariant?._id)}
+          onClick={addToCart} // Variant ID handled in parent component
           disabled={product.inCart || displayStock <= 0}
         >
           <AiOutlineShoppingCart className="mr-1 sm:mr-2" />
@@ -110,7 +120,7 @@ const ProductDetails = ({
         </Button>
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={() => buyNow(selectedVariant?._id)}
+          onClick={buyNow} // Variant ID handled in parent component
           disabled={displayStock <= 0}
         >
           Buy Now

@@ -94,7 +94,8 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Category</dt>
                   <dd className="text-gray-600">
-                    {product.category_id && typeof product.category_id !== "string"
+                    {product.category_id &&
+                    typeof product.category_id !== "string"
                       ? product.category_id.name
                       : "N/A"}
                   </dd>
@@ -104,7 +105,8 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Subcategory</dt>
                   <dd className="text-gray-600">
-                    {product.subcategory_id && typeof product.subcategory_id !== "string"
+                    {product.subcategory_id &&
+                    typeof product.subcategory_id !== "string"
                       ? product.subcategory_id.name
                       : "N/A"}
                   </dd>
@@ -119,7 +121,9 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 {/* Variants */}
                 {product.variants && product.variants.length > 0 && (
                   <div className="border-b border-gray-100 pb-3">
-                    <dt className="font-semibold text-gray-800 mb-2">Variants</dt>
+                    <dt className="font-semibold text-gray-800 mb-2">
+                      Variants
+                    </dt>
                     <dd className="text-gray-600">
                       <ul className="space-y-2">
                         {product.variants.map((variant) => (
@@ -129,7 +133,8 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                           >
                             <span>
                               {variant.name} - ₹
-                              {variant.price && typeof variant.price === "object"
+                              {variant.price &&
+                              typeof variant.price === "object"
                                 ? variant.price.$numberDecimal
                                 : variant.price}{" "}
                               ({variant.stock} in stock)
@@ -173,6 +178,9 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isReviewsLoading, setIsReviewsLoading] = useState<boolean>(true);
   const [subCategoryProducts, setSubCategoryProducts] = useState<Product[]>([]);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    null
+  ); // New state for variant selection
   const router = useRouter();
 
   // Fetch product details
@@ -187,6 +195,15 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       const response = await getProductByIdAPI(productId);
       if (response?.data?.data) {
         setProduct(response.data.data);
+        // Set the default variant to the first one if available
+        console.log(
+          "response.data.data.variants[0]._id",
+          response.data.data.variants[0]._id
+        );
+
+        if (response.data.data.variants.length > 0) {
+          setSelectedVariantId(response.data.data.variants[0]._id);
+        }
         const subcategoryId =
           typeof response.data.data.subcategory_id === "string"
             ? response.data.data.subcategory_id
@@ -281,11 +298,15 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
 
   // Add to cart
   const addToCart = useCallback(async () => {
-    if (!product?._id) return;
+    if (!product?._id || !selectedVariantId) {
+      toast.error("Please select a variant to add to cart.");
+      return;
+    }
 
     try {
       const response = await addToCartAPI({
         productId: product._id,
+        variantId: selectedVariantId,
         quantity: 1,
       });
       toast.success(response.data.message || "Item added to cart!");
@@ -299,15 +320,19 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       );
       console.error("Error adding to cart:", error);
     }
-  }, [product]);
+  }, [product, selectedVariantId]);
 
   // Buy now
   const buyNow = useCallback(async () => {
-    if (!product?._id) return;
+    if (!product?._id || !selectedVariantId) {
+      toast.error("Please select a variant to proceed to checkout.");
+      return;
+    }
 
     try {
       await addToCartAPI({
         productId: product._id,
+        variantId: selectedVariantId,
         quantity: 1,
       });
       router.push("/checkout");
@@ -318,7 +343,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       );
       console.error("Error during Buy Now:", error);
     }
-  }, [product, router]);
+  }, [product, selectedVariantId, router]);
 
   // Fetch products by subcategory
   const fetchAllProductsBySubCategory = useCallback(
@@ -403,6 +428,8 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
             addToWishList={addToWishList}
             deleteProductFromWishlist={deleteProductFromWishlist}
             subCategoryProducts={subCategoryProducts}
+            selectedVariantId={selectedVariantId} // Pass selectedVariantId
+            setSelectedVariantId={setSelectedVariantId} // Pass setter for variant selection
           />
           <SupplierDetails product={product} />
         </div>
