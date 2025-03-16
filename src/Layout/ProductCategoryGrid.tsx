@@ -1,20 +1,23 @@
 "use client";
 
 import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
+import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import {
   addToWishListAPI,
   deleteProductFromWishlistAPI,
 } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
+import l2 from "@/public/l2.jpg";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-// Define Product type based on provided API response
+// Define Product interface based on API response
 interface Product {
   _id: string;
   name: string;
@@ -40,8 +43,8 @@ interface Product {
   inCart?: boolean;
 }
 
-// Skeleton Product Card
-const SkeletonProductCard = () => (
+// Skeleton Card for Products
+const SkeletonCard = () => (
   <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
     <div className="w-full aspect-square bg-gray-300 rounded-t-2xl" />
     <div className="p-4 md:p-6 space-y-3">
@@ -65,6 +68,15 @@ const SkeletonProductCard = () => (
   </div>
 );
 
+// Skeleton Card for Categories
+const SkeletonCategoryCard = () => (
+  <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 animate-pulse">
+    <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-300 rounded-full mb-4" />
+    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2" />
+    <div className="h-3 bg-gray-300 rounded w-1/2" />
+  </div>
+);
+
 // ProductCard Component
 type ProductCardProps = {
   imageSrc: string;
@@ -73,7 +85,7 @@ type ProductCardProps = {
   originalPrice: number;
   isBestSeller: boolean;
   productId: string;
-  variantId: string; // Added variantId
+  variantId: string;
   inWishlist?: boolean;
   inCart?: boolean;
 };
@@ -89,19 +101,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   inWishlist,
   inCart,
 }) => {
-  const [isInWishlist, setIsInWishlist] = useState(inWishlist);
-  const [isInCart, setIsInCart] = useState(inCart);
+  const [isInWishlist, setIsInWishlist] = useState(inWishlist ?? false);
+  const [isInCart, setIsInCart] = useState(inCart ?? false);
   const navigation = useRouter();
 
   const addToWishList = async () => {
     try {
       const response = await addToWishListAPI(productId);
       setIsInWishlist(true);
-      toast.success(response.data.message || "Item added to wishlist!");
+      toast.success(response?.data?.message || "Item added to wishlist!");
     } catch (error: any) {
-      console.error(error);
+      console.error("Error adding to wishlist:", error);
       toast.error(
-        error.response?.data?.message ||
+        error?.response?.data?.message ||
           "Failed to add item to wishlist. Try again later."
       );
     }
@@ -111,11 +123,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     try {
       const response = await deleteProductFromWishlistAPI(productId);
       setIsInWishlist(false);
-      toast.success(response.data.message || "Item removed from wishlist!");
+      toast.success(response?.data?.message || "Item removed from wishlist!");
     } catch (error: any) {
-      console.error(error);
+      console.error("Error removing from wishlist:", error);
       toast.error(
-        error.response?.data?.message ||
+        error?.response?.data?.message ||
           "Failed to remove item from wishlist. Try again later."
       );
     }
@@ -129,11 +141,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         quantity: 1,
       });
       setIsInCart(true);
-      toast.success(response.data.message || "Item added to cart!");
+      toast.success(response?.data?.message || "Item added to cart!");
     } catch (error: any) {
-      console.error(error);
+      console.error("Error adding to cart:", error);
       toast.error(
-        error.response?.data?.message ||
+        error?.response?.data?.message ||
           "Failed to add item to cart. Try again later."
       );
     }
@@ -143,11 +155,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     try {
       const response = await deleteToCartAPI({ productId, variantId });
       setIsInCart(false);
-      toast.success(response.data.message || "Item removed from cart!");
+      toast.success(response?.data?.message || "Item removed from cart!");
     } catch (error: any) {
-      console.error(error);
+      console.error("Error removing from cart:", error);
       toast.error(
-        error.response?.data?.message ||
+        error?.response?.data?.message ||
           "Failed to remove item from cart. Try again later."
       );
     }
@@ -155,17 +167,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
-      {/* Badge and Image */}
       <div
         className="relative overflow-hidden"
         onClick={() => navigation.push(`/products/${productId}`)}
       >
         <img
           src={imageSrc}
-          alt={title}
+          alt={title || "Product Image"}
           className="w-full aspect-square object-cover rounded-t-2xl transition-transform duration-500 group-hover:scale-105"
         />
-        {/* Badges */}
         {isBestSeller && (
           <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
             Best Seller
@@ -174,16 +184,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
           -5%
         </div>
-        {/* Overlay */}
         <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
       </div>
-
-      {/* Content */}
       <div className="p-4 md:p-6 space-y-3">
         <h3 className="text-gray-800 text-base md:text-lg font-semibold line-clamp-1 group-hover:text-green-700 transition-colors">
-          {title}
+          {title || "Unnamed Product"}
         </h3>
-        {/* Rating */}
         <div className="flex">
           {[...Array(5)].map((_, index) => (
             <svg
@@ -197,18 +203,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </svg>
           ))}
         </div>
-        {/* Price */}
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-2">
             <span className="text-green-600 font-bold text-lg md:text-xl">
-              ₹{price}
+              ₹{price || "N/A"}
             </span>
             <span className="text-gray-400 line-through text-sm md:text-base">
-              ₹{originalPrice}
+              ₹{originalPrice || "N/A"}
             </span>
           </div>
         </div>
-        {/* Actions */}
         <div className="flex items-center justify-between gap-3">
           <Button
             className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
@@ -239,76 +243,179 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-// ProductCategoryGrid Component
-const ProductCategoryGrid: React.FC = () => {
+// Main Component
+const ProductCategories = () => {
+  const navigate = useRouter();
+  const [categories, setCategories] = useState<any[]>([]); // Define a Category interface if needed
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchCategories = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
+
+      const categoryResponse = await getCategoriesAPI();
+      setCategories(categoryResponse?.data?.data || []);
+
       const productsResponse = await getProductsAPI();
-      setProducts(productsResponse.data.data.products);
+      setProducts(productsResponse?.data?.data?.products || []);
     } catch (error: any) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching data:", error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Failed to load products and categories. Please try again later.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchData();
   }, []);
 
-  return (
-    <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      <h1 className="text-center text-3xl md:text-5xl font-extrabold text-gray-900 mb-10 md:mb-12 tracking-tight">
-        Our Best Seller Products
-      </h1>
-
-      {/* Responsive Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-        {loading ? (
-          Array(10)
-            .fill(0)
-            .map((_, index) => <SkeletonProductCard key={index} />)
-        ) : products.length > 0 ? (
-          products.slice(0, 10).map((product) => {
-            const firstVariant = product.variants[0]; // Use first variant for price
-            return (
-              <ProductCard
-                key={product._id}
-                imageSrc={product.images[0] || "/placeholder-image.jpg"}
-                title={product.name}
-                price={firstVariant.price.$numberDecimal}
-                originalPrice={
-                  parseFloat(firstVariant.price.$numberDecimal) + 10
-                }
-                isBestSeller={true}
-                productId={product._id}
-                variantId={firstVariant._id} // Pass variantId
-                inWishlist={product.inWishlist || false}
-                inCart={product.inCart || false}
-              />
-            );
-          })
-        ) : (
-          <p className="text-center col-span-full text-gray-500">
-            No products available.
-          </p>
-        )}
-      </div>
-
-      {/* See All Products Button */}
-      <div className="flex justify-center mt-10 md:mt-12">
-        <Link href="/products">
-          <Button className="bg-green-600 text-white hover:bg-green-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
-            See All Products
+  if (error) {
+    return (
+      <section className="bg-gradient-to-b from-white to-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Oops! Something Went Wrong
+          </h1>
+          <p className="text-gray-600 text-base md:text-lg mb-6">{error}</p>
+          <Button
+            onClick={fetchData}
+            className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-full text-lg font-semibold shadow-md transition-all duration-300"
+          >
+            Retry
           </Button>
-        </Link>
-      </div>
-    </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="bg-gradient-to-b from-white to-gray-50">
+      {/* Top Products Section */}
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="container mx-auto">
+          <h1 className="text-3xl md:text-5xl text-center font-extrabold text-gray-900 mb-10 tracking-tight">
+            Popular Products
+          </h1>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            {loading
+              ? Array(10)
+                  .fill(0)
+                  .map((_, index) => <SkeletonCard key={index} />)
+              : products.slice(0, 10).map((product) => {
+                  const firstVariant = product.variants?.[0];
+                  return (
+                    <ProductCard
+                      key={product._id}
+                      imageSrc={product.images?.[0] || "/placeholder-image.jpg"}
+                      title={product.name || "Unnamed Product"}
+                      price={firstVariant?.price?.$numberDecimal || "N/A"}
+                      originalPrice={
+                        parseFloat(firstVariant?.price?.$numberDecimal || "0") +
+                        10
+                      }
+                      isBestSeller={true}
+                      productId={product._id}
+                      variantId={firstVariant?._id || ""}
+                      inWishlist={product.inWishlist ?? false}
+                      inCart={product.inCart ?? false}
+                    />
+                  );
+                })}
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/products">
+              <Button className="bg-green-600 text-white hover:bg-green-700 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300">
+                View All Products
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      {/* Best Product Categories Section */}
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-5xl text-center font-extrabold text-gray-900 mb-10 tracking-tight">
+            Best Product Categories
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+            {loading
+              ? Array(10)
+                  .fill(0)
+                  .map((_, index) => <SkeletonCategoryCard key={index} />)
+              : categories.slice(0, 10).map((category) => (
+                  <div
+                    key={category?._id || `category-${Math.random()}`}
+                    className="group bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 md:p-6 transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
+                  >
+                    <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+                      <img
+                        src={category?.images?.[0] || "/placeholder-category.jpg"}
+                        alt={category?.name || "Unnamed Category"}
+                        className="w-full h-full object-cover rounded-full border-2 border-green-100 group-hover:border-green-300 transition-colors"
+                      />
+                      <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
+                    </div>
+                    <h3 className="text-base md:text-lg font-semibold text-gray-800 line-clamp-1">
+                      {category?.name || "Unnamed Category"}
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-500 line-clamp-2 leading-relaxed">
+                      {category?.description || "No description available"}
+                    </p>
+                    <Link
+                      href={`/products?category=${category?._id || ""}`}
+                      className="mt-3 inline-block text-green-600 font-medium text-sm md:text-base hover:text-green-700 transition-colors"
+                    >
+                      Explore Now →
+                    </Link>
+                  </div>
+                ))}
+          </div>
+        </div>
+      </main>
+
+      {/* Video and Description Section */}
+      <main className="px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center bg-white rounded-3xl shadow-lg p-6 md:p-10">
+            <div className="relative overflow-hidden rounded-2xl">
+              <Image
+                src={l2}
+                alt="Nature Essence"
+                className="w-full h-auto object-cover transform transition-all hover:scale-105 duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent" />
+            </div>
+            <div className="space-y-6">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                Discover the Essence of Nature
+              </h2>
+              <p className="text-gray-600 text-base md:text-lg lg:text-xl leading-relaxed">
+                At Gauraaj, we’re passionate about delivering pure, organic
+                products sourced directly from nature’s heart. Embrace
+                sustainable living and join us in nurturing a healthier,
+                greener planet.
+              </p>
+              <Button
+                onClick={() => navigate.push("/about")}
+                className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-full text-lg font-semibold shadow-md transition-all duration-300"
+              >
+                Learn More
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
   );
 };
 
-export default ProductCategoryGrid;
+export default ProductCategories;

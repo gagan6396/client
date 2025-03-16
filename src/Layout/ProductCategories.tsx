@@ -8,7 +8,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify"; // Import toast for user feedback
 import { ProductCard } from "./ProductCategoryGrid";
+
+// Define Product interface based on API response
+interface Product {
+  _id: string;
+  name: string;
+  images: string[];
+  variants: {
+    price: { $numberDecimal: string };
+    _id: string;
+  }[];
+  inWishlist?: boolean;
+  inCart?: boolean;
+}
 
 const SkeletonCard = () => (
   <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
@@ -31,20 +45,28 @@ const SkeletonCategoryCard = () => (
 
 const ProductCategories = () => {
   const navigate = useRouter();
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]); // Keep any for categories until we define a type
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await getCategoriesAPI();
-      setCategories(response.data.data);
+      setError(null); // Reset error state on new fetch
+
+      const categoryResponse = await getCategoriesAPI();
+      setCategories(categoryResponse?.data?.data || []);
 
       const productsResponse = await getProductsAPI();
-      setProducts(productsResponse.data.data.products);
+      setProducts(productsResponse?.data?.data?.products || []);
     } catch (error: any) {
-      console.log(error);
+      console.error("Error fetching data:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to load products and categories. Please try again later.";
+      setError(errorMessage);
+      toast.error(errorMessage); // Notify user
     } finally {
       setLoading(false);
     }
@@ -53,6 +75,25 @@ const ProductCategories = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  if (error) {
+    return (
+      <section className="bg-gradient-to-b from-white to-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Oops! Something Went Wrong
+          </h1>
+          <p className="text-gray-600 text-base md:text-lg mb-6">{error}</p>
+          <Button
+            onClick={fetchCategories}
+            className="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-full text-lg font-semibold shadow-md transition-all duration-300"
+          >
+            Retry
+          </Button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-gradient-to-b from-white to-gray-50">
@@ -67,25 +108,25 @@ const ProductCategories = () => {
               ? Array(10)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
-              : products.slice(0, 10).map((product: any) => {
-                  const firstVariant = product.variants[0]; // Use first variant for price and ID
+              : products.slice(0, 10).map((product) => {
+                  const firstVariant = product.variants?.[0]; // Optional chaining
                   return (
                     <div
                       key={product._id}
                       className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
                     >
                       <ProductCard
-                        imageSrc={product.images[0] || "/placeholder-image.jpg"}
-                        title={product.name}
-                        price={firstVariant.price.$numberDecimal || "N/A"}
+                        imageSrc={product.images?.[0] || "/placeholder-image.jpg"}
+                        title={product.name || "Unnamed Product"}
+                        price={firstVariant?.price?.$numberDecimal || "N/A"}
                         originalPrice={
-                          parseFloat(firstVariant.price.$numberDecimal || "0") + 10
+                          parseFloat(firstVariant?.price?.$numberDecimal || "0") + 10
                         }
                         isBestSeller={true}
                         productId={product._id}
-                        variantId={firstVariant._id} // Pass variantId
-                        inWishlist={product.inWishlist}
-                        inCart={product.inCart}
+                        variantId={firstVariant?._id || ""} // Fallback to empty string
+                        inWishlist={product.inWishlist ?? false}
+                        inCart={product.inCart ?? false}
                       />
                     </div>
                   );
@@ -112,27 +153,27 @@ const ProductCategories = () => {
               ? Array(10)
                   .fill(0)
                   .map((_, index) => <SkeletonCategoryCard key={index} />)
-              : categories.slice(0, 10).map((category: any) => (
+              : categories.slice(0, 10).map((category) => (
                   <div
-                    key={category._id}
+                    key={category?._id || `category-${Math.random()}`} // Fallback key
                     className="group bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 md:p-6 transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
                   >
                     <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
                       <img
-                        src={category.images?.[0] || "/placeholder-category.jpg"}
-                        alt={category.name}
+                        src={category?.images?.[0] || "/placeholder-category.jpg"}
+                        alt={category?.name || "Unnamed Category"}
                         className="w-full h-full object-cover rounded-full border-2 border-green-100 group-hover:border-green-300 transition-colors"
                       />
                       <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
                     </div>
                     <h3 className="text-base md:text-lg font-semibold text-gray-800 line-clamp-1">
-                      {category.name}
+                      {category?.name || "Unnamed Category"}
                     </h3>
                     <p className="text-xs md:text-sm text-gray-500 line-clamp-2 leading-relaxed">
-                      {category.description}
+                      {category?.description || "No description available"}
                     </p>
                     <Link
-                      href={`/products?category=${category._id}`}
+                      href={`/products?category=${category?._id || ""}`}
                       className="mt-3 inline-block text-green-600 font-medium text-sm md:text-base hover:text-green-700 transition-colors"
                     >
                       Explore Now →
