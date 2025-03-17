@@ -1,4 +1,5 @@
 "use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Product } from "@/types";
@@ -82,59 +83,61 @@ const ProductDescriptionAndDetails = ({
                   <dd className="text-gray-600">{product.brand || "N/A"}</dd>
                 </div>
 
-                {/* SKU (Base Product) */}
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
-                  <dt className="font-semibold text-gray-800">SKU</dt>
-                  <dd className="text-gray-600">{product.sku || "N/A"}</dd>
-                </div>
-
-                {/* Stock (Base Product) */}
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
-                  <dt className="font-semibold text-gray-800">Stock</dt>
-                  <dd className="text-gray-600">{product.stock ?? "N/A"}</dd>
-                </div>
-
-                {/* Weight (Base Product) */}
-                {product.weight && (
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
-                    <dt className="font-semibold text-gray-800">Weight</dt>
-                    <dd className="text-gray-600">{`${product.weight} kg`}</dd>
-                  </div>
-                )}
-
-                {/* Dimensions (Base Product) */}
-                {/* {product.dimensions && (
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
-                    <dt className="font-semibold text-gray-800">Dimensions</dt>
-                    <dd className="text-gray-600">{`${product.dimensions.height} x ${product.dimensions.length} x ${product.dimensions.width} cm`}</dd>
-                  </div>
-                )} */}
-
                 {/* Variants (if available) */}
                 {product.variants && product.variants.length > 0 && (
                   <div className="border-b border-gray-100 pb-3">
                     <dt className="font-semibold text-gray-800 mb-2">Variants</dt>
                     <dd className="text-gray-600">
                       <ul className="space-y-2">
-                        {product.variants.map((variant) => (
-                          <li
-                            key={variant._id}
-                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
-                          >
-                            <span>
-                              {variant.name} - ₹{variant.price.$numberDecimal} (
-                              {variant.stock} in stock)
-                              {variant.weight ? `, ${variant.weight} kg` : ""}
-                            </span>
-                            {variant.dimensions && (
-                              <span className="text-sm text-gray-500">
-                                Dimensions: {variant.dimensions.height} x{" "}
-                                {variant.dimensions.length} x{" "}
-                                {variant.dimensions.width} cm
+                        {product.variants.map((variant) => {
+                          const currentDate = new Date("2025-03-17"); // Fixed date for consistency
+                          const isDiscountActive =
+                            variant.discount?.active &&
+                            (!variant.discount.startDate ||
+                              new Date(variant.discount.startDate) <= currentDate) &&
+                            (!variant.discount.endDate ||
+                              new Date(variant.discount.endDate) >= currentDate);
+                          const price = parseFloat(variant.price.$numberDecimal);
+                          const discountValue = isDiscountActive
+                            ? variant.discount?.value || 0
+                            : 0;
+                          const originalPrice = discountValue
+                            ? price / (1 - discountValue / 100)
+                            : price;
+
+                          return (
+                            <li
+                              key={variant._id}
+                              className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
+                            >
+                              <span>
+                                {variant.name} - ₹{price.toFixed(2)}{" "}
+                                {isDiscountActive && discountValue > 0 && (
+                                  <span className="text-gray-500 line-through">
+                                    ₹{originalPrice.toFixed(2)}
+                                  </span>
+                                )}{" "}
+                                ({variant.stock} in stock)
+                                {variant.weight ? `, ${variant.weight} kg` : ""}
+                                {isDiscountActive && discountValue > 0 && (
+                                  <span className="text-green-600 ml-2">
+                                    ({discountValue}% off)
+                                  </span>
+                                )}
                               </span>
-                            )}
-                          </li>
-                        ))}
+                              {variant.dimensions && (
+                                <span className="text-sm text-gray-500 mt-1 sm:mt-0">
+                                  Dimensions: {variant.dimensions.height} x{" "}
+                                  {variant.dimensions.length} x{" "}
+                                  {variant.dimensions.width} cm
+                                </span>
+                              )}
+                              <span className="text-sm text-gray-500 mt-1 sm:mt-0">
+                                SKU: {variant.sku || "N/A"}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </dd>
                   </div>
