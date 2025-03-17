@@ -1,4 +1,5 @@
 "use client";
+
 import { getAddToCartProductsAPI } from "@/apis/addToCartAPIs";
 import { createOrderAPI } from "@/apis/orderAPIs";
 import { verifyPaymentAPI } from "@/apis/paymentAPIs";
@@ -14,13 +15,22 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
+// Updated CartItem interface based on new cart response structure
 interface CartItem {
   id: string; // Product ID
-  variantId: string; // Variant SKU or ID
+  variantId: string; // Variant ID
   imageSrc: string;
-  title: string; // Product name + variant name
-  price: number; // Variant price
+  title: string; // Product name
+  variantName: string; // Variant name
+  price: string; // Variant price as $numberDecimal string
   quantity: number;
+  discount?: {
+    type?: string;
+    value?: number;
+    active: boolean;
+    startDate?: string;
+    endDate?: string;
+  }; // Added discount field
 }
 
 interface UserProfile {
@@ -104,17 +114,18 @@ const CheckoutPage = () => {
           });
         }
 
-        // Map cart items based on the provided API response
+        // Map cart items based on the new API response structure
         const mappedItems = cartRes.data.data.products.map((item: any) => ({
           id: item.productId,
           variantId: item.variantId,
           imageSrc:
-            item.productDetails.variant.images.length > 0
-              ? item.productDetails.variant.images[0]
-              : item.productDetails.images[0],
-          title: `${item.productDetails.name} - ${item.productDetails.variant.name}`,
-          price: parseFloat(item.productDetails.variant.price.$numberDecimal),
+            item.productDetails.images.find((img: any) => img.sequence === 0)?.url ||
+            "/placeholder-image.jpg",
+          title: item.productDetails.name,
+          variantName: item.productDetails.variant.name,
+          price: item.productDetails.variant.price.$numberDecimal, // Keep as string
           quantity: item.quantity,
+          discount: item.productDetails.variant.discount, // Add discount field
         }));
         setCartItems(mappedItems);
       } catch (error) {
@@ -142,9 +153,11 @@ const CheckoutPage = () => {
       const orderData = {
         products: cartItems.map((item) => ({
           productId: item.id,
-          variantId: item.variantId, // Include variantId
+          variantId: item.variantId,
           quantity: item.quantity,
-          discount: 0,
+          discount: item.discount?.active && item.discount?.value
+            ? item.discount.value
+            : 0, // Include discount if active
           tax: 0,
         })),
         shippingAddress: addressSnapshot,
@@ -235,9 +248,16 @@ const CheckoutPage = () => {
     });
   };
 
+  // Calculate total with discounts
   const calculateTotal = () => {
     return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => {
+        const numericPrice = parseFloat(item.price);
+        const discountedPrice = item.discount?.active && item.discount?.value
+          ? numericPrice * (1 - (item.discount.value / 100))
+          : numericPrice;
+        return total + discountedPrice * item.quantity;
+      }, 0)
       .toFixed(2);
   };
 
@@ -344,29 +364,53 @@ const CheckoutPage = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-4">
-            {cartItems.map((item) => (
-              <div
-                key={`${item.id}-${item.variantId}`}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={item.imageSrc}
-                    alt={item.title}
-                    className="w-16 h-16 rounded-lg object-cover"
-                  />
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="text-gray-600">
-                      ₹{item.price.toFixed(2)} x {item.quantity}
-                    </p>
+            {cartItems.map((item) => {
+              const numericPrice = parseFloat(item.price);
+              const discountedPrice = item.discount?.active && item.discount?.value
+                ? numericPrice * (1 - (item.discount.value / 100))
+                : numericPrice;
+
+              return (
+                <div
+                  key={`${item.id}-${item.variantId}`}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.imageSrc}
+                      alt={item.title}
+                      className="w-16 h-16 rounded-lg object-cover"
+                    />
+                    <div>
+                      <h3 className="text-lg font-semibold">{item.title}</h3>
+                      <p className="text-gray-600">{item.variantName}</p>
+                      <div className="flex items-center gap-2">
+                        {item.discount?.active && item.discount?.value ? (
+                          <>
+                            <p className="text-gray-800">
+                              ₹{discountedPrice.toFixed(2)} x {item.quantity}
+                            </p>
+                            <p className="text-gray-500 line-through text-sm">
+                              ₹{numericPrice.toFixed(2)}
+                            </p>
+                            <span className="text-xs text-red-500">
+                              ({item.discount.value}% OFF)
+                            </span>
+                          </>
+                        ) : (
+                          <p className="text-gray-800">
+                            ₹{numericPrice.toFixed(2)} x {item.quantity}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                  <p className="text-lg font-semibold">
+                    ₹{(discountedPrice * item.quantity).toFixed(2)}
+                  </p>
                 </div>
-                <p className="text-lg font-semibold">
-                  ₹{(item.price * item.quantity).toFixed(2)}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mt-6">
             <div className="flex justify-between">

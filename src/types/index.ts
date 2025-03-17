@@ -41,25 +41,67 @@ export interface Review {
 // Product Interface
 export interface Product {
   _id: string;
-  supplier_id: Supplier;
-  category_id: Category;
-  video?: string;
-  subcategory_id: Subcategory;
-  reviews: Review[];
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
   name: string;
   description: string;
-  price: { $numberDecimal: string };
-  stock: number;
-  weight: number;
-  images: string[];
+  variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
   rating: number;
   brand: string;
-  sku: string;
-  skuParameters: Record<string, any>;
+  isBestSeller: boolean;
   createdAt: string;
   inWishlist: boolean;
   inCart: boolean;
-  variants: Variant[];
 }
 
 export interface Variant {

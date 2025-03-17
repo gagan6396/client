@@ -10,7 +10,7 @@ interface ProductImageCarouselProps {
 
 const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
   const [selectedMedia, setSelectedMedia] = useState<string | null>(
-    product.video || product.images[0] || null
+    product.video || (product.images[0]?.url ?? null)
   );
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -26,8 +26,8 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
 
   // Combine video (if present) and images into a single array for thumbnails
   const mediaItems = product.video
-    ? [...product.images, product.video]
-    : product.images;
+    ? [product.video, ...product.images.map((img) => img.url)]
+    : product.images.map((img) => img.url);
 
   return (
     <div className="w-full">
@@ -37,7 +37,7 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
           <div className="relative flex justify-center mb-6">
             {selectedMedia === product.video ? (
               <video
-                src={selectedMedia}
+                src={selectedMedia || ""}
                 className="rounded-lg object-cover h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-auto"
                 controls
                 playsInline

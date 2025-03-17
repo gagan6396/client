@@ -1,7 +1,73 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import logo from "@/public/logo.png";
-import { Product } from "@/types";
+
+// Updated Product interface based on new data structure
+interface Product {
+  _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
+  name: string;
+  description: string;
+  variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
+}
+
 interface SupplierDetailsProps {
   product: Product;
 }
@@ -27,14 +93,16 @@ const SupplierDetails = ({ product }: SupplierDetailsProps) => {
             alt="Supplier Avatar"
             className="object-contain"
           />
-          <AvatarFallback>{product.supplier_id.username[0]}</AvatarFallback>
+          <AvatarFallback>
+            {product.supplier_id.shop_name?.[0] ?? "S"}
+          </AvatarFallback>
         </Avatar>
         <div>
           <p className="font-semibold text-sm sm:text-base md:text-lg">
-            {product.supplier_id.shop_name}
+            {product.supplier_id.shop_name ?? "Unknown Supplier"}
           </p>
           <p className="text-xs sm:text-sm md:text-base text-gray-600">
-            {product.supplier_id.email}
+            {product.supplier_id.email ?? "N/A"}
           </p>
         </div>
       </CardContent>

@@ -2,44 +2,137 @@
 
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { ProductCard } from "@/Layout/ProductCategoryGrid";
-import { default as image404, default as noProductFound } from "@/public/notfound.jpg";
+import noProductFound from "@/public/notfound.jpg";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 
-// Define Product interface based on API response
-interface Product {
+// Product Interface
+export interface Product {
   _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
   name: string;
-  price: { $numberDecimal: string };
-  images: string[];
+  description: string;
   variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
     name: string;
     price: { $numberDecimal: string };
     stock: number;
     weight: number;
-    dimensions: { height: number; length: number; width: number };
     sku: string;
     images: string[];
     _id: string;
   }[];
-  inWishlist?: boolean;
-  inCart?: boolean;
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
 }
 
+// Skeleton Product Card
+const SkeletonProductCard = () => (
+  <div className="rounded-xl overflow-hidden animate-pulse border border-gray-100">
+    <div className="w-full aspect-square bg-gray-300 rounded-t-xl" />
+    <div className="p-4 space-y-3 bg-white">
+      <div className="h-4 bg-gray-300 rounded w-3/4" />
+      <div className="flex space-x-1">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-4 w-4 bg-gray-300 rounded-full" />
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          <div className="h-5 bg-gray-300 rounded w-16" />
+          <div className="h-4 bg-gray-300 rounded w-12" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1 h-10 bg-gray-300 rounded-full" />
+        <div className="h-6 w-6 bg-gray-300 rounded-full" />
+      </div>
+    </div>
+  </div>
+);
+
 // Reusable ProductGrid Component
-const ProductGrid = ({ products }: { products: Product[] }) => {
+const ProductGrid = ({
+  products,
+  isLoading,
+}: {
+  products: Product[];
+  isLoading: boolean;
+}) => {
   return (
-    <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {products.length > 0 ? (
-        products.map((product, index) => {
+    <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {isLoading ? (
+        [...Array(8)].map((_, index) => <SkeletonProductCard key={index} />)
+      ) : products.length > 0 ? (
+        products.map((product) => {
           if (!product?.images || product.images.length === 0) {
-            console.warn(`Product at index ${index} has no images`, product);
+            console.warn(`Product ${product._id} has no images`, product);
             return null;
           }
 
-          const firstVariant = product.variants[0]; // Use first variant for price and ID
+          const firstVariant = product.variants[0];
+          const currentDate = new Date();
+          const isDiscountActive =
+            firstVariant?.discount?.active &&
+            (!firstVariant.discount.startDate ||
+              new Date(firstVariant.discount.startDate) <= currentDate) &&
+            (!firstVariant.discount.endDate ||
+              new Date(firstVariant.discount.endDate) >= currentDate);
+          const discountValue = isDiscountActive
+            ? firstVariant?.discount?.value
+            : 0;
+          const price = parseFloat(firstVariant?.price?.$numberDecimal || "0");
+          const originalPrice = discountValue
+            ? price / (1 - discountValue / 100)
+            : price + 10; // Fallback to +10 if no discount
 
           return (
             <div
@@ -47,15 +140,16 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
               className="embla__slide rounded-xl p-2 sm:p-4 my-2 sm:my-3 relative hover:shadow-lg transition-shadow duration-300"
             >
               <ProductCard
-                imageSrc={product.images[0]}
-                title={product.name}
+                images={product.images} // Pass the full images array for hover effect
+                title={`${product.name} - ${firstVariant?.name || "Default"}`}
                 price={firstVariant.price.$numberDecimal || "N/A"}
-                originalPrice={parseFloat(firstVariant.price.$numberDecimal || "0") + 10}
-                isBestSeller={true}
+                originalPrice={originalPrice}
+                isBestSeller={product.isBestSeller}
                 productId={product._id}
-                variantId={firstVariant._id} // Pass variantId
+                variantId={firstVariant._id}
                 inWishlist={product?.inWishlist}
                 inCart={product?.inCart}
+                discount={firstVariant?.discount}
               />
             </div>
           );
@@ -64,16 +158,16 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
         <div className="col-span-full text-center py-12">
           <div className="max-w-md mx-auto">
             <img
-              src="/images/no-products.svg"
+              src={noProductFound.src}
               alt="No Products Found"
-              className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
+              className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6 animate-pulse"
             />
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
               No Products Found
             </h3>
             <p className="text-sm sm:text-base text-gray-500">
-              We couldn&apos;t find any products matching your criteria. Stay
-              tuned for updates!
+              We couldn't find any products matching your criteria. Stay tuned
+              for updates!
             </p>
           </div>
         </div>
@@ -137,69 +231,34 @@ const SearchPage = () => {
     if (emblaApi) emblaApi.on("init", () => autoplay.current?.play());
   }, [emblaApi]);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-sm sm:text-base text-gray-700">
-            Loading products...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
-      <div className="col-span-full text-center py-12">
-        <div className="max-w-md mx-auto">
-          <img
-            src={noProductFound.src}
-            alt="No Products Found"
-            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
-          />
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-            No Products Found
-          </h3>
-          <p className="text-sm sm:text-base text-gray-500">
-            {error}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (filteredProducts.length === 0 && !isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gray-50">
         <div className="text-center">
           <img
-            src={image404.src}
-            alt="Products Coming Soon"
-            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6"
+            src={noProductFound.src}
+            alt="Error"
+            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6 animate-pulse"
           />
           <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-            Products Coming Soon!
+            Oops! Something Went Wrong
           </h3>
-          <p className="text-sm sm:text-base text-gray-500">
-            We&apos;re working hard to bring you amazing products. Stay tuned!
-          </p>
+          <p className="text-sm sm:text-base text-gray-500">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen py-8 sm:py-12">
       {/* Carousel Section */}
       <section className="my-8 sm:my-12">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 text-gray-900">
           Search Results
         </h2>
-        <div ref={emblaRef} className="embla w-11/12 mx-auto">
+        <div ref={emblaRef} className="embla w-full overflow-hidden">
           <div className="embla__container flex gap-4">
-            <ProductGrid products={filteredProducts} />
+            <ProductGrid products={filteredProducts} isLoading={isLoading} />
           </div>
         </div>
       </section>
@@ -210,7 +269,18 @@ const SearchPage = () => {
 // Suspense Wrapper
 export default function SuspenseWrapper() {
   return (
-    <Suspense fallback={<div>Loading products...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-sm sm:text-base text-gray-700">
+              Loading products...
+            </p>
+          </div>
+        </div>
+      }
+    >
       <SearchPage />
     </Suspense>
   );

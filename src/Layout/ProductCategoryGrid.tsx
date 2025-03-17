@@ -17,30 +17,79 @@ import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-// Define Product interface based on API response
+// Updated Product interface based on new data structure
 interface Product {
   _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
   name: string;
   description: string;
-  price: { $numberDecimal: string };
-  stock: number;
-  images: string[];
-  rating: number;
-  brand: string;
-  sku: string;
-  createdAt: string;
   variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
     name: string;
     price: { $numberDecimal: string };
     stock: number;
     weight: number;
-    dimensions: { height: number; length: number; width: number };
     sku: string;
     images: string[];
     _id: string;
   }[];
-  inWishlist?: boolean;
-  inCart?: boolean;
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
+}
+
+// Category interface
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  slug: string;
+  images?: string[];
 }
 
 // Skeleton Card for Products
@@ -78,20 +127,27 @@ const SkeletonCategoryCard = () => (
 );
 
 // ProductCard Component
-type ProductCardProps = {
-  imageSrc: string;
+interface ProductCardProps {
+  images: { url: string; sequence: number }[]; // Updated to accept an array of images
   title: string;
   price: string;
   originalPrice: number;
   isBestSeller: boolean;
   productId: string;
   variantId: string;
-  inWishlist?: boolean;
-  inCart?: boolean;
-};
+  inWishlist: boolean;
+  inCart: boolean;
+  discount?: {
+    type?: string;
+    value?: number;
+    active: boolean;
+    startDate?: string;
+    endDate?: string;
+  };
+}
 
 export const ProductCard: React.FC<ProductCardProps> = ({
-  imageSrc,
+  images,
   title,
   price,
   originalPrice,
@@ -100,10 +156,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   variantId,
   inWishlist,
   inCart,
+  discount,
 }) => {
-  const [isInWishlist, setIsInWishlist] = useState(inWishlist ?? false);
-  const [isInCart, setIsInCart] = useState(inCart ?? false);
+  const [isInWishlist, setIsInWishlist] = useState(inWishlist);
+  const [isInCart, setIsInCart] = useState(inCart);
+  const [hovered, setHovered] = useState(false); // State to track hover
   const navigation = useRouter();
+
+  const primaryImage = images?.find((img) => img.sequence === 0)?.url || "/placeholder-image.jpg";
+  const secondaryImage = images?.find((img) => img.sequence === 1)?.url || primaryImage;
 
   const addToWishList = async () => {
     try {
@@ -165,25 +226,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const currentDate = new Date();
+  const isDiscountActive =
+    discount?.active &&
+    (!discount.startDate ||
+      new Date(discount.startDate) <= currentDate) &&
+    (!discount.endDate || new Date(discount.endDate) >= currentDate);
+  const discountPercentage = isDiscountActive ? discount?.value : 0;
+
   return (
-    <div className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
+    <div
+      className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden cursor-pointer"
         onClick={() => navigation.push(`/products/${productId}`)}
       >
         <img
-          src={imageSrc}
+          src={hovered ? secondaryImage : primaryImage}
           alt={title || "Product Image"}
-          className="w-full aspect-square object-cover rounded-t-2xl transition-transform duration-500 group-hover:scale-105"
+          className="w-full aspect-square object-cover rounded-t-2xl transition-all duration-500"
         />
         {isBestSeller && (
           <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
             Best Seller
           </div>
         )}
-        <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
-          -5%
-        </div>
+        {isDiscountActive && discountPercentage && (
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+            -{discountPercentage}%
+          </div>
+        )}
         <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
       </div>
       <div className="p-4 md:p-6 space-y-3">
@@ -244,9 +319,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 // Main Component
-const ProductCategories = () => {
+const ProductCategories: React.FC = () => {
   const navigate = useRouter();
-  const [categories, setCategories] = useState<any[]>([]); // Define a Category interface if needed
+  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -314,18 +389,19 @@ const ProductCategories = () => {
                   return (
                     <ProductCard
                       key={product._id}
-                      imageSrc={product.images?.[0] || "/placeholder-image.jpg"}
+                      images={product.images} // Pass the full images array
                       title={product.name || "Unnamed Product"}
                       price={firstVariant?.price?.$numberDecimal || "N/A"}
                       originalPrice={
                         parseFloat(firstVariant?.price?.$numberDecimal || "0") +
                         10
                       }
-                      isBestSeller={true}
+                      isBestSeller={product.isBestSeller}
                       productId={product._id}
                       variantId={firstVariant?._id || ""}
-                      inWishlist={product.inWishlist ?? false}
-                      inCart={product.inCart ?? false}
+                      inWishlist={product.inWishlist}
+                      inCart={product.inCart}
+                      discount={firstVariant?.discount}
                     />
                   );
                 })}

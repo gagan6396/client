@@ -20,7 +20,73 @@ import ProductDetails from "@/Layout/ProductDetails/ProductDetails";
 import ProductImageCarousel from "@/Layout/ProductDetails/ProductImageCarousel";
 import ReviewsSection from "@/Layout/ProductDetails/ReviewsSection";
 import SupplierDetails from "@/Layout/ProductDetails/SupplierDetails";
-import { Product, Review } from "@/types";
+import { Review } from "@/types";
+
+// Updated Product interface based on new data structure
+interface Product {
+  _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
+  name: string;
+  description: string;
+  variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
+    name: string;
+    price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    sku: string;
+    images: string[];
+    _id: string;
+  }[];
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
+}
 
 // Skeleton for Reviews Section
 const SkeletonReviewsSection = () => (
@@ -94,8 +160,7 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Category</dt>
                   <dd className="text-gray-600">
-                    {product.category_id &&
-                    typeof product.category_id !== "string"
+                    {product.category_id && typeof product.category_id !== "string"
                       ? product.category_id.name
                       : "N/A"}
                   </dd>
@@ -105,8 +170,7 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 <div className="flex items-center justify-between border-b border-gray-100 pb-3 hover:bg-gray-50 transition-colors duration-200 rounded-md px-2">
                   <dt className="font-semibold text-gray-800">Subcategory</dt>
                   <dd className="text-gray-600">
-                    {product.subcategory_id &&
-                    typeof product.subcategory_id !== "string"
+                    {product.subcategory_id && typeof product.subcategory_id !== "string"
                       ? product.subcategory_id.name
                       : "N/A"}
                   </dd>
@@ -121,27 +185,47 @@ const ProductDescriptionAndDetails = ({ product }: { product: Product }) => {
                 {/* Variants */}
                 {product.variants && product.variants.length > 0 && (
                   <div className="border-b border-gray-100 pb-3">
-                    <dt className="font-semibold text-gray-800 mb-2">
-                      Variants
-                    </dt>
+                    <dt className="font-semibold text-gray-800 mb-2">Variants</dt>
                     <dd className="text-gray-600">
                       <ul className="space-y-2">
-                        {product.variants.map((variant) => (
-                          <li
-                            key={variant._id}
-                            className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
-                          >
-                            <span>
-                              {variant.name} - ₹
-                              {variant.price &&
-                              typeof variant.price === "object"
-                                ? variant.price.$numberDecimal
-                                : variant.price}{" "}
-                              ({variant.stock} in stock)
-                              {variant.weight ? `, ${variant.weight} kg` : ""}
-                            </span>
-                          </li>
-                        ))}
+                        {product.variants.map((variant) => {
+                          const currentDate = new Date("2025-03-17"); // Use fixed date for consistency
+                          const isDiscountActive =
+                            variant.discount?.active &&
+                            (!variant.discount.startDate ||
+                              new Date(variant.discount.startDate) <= currentDate) &&
+                            (!variant.discount.endDate ||
+                              new Date(variant.discount.endDate) >= currentDate);
+                          const price = parseFloat(variant.price.$numberDecimal);
+                          const discountValue = isDiscountActive
+                            ? variant.discount?.value || 0
+                            : 0;
+                          const originalPrice = discountValue
+                            ? price / (1 - discountValue / 100)
+                            : price;
+
+                          return (
+                            <li
+                              key={variant._id}
+                              className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-2 rounded-md"
+                            >
+                              <span>
+                                {variant.name} - ₹{price.toFixed(2)}{" "}
+                                {isDiscountActive && (
+                                  <span className="text-gray-500 line-through">
+                                    ₹{originalPrice.toFixed(2)}
+                                  </span>
+                                )} ({variant.stock} in stock)
+                                {variant.weight ? `, ${variant.weight} kg` : ""}
+                                {isDiscountActive && discountValue ? (
+                                  <span className="text-green-600 ml-2">
+                                    ({discountValue}% off)
+                                  </span>
+                                ) : null}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </dd>
                   </div>
@@ -178,9 +262,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isReviewsLoading, setIsReviewsLoading] = useState<boolean>(true);
   const [subCategoryProducts, setSubCategoryProducts] = useState<Product[]>([]);
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
-    null
-  ); // New state for variant selection
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
   const router = useRouter();
 
   // Fetch product details
@@ -195,12 +277,6 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
       const response = await getProductByIdAPI(productId);
       if (response?.data?.data) {
         setProduct(response.data.data);
-        // Set the default variant to the first one if available
-        console.log(
-          "response.data.data.variants[0]._id",
-          response.data.data.variants[0]._id
-        );
-
         if (response.data.data.variants.length > 0) {
           setSelectedVariantId(response.data.data.variants[0]._id);
         }
@@ -265,7 +341,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     try {
       const response = await addToWishListAPI(product._id);
       toast.success(response.data.message || "Item added to wishlist!");
-      setProduct((prevProduct: any) =>
+      setProduct((prevProduct) =>
         prevProduct ? { ...prevProduct, inWishlist: true } : null
       );
     } catch (error: any) {
@@ -284,7 +360,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
     try {
       const response = await deleteProductFromWishlistAPI(product._id);
       toast.success(response.data.message || "Item removed from wishlist!");
-      setProduct((prevProduct: any) =>
+      setProduct((prevProduct) =>
         prevProduct ? { ...prevProduct, inWishlist: false } : null
       );
     } catch (error: any) {
@@ -310,7 +386,7 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
         quantity: 1,
       });
       toast.success(response.data.message || "Item added to cart!");
-      setProduct((prevProduct: any) =>
+      setProduct((prevProduct) =>
         prevProduct ? { ...prevProduct, inCart: true } : null
       );
     } catch (error: any) {
@@ -428,8 +504,8 @@ const ProductDetailPage = ({ params }: ProductDetailPageProps) => {
             addToWishList={addToWishList}
             deleteProductFromWishlist={deleteProductFromWishlist}
             subCategoryProducts={subCategoryProducts}
-            selectedVariantId={selectedVariantId} // Pass selectedVariantId
-            setSelectedVariantId={setSelectedVariantId} // Pass setter for variant selection
+            selectedVariantId={selectedVariantId}
+            setSelectedVariantId={setSelectedVariantId}
           />
           <SupplierDetails product={product} />
         </div>

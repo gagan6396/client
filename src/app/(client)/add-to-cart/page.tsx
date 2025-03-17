@@ -1,4 +1,5 @@
 "use client";
+
 import {
   deleteToCartAPI,
   getAddToCartProductsAPI,
@@ -10,14 +11,22 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+// Updated CartItemProps based on new cart response structure
 type CartItemProps = {
   productId: string;
   variantId: string;
   imageSrc: string;
   title: string;
-  price: number;
+  price: string; // Changed to string to match $numberDecimal
   quantity: number;
-  variantName: string; // Added to display variant name
+  variantName: string;
+  discount?: {
+    type?: string;
+    value?: number;
+    active: boolean;
+    startDate?: string;
+    endDate?: string;
+  }; // Added discount field
   onQuantityChange: (amount: number) => void;
   onRemove: () => void;
   isUpdating: boolean;
@@ -31,11 +40,16 @@ const CartItem: React.FC<CartItemProps> = ({
   price,
   quantity,
   variantName,
+  discount,
   onQuantityChange,
   onRemove,
   isUpdating,
 }) => {
-  console.log(productId, variantId);
+  // Calculate discounted price if discount is active
+  const numericPrice = parseFloat(price);
+  const discountedPrice = discount?.active && discount?.value
+    ? numericPrice * (1 - (discount.value / 100))
+    : numericPrice;
 
   return (
     <div className="group flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
@@ -55,9 +69,25 @@ const CartItem: React.FC<CartItemProps> = ({
             {title}
           </h3>
           <p className="text-sm text-gray-600">{variantName}</p>
-          <p className="text-green-600 font-bold text-sm md:text-base mt-1">
-            ₹{price.toFixed(2)}
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            {discount?.active && discount?.value ? (
+              <>
+                <p className="text-green-600 font-bold text-sm md:text-base">
+                  ₹{discountedPrice.toFixed(2)}
+                </p>
+                <p className="text-gray-500 line-through text-xs md:text-sm">
+                  ₹{numericPrice.toFixed(2)}
+                </p>
+                <span className="text-xs text-red-500">
+                  ({discount.value}% OFF)
+                </span>
+              </>
+            ) : (
+              <p className="text-green-600 font-bold text-sm md:text-base">
+                ₹{numericPrice.toFixed(2)}
+              </p>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -107,11 +137,14 @@ const AddToCartPage: React.FC = () => {
       const mappedItems = response.data.data.products.map((item: any) => ({
         productId: item.productId,
         variantId: item.variantId,
-        imageSrc: item.productDetails.images[0] || "/placeholder-image.jpg",
+        imageSrc:
+          item.productDetails.images.find((img: any) => img.sequence === 0)?.url ||
+          "/placeholder-image.jpg",
         title: item.productDetails.name,
-        price: parseFloat(item.productDetails.variant.price.$numberDecimal),
+        price: item.productDetails.variant.price.$numberDecimal, // Keep as string
         quantity: item.quantity,
-        variantName: item.productDetails.variant.name, // Added variant name
+        variantName: item.productDetails.variant.name,
+        discount: item.productDetails.variant.discount, // Add discount field
       }));
       setCartItems(mappedItems);
     } catch (error) {
@@ -132,8 +165,6 @@ const AddToCartPage: React.FC = () => {
     variantId: string,
     amount: number
   ) => {
-    console.log(productId, variantId, amount);
-
     const itemKey = `${productId}-${variantId}`;
     if (updatingItemId === itemKey) return;
     setUpdatingItemId(itemKey);
@@ -174,10 +205,16 @@ const AddToCartPage: React.FC = () => {
     }
   };
 
-  // Calculate total price
+  // Calculate total price with discounts
   const calculateTotal = () => {
     return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce((total, item) => {
+        const numericPrice = parseFloat(item.price);
+        const discountedPrice = item.discount?.active && item.discount?.value
+          ? numericPrice * (1 - (item.discount.value / 100))
+          : numericPrice;
+        return total + discountedPrice * item.quantity;
+      }, 0)
       .toFixed(2);
   };
 

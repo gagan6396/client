@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types";
@@ -9,13 +11,13 @@ import { FaHeart } from "react-icons/fa";
 
 interface ProductDetailsProps {
   product: Product;
-  addToCart: () => void; // Updated to not require variantId here, handled via state
-  buyNow: () => void; // Updated to not require variantId here, handled via state
+  addToCart: () => void;
+  buyNow: () => void;
   addToWishList: () => void;
   deleteProductFromWishlist: () => void;
   subCategoryProducts: Product[];
-  selectedVariantId: string | null; // Added from ProductDetailPage
-  setSelectedVariantId: (variantId: string | null) => void; // Added from ProductDetailPage
+  selectedVariantId: string | null;
+  setSelectedVariantId: (variantId: string | null) => void;
 }
 
 const ProductDetails = ({
@@ -37,17 +39,25 @@ const ProductDetails = ({
       null
   );
 
-  // Fallback to product price/stock if no variants, otherwise use selected variant
-  const displayPrice =
-    selectedVariant?.price?.$numberDecimal ||
-    product.price?.$numberDecimal ||
-    "N/A";
-  const displayStock = selectedVariant?.stock ?? product.stock;
+  // Calculate discount and pricing for the selected variant
+  const currentDate = new Date("2025-03-17"); // Fixed date for consistency
+  const isDiscountActive =
+    selectedVariant?.discount?.active &&
+    (!selectedVariant.discount.startDate ||
+      new Date(selectedVariant.discount.startDate) <= currentDate) &&
+    (!selectedVariant.discount.endDate ||
+      new Date(selectedVariant.discount.endDate) >= currentDate);
+  const price = parseFloat(selectedVariant?.price.$numberDecimal || "0");
+  const discountValue = isDiscountActive ? selectedVariant?.discount?.value || 0 : 0;
+  const originalPrice = discountValue ? price / (1 - discountValue / 100) : price;
+  const displayPrice = price.toFixed(2);
+  const displayOriginalPrice = originalPrice.toFixed(2);
+  const displayStock = selectedVariant?.stock ?? 0;
 
   // Handle variant selection
   const handleVariantChange = (variant: typeof selectedVariant) => {
     setSelectedVariant(variant);
-    setSelectedVariantId(variant._id); // Sync with parent state
+    setSelectedVariantId(variant?._id ?? null); // Sync with parent state
   };
 
   return (
@@ -59,9 +69,21 @@ const ProductDetails = ({
 
       {/* Price and Stock Status */}
       <div className="flex items-center gap-3 sm:gap-4">
-        <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
-          ₹{displayPrice}
-        </p>
+        <div className="flex items-baseline gap-2">
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
+            ₹{displayPrice}
+          </p>
+          {isDiscountActive && discountValue > 0 && (
+            <p className="text-sm sm:text-base text-gray-500 line-through">
+              ₹{displayOriginalPrice}
+            </p>
+          )}
+        </div>
+        {isDiscountActive && discountValue > 0 && (
+          <Badge variant="outline" className="bg-green-100 text-green-800 text-xs sm:text-sm">
+            {discountValue}% off
+          </Badge>
+        )}
         <Badge
           variant="outline"
           className={`text-xs sm:text-sm ${
@@ -75,29 +97,50 @@ const ProductDetails = ({
       </div>
 
       {/* Variant Selection */}
-      {product.variants && (
+      {product.variants && product.variants.length > 0 && (
         <div className="mt-4">
           <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2">
             Select Variant:
           </h3>
           <div className="flex flex-wrap gap-2">
-            {product.variants.map((variant) => (
-              <Button
-                key={variant._id}
-                variant={
-                  selectedVariant?._id === variant._id ? "default" : "outline"
-                }
-                className={`text-xs sm:text-sm px-3 py-1 ${
-                  selectedVariant?._id === variant._id
-                    ? "bg-green-600 text-white"
-                    : "border-gray-300 hover:bg-gray-100"
-                }`}
-                onClick={() => handleVariantChange(variant)}
-              >
-                {variant.name} - ₹{variant.price.$numberDecimal}
-                {variant.weight ? ` (${variant.weight}kg)` : ""}
-              </Button>
-            ))}
+            {product.variants.map((variant) => {
+              const variantPrice = parseFloat(variant.price.$numberDecimal);
+              const variantIsDiscountActive =
+                variant.discount?.active &&
+                (!variant.discount.startDate ||
+                  new Date(variant.discount.startDate) <= currentDate) &&
+                (!variant.discount.endDate ||
+                  new Date(variant.discount.endDate) >= currentDate);
+              const variantDiscountValue = variantIsDiscountActive
+                ? variant.discount?.value || 0
+                : 0;
+              const variantOriginalPrice = variantDiscountValue
+                ? variantPrice / (1 - variantDiscountValue / 100)
+                : variantPrice;
+
+              return (
+                <Button
+                  key={variant._id}
+                  variant={
+                    selectedVariant?._id === variant._id ? "default" : "outline"
+                  }
+                  className={`text-xs sm:text-sm px-3 py-1 ${
+                    selectedVariant?._id === variant._id
+                      ? "bg-green-600 text-white"
+                      : "border-gray-300 hover:bg-gray-100"
+                  }`}
+                  onClick={() => handleVariantChange(variant)}
+                >
+                  {variant.name} - ₹{variantPrice.toFixed(2)}
+                  {/* {variantIsDiscountActive && variantDiscountValue > 0 && (
+                    <span className="ml-1 text-gray-500 line-through">
+                      ₹{variantOriginalPrice.toFixed(2)}
+                    </span>
+                  )} */}
+                  {variant.weight ? ` (${variant.weight}kg)` : ""}
+                </Button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -112,7 +155,7 @@ const ProductDetails = ({
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={addToCart} // Variant ID handled in parent component
+          onClick={addToCart}
           disabled={product.inCart || displayStock <= 0}
         >
           <AiOutlineShoppingCart className="mr-1 sm:mr-2" />
@@ -120,7 +163,7 @@ const ProductDetails = ({
         </Button>
         <Button
           className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
-          onClick={buyNow} // Variant ID handled in parent component
+          onClick={buyNow}
           disabled={displayStock <= 0}
         >
           Buy Now

@@ -1,6 +1,6 @@
 "use client";
 
-import { getOrderByIdAPI } from "@/apis/orderAPIs"; // API to fetch order details
+import { getOrderByIdAPI } from "@/apis/orderAPIs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import moment from "moment";
@@ -8,30 +8,54 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// Define the Order interface based on expected API response
+// Updated Order interface based on the new API response
 interface Order {
   _id: string;
-  orderStatus: string;
+  user_id: string;
+  orderDate: string;
   totalAmount: number;
-  orderDate?: string;
-  shippingStatus?: string;
+  orderStatus: string;
+  shippingStatus: string;
+  products: {
+    productId: {
+      _id: string;
+      name: string;
+      images: { url: string; sequence: number; _id: string }[];
+    };
+    variantId: string;
+    quantity: number;
+    price: number; // Price per unit for this order
+    name: string; // Product name with variant
+    skuParameters: { weight: string };
+    _id: string;
+  }[];
+  shippingAddressId: string | null;
   payment_id?: {
+    _id: string;
+    userId: string;
+    orderId: string;
     paymentMethod: string;
-    status: string;
+    transactionId: string;
     amount: { $numberDecimal: string };
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    refundDetails: { refundId: string | null };
   };
-  products?: { productId: { name: string; price: { $numberDecimal: string }; images: string[] }; quantity: number }[];
-  [key: string]: any; // Allow additional fields
+  shipRocketOrderId?: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }> }) => {
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false); // Flag for client-side rendering
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Mark as client-side after mount
+    setIsClient(true);
 
     const fetchOrderDetails = async () => {
       try {
@@ -52,9 +76,8 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
     fetchOrderDetails();
   }, [params]);
 
-  // Avoid rendering until client-side to prevent hydration mismatch
   if (!isClient) {
-    return null; // Render nothing on server-side
+    return null; // Avoid hydration mismatch
   }
 
   if (loading) {
@@ -103,7 +126,9 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
           <CardContent className="p-6 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <p className="text-gray-700 font-medium">Order ID: <span className="font-normal">{order._id}</span></p>
+                <p className="text-gray-700 font-medium">
+                  Order ID: <span className="font-normal">{order._id}</span>
+                </p>
                 <p className="text-gray-700 font-medium">
                   Order Date: <span className="font-normal">{moment(order.orderDate).format("DD-MM-YYYY")}</span>
                 </p>
@@ -112,11 +137,9 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
                     {order.orderStatus}
                   </span>
                 </p>
-                {order.shippingStatus && (
-                  <p className="text-gray-700 font-medium">
-                    Shipping Status: <span className="font-normal">{order.shippingStatus}</span>
-                  </p>
-                )}
+                <p className="text-gray-700 font-medium">
+                  Shipping Status: <span className="font-normal">{order.shippingStatus}</span>
+                </p>
               </div>
               <p className="text-2xl font-bold text-gray-900">Total: ₹{order.totalAmount.toFixed(2)}</p>
             </div>
@@ -130,7 +153,7 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
                     <li key={index} className="flex items-center gap-4 border-b pb-4 last:border-b-0">
                       {product.productId.images && product.productId.images.length > 0 && (
                         <Image
-                          src={product.productId.images[0]}
+                          src={product.productId.images.find((img) => img.sequence === 0)?.url || ""}
                           alt={product.productId.name}
                           width={80}
                           height={80}
@@ -138,13 +161,13 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
                         />
                       )}
                       <div className="flex-1">
-                        <p className="text-gray-800 font-medium">{product.productId.name}</p>
+                        <p className="text-gray-800 font-medium">{product.name}</p>
                         <p className="text-gray-600 text-sm">
-                          Quantity: {product.quantity} | Unit Price: ₹{product.productId.price.$numberDecimal}
+                          Quantity: {product.quantity} | Unit Price: ₹{product.price.toFixed(2)}
                         </p>
                       </div>
                       <p className="text-gray-900 font-semibold">
-                        ₹{(parseFloat(product.productId.price.$numberDecimal) * product.quantity).toFixed(2)}
+                        ₹{(product.price * product.quantity).toFixed(2)}
                       </p>
                     </li>
                   ))}
@@ -165,6 +188,10 @@ const OrderConfirmationPage = ({ params }: { params: Promise<{ orderId: string }
                 <h3 className="text-lg font-medium text-gray-800">Payment Details</h3>
                 <p className="text-gray-600">Method: {order.payment_id.paymentMethod}</p>
                 <p className="text-gray-600">Status: {order.payment_id.status}</p>
+                <p className="text-gray-600">
+                  Amount: ₹{parseFloat(order.payment_id.amount.$numberDecimal).toFixed(2)}
+                </p>
+                <p className="text-gray-600">Transaction ID: {order.payment_id.transactionId}</p>
               </div>
             )}
             <div>

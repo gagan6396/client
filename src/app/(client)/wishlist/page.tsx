@@ -6,9 +6,29 @@ import { Heart, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deleteProductFromWishlistAPI, getWishListAPI } from "../../../apis/wishlistAPIs";
+import {
+  deleteProductFromWishlistAPI,
+  getWishListAPI,
+} from "../../../apis/wishlistAPIs";
 
-const WishlistItem = ({ imageSrc, title, price, originalPrice, onRemove }) => {
+// Updated WishlistItem interface based on new response
+interface WishlistItemProps {
+  imageSrc: string;
+  title: string;
+  price: string; // Price as $numberDecimal string
+  originalPrice?: number; // Calculated original price before discount
+  discount?: number; // Discount percentage
+  onRemove: () => void;
+}
+
+const WishlistItem = ({
+  imageSrc,
+  title,
+  price,
+  originalPrice,
+  discount,
+  onRemove,
+}: WishlistItemProps) => {
   return (
     <div className="group flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
       {/* Image Section */}
@@ -27,11 +47,18 @@ const WishlistItem = ({ imageSrc, title, price, originalPrice, onRemove }) => {
           </h3>
           <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-2">
             <span className="text-green-600 font-bold text-sm md:text-base">
-              ₹{price}
+              ₹{parseFloat(price).toFixed(2)}
             </span>
-            <span className="text-gray-400 line-through text-xs md:text-sm">
-              ₹{originalPrice}
-            </span>
+            {discount && originalPrice && (
+              <>
+                <span className="text-gray-400 line-through text-xs md:text-sm">
+                  ₹{originalPrice.toFixed(2)}
+                </span>
+                <span className="text-xs md:text-sm text-red-500">
+                  ({discount}% OFF)
+                </span>
+              </>
+            )}
           </div>
         </div>
         {/* Remove Button */}
@@ -48,9 +75,9 @@ const WishlistItem = ({ imageSrc, title, price, originalPrice, onRemove }) => {
 };
 
 const WishlistPage = () => {
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState<any[]>([]); // Using any[] temporarily for flexibility
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch wishlist data
   const getWishList = async () => {
@@ -75,15 +102,23 @@ const WishlistPage = () => {
   }, []);
 
   // Function to remove an item from the wishlist
-  const removeFromWishlist = async (productId) => {
+  const removeFromWishlist = async (productId: string) => {
     try {
       await deleteProductFromWishlistAPI(productId);
-      toast.success("Item removed from wishlist!", { icon: "❤️" });
+      toast.success("Item removed from wishlist!");
       getWishList(); // Refresh the wishlist
     } catch (error) {
       toast.error("Failed to remove item. Please try again.");
       console.error("Error removing product:", error);
     }
+  };
+
+  // Function to get primary variant (first variant or one with active discount)
+  const getPrimaryVariant = (variants: any[]) => {
+    const activeDiscountVariant = variants.find(
+      (v) => v.discount?.active && v.discount?.value
+    );
+    return activeDiscountVariant || variants[0];
   };
 
   return (
@@ -114,7 +149,10 @@ const WishlistPage = () => {
       {/* Error State */}
       {error && !loading && (
         <div className="text-center mt-12 md:mt-16">
-          <Heart size={80} className="text-gray-200 mx-auto mb-6 animate-pulse" />
+          <Heart
+            size={80}
+            className="text-gray-200 mx-auto mb-6 animate-pulse"
+          />
           <p className="text-lg md:text-xl text-red-500 font-medium">{error}</p>
         </div>
       )}
@@ -124,19 +162,39 @@ const WishlistPage = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-8">
             {wishlist.length > 0 ? (
-              wishlist.map((item, index) => (
-                <WishlistItem
-                  key={index}
-                  imageSrc={item?.images[0]}
-                  title={item?.name}
-                  price={item?.price?.$numberDecimal}
-                  originalPrice={item?.price?.$numberDecimal + 10}
-                  onRemove={() => removeFromWishlist(item._id)}
-                />
-              ))
+              wishlist.map((item) => {
+                const primaryVariant = getPrimaryVariant(item.variants);
+                const price = parseFloat(primaryVariant.price.$numberDecimal);
+                const discount =
+                  primaryVariant.discount?.active &&
+                  primaryVariant.discount?.value
+                    ? primaryVariant.discount.value
+                    : 0;
+                const originalPrice = discount
+                  ? price / (1 - discount / 100)
+                  : undefined;
+
+                return (
+                  <WishlistItem
+                    key={item._id}
+                    imageSrc={
+                      item.images.find((img: any) => img.sequence === 0)?.url ||
+                      "/placeholder-image.jpg"
+                    }
+                    title={`${item.name} - ${primaryVariant.name}`}
+                    price={primaryVariant.price.$numberDecimal}
+                    originalPrice={originalPrice}
+                    discount={discount}
+                    onRemove={() => removeFromWishlist(item._id)}
+                  />
+                );
+              })
             ) : (
               <div className="text-center mt-12 md:mt-16 col-span-full">
-                <Heart size={80} className="text-gray-200 mx-auto mb-6 animate-bounce" />
+                <Heart
+                  size={80}
+                  className="text-gray-200 mx-auto mb-6 animate-bounce"
+                />
                 <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
                   Your Wishlist is Empty
                 </h3>
@@ -152,7 +210,7 @@ const WishlistPage = () => {
             <div className="flex justify-center mt-10 md:mt-12">
               <Button
                 className="bg-green-600 hover:bg-green-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
-                onClick={() => window.location.href = "/products"}
+                onClick={() => (window.location.href = "/products")}
               >
                 Explore Products
               </Button>

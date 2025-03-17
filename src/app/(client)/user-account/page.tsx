@@ -51,25 +51,35 @@ interface User {
 }
 
 interface Product {
-  productId: { _id: string; name: string; images: string[] };
+  productId: {
+    _id: string;
+    name: string;
+    images: { url: string; sequence: number; _id: string }[];
+  };
   variantId: string;
   quantity: number;
-  price: number; // Variant-specific price
-  name: string; // Variant-specific name (e.g., "Test Product - 1 Kg")
+  price: number; // Unit price at order time
+  name: string; // Combined product and variant name (e.g., "Rishabh Gehlot - 400 ml")
   skuParameters: { weight: string };
   _id: string;
 }
 
 interface Payment {
   _id: string;
+  userId: string;
+  orderId: string;
   paymentMethod: string;
-  status: string;
+  transactionId: string;
   amount: { $numberDecimal: string };
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  refundDetails: { refundId: string | null };
 }
 
 interface Order {
   _id: string;
-  user_id: User;
+  user_id: string; // Changed to string to match response
   orderDate: string;
   totalAmount: number;
   orderStatus: string;
@@ -78,6 +88,9 @@ interface Order {
   shippingAddressId: string | null;
   payment_id: Payment;
   shipRocketOrderId?: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 interface UserProfile {
@@ -197,7 +210,7 @@ export default function UserAccount() {
 
         const ordersResponse = await getUserOrdersAPI();
         if (ordersResponse.success) {
-          setOrders(ordersResponse.data.orders);
+          setOrders(ordersResponse.data.orders); // Assuming orders are under `data.orders`
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -604,9 +617,9 @@ export default function UserAccount() {
                         </p>
                         <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                           {userProfile.shoppingAddress.addressLine1}
-                          {userProfile.shoppingAddress.addressLine2 && ", "}
-                          {userProfile.shoppingAddress.addressLine2},{" "}
-                          {userProfile.shoppingAddress.city},{" "}
+                          {userProfile.shoppingAddress.addressLine2 &&
+                            ", " + userProfile.shoppingAddress.addressLine2}
+                          , {userProfile.shoppingAddress.city},{" "}
                           {userProfile.shoppingAddress.state},{" "}
                           {userProfile.shoppingAddress.country},{" "}
                           {userProfile.shoppingAddress.postalCode}
@@ -622,7 +635,7 @@ export default function UserAccount() {
                           {order.payment_id.paymentMethod} -{" "}
                           <span
                             className={
-                              order.payment_id.status === "Paid"
+                              order.payment_id.status === "Completed"
                                 ? "text-green-600"
                                 : "text-yellow-600"
                             }
@@ -644,7 +657,11 @@ export default function UserAccount() {
                             className="flex items-center gap-3 sm:gap-4 border-b py-2 sm:py-3"
                           >
                             <Image
-                              src={product.productId.images[0]}
+                              src={
+                                product.productId.images.find(
+                                  (img) => img.sequence === 0
+                                )?.url || "/placeholder-image.jpg"
+                              }
                               alt={product.name}
                               width={60}
                               height={60}

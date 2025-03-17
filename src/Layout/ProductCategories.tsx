@@ -8,29 +8,104 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify"; // Import toast for user feedback
+import { toast } from "react-toastify";
 import { ProductCard } from "./ProductCategoryGrid";
 
-// Define Product interface based on API response
+// Updated Product interface based on new data structure
 interface Product {
   _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
   name: string;
-  images: string[];
+  description: string;
   variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
+    name: string;
     price: { $numberDecimal: string };
+    stock: number;
+    weight: number;
+    sku: string;
+    images: string[];
     _id: string;
   }[];
-  inWishlist?: boolean;
-  inCart?: boolean;
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
+}
+
+// Category interface
+interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  slug: string;
+  images?: string[];
 }
 
 const SkeletonCard = () => (
-  <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
-    <div className="w-full h-48 bg-gray-300" />
-    <div className="p-4 space-y-3">
+  <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
+    <div className="w-full aspect-square bg-gray-300 rounded-t-2xl" />
+    <div className="p-4 md:p-6 space-y-3">
       <div className="h-4 bg-gray-300 rounded w-3/4" />
-      <div className="h-3 bg-gray-300 rounded w-1/2" />
-      <div className="h-3 bg-gray-300 rounded w-1/4" />
+      <div className="flex space-x-1">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-4 w-4 bg-gray-300 rounded-full" />
+        ))}
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          <div className="h-5 bg-gray-300 rounded w-16" />
+          <div className="h-4 bg-gray-300 rounded w-12" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex-1 h-10 bg-gray-300 rounded-full" />
+        <div className="h-6 w-6 bg-gray-300 rounded-full" />
+      </div>
     </div>
   </div>
 );
@@ -43,9 +118,9 @@ const SkeletonCategoryCard = () => (
   </div>
 );
 
-const ProductCategories = () => {
+const ProductCategories: React.FC = () => {
   const navigate = useRouter();
-  const [categories, setCategories] = useState<any[]>([]); // Keep any for categories until we define a type
+  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +128,7 @@ const ProductCategories = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      setError(null); // Reset error state on new fetch
+      setError(null);
 
       const categoryResponse = await getCategoriesAPI();
       setCategories(categoryResponse?.data?.data || []);
@@ -66,7 +141,7 @@ const ProductCategories = () => {
         error.response?.data?.message ||
         "Failed to load products and categories. Please try again later.";
       setError(errorMessage);
-      toast.error(errorMessage); // Notify user
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -109,26 +184,34 @@ const ProductCategories = () => {
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
               : products.slice(0, 10).map((product) => {
-                  const firstVariant = product.variants?.[0]; // Optional chaining
+                  const firstVariant = product.variants?.[0];
+                  const currentDate = new Date();
+                  const isDiscountActive =
+                    firstVariant?.discount?.active &&
+                    (!firstVariant.discount.startDate ||
+                      new Date(firstVariant.discount.startDate) <= currentDate) &&
+                    (!firstVariant.discount.endDate ||
+                      new Date(firstVariant.discount.endDate) >= currentDate);
+                  const discountValue = isDiscountActive ? firstVariant?.discount?.value : 0;
+                  const price = parseFloat(firstVariant?.price?.$numberDecimal || "0");
+                  const originalPrice = discountValue
+                    ? price / (1 - discountValue / 100)
+                    : price + 10; // Fallback to +10 if no discount
+
                   return (
-                    <div
+                    <ProductCard
                       key={product._id}
-                      className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
-                    >
-                      <ProductCard
-                        imageSrc={product.images?.[0] || "/placeholder-image.jpg"}
-                        title={product.name || "Unnamed Product"}
-                        price={firstVariant?.price?.$numberDecimal || "N/A"}
-                        originalPrice={
-                          parseFloat(firstVariant?.price?.$numberDecimal || "0") + 10
-                        }
-                        isBestSeller={true}
-                        productId={product._id}
-                        variantId={firstVariant?._id || ""} // Fallback to empty string
-                        inWishlist={product.inWishlist ?? false}
-                        inCart={product.inCart ?? false}
-                      />
-                    </div>
+                      images={product.images} // Pass the full images array for hover effect
+                      title={`${product.name} - ${firstVariant?.name || "Default"}`}
+                      price={firstVariant?.price?.$numberDecimal || "N/A"}
+                      originalPrice={originalPrice}
+                      isBestSeller={product.isBestSeller}
+                      productId={product._id}
+                      variantId={firstVariant?._id || ""}
+                      inWishlist={product.inWishlist}
+                      inCart={product.inCart}
+                      discount={firstVariant?.discount}
+                    />
                   );
                 })}
           </div>
@@ -155,7 +238,7 @@ const ProductCategories = () => {
                   .map((_, index) => <SkeletonCategoryCard key={index} />)
               : categories.slice(0, 10).map((category) => (
                   <div
-                    key={category?._id || `category-${Math.random()}`} // Fallback key
+                    key={category?._id || `category-${Math.random()}`}
                     className="group bg-white rounded-2xl shadow-md overflow-hidden flex flex-col items-center text-center p-4 md:p-6 transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100"
                   >
                     <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">

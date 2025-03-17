@@ -22,37 +22,70 @@ import { FilterIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-// Define Product type based on provided API response
+// Updated Product interface based on new data structure
 interface Product {
   _id: string;
-  category_id: { _id: string; name: string; description: string; slug: string };
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
   subcategory_id: {
     _id: string;
     name: string;
     description: string;
     slug: string;
   };
+  reviews: any[];
   name: string;
   description: string;
-  price: { $numberDecimal: string };
-  stock: number;
-  images: string[];
-  rating: number;
-  brand: string;
-  sku: string;
-  createdAt: string;
   variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
     name: string;
     price: { $numberDecimal: string };
     stock: number;
     weight: number;
-    dimensions: { height: number; length: number; width: number };
     sku: string;
     images: string[];
     _id: string;
   }[];
-  inWishlist?: boolean;
-  inCart?: boolean;
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
 }
 
 // Skeleton Product Card
@@ -91,7 +124,7 @@ const ProductGrid = ({
 }) => {
   return (
     <section className="bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 text-center mb-10 md:mb-12 tracking-tight">
           {title}
         </h2>
@@ -108,26 +141,36 @@ const ProductGrid = ({
                 console.warn(`Product ${product._id} has no images`, product);
                 return null;
               }
-              const firstVariant = product.variants[0]; // Use the first variant for display
+              const firstVariant = product.variants[0];
+              const currentDate = new Date();
+              const isDiscountActive =
+                firstVariant?.discount?.active &&
+                (!firstVariant.discount.startDate ||
+                  new Date(firstVariant.discount.startDate) <= currentDate) &&
+                (!firstVariant.discount.endDate ||
+                  new Date(firstVariant.discount.endDate) >= currentDate);
+              const discountValue = isDiscountActive
+                ? firstVariant?.discount?.value
+                : 0;
+              const price = parseFloat(firstVariant?.price?.$numberDecimal || "0");
+              const originalPrice = discountValue
+                ? price / (1 - discountValue / 100)
+                : price + 10; // Fallback to +10 if no discount
+
               return (
-                <div
+                <ProductCard
                   key={product._id}
-                  className="group rounded-2xl overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
-                >
-                  <ProductCard
-                    imageSrc={product.images[0]}
-                    title={product.name}
-                    price={firstVariant.price.$numberDecimal}
-                    originalPrice={
-                      parseFloat(firstVariant.price.$numberDecimal) + 10
-                    }
-                    isBestSeller={true}
-                    productId={product._id}
-                    variantId={firstVariant._id} // Pass variantId
-                    inWishlist={product.inWishlist}
-                    inCart={product.inCart}
-                  />
-                </div>
+                  images={product.images} // Pass the full images array for hover effect
+                  title={`${product.name} - ${firstVariant?.name || "Default"}`}
+                  price={firstVariant.price.$numberDecimal}
+                  originalPrice={originalPrice}
+                  isBestSeller={product.isBestSeller}
+                  productId={product._id}
+                  variantId={firstVariant._id}
+                  inWishlist={product.inWishlist}
+                  inCart={product.inCart}
+                  discount={firstVariant.discount}
+                />
               );
             })}
           </div>
