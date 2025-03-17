@@ -166,7 +166,7 @@ const ProductGrid = ({
               No Products Found
             </h3>
             <p className="text-sm sm:text-base text-gray-500">
-              We couldn't find any products matching your criteria. Stay tuned
+              We couldn&apos;t find any products matching your criteria. Stay tuned
               for updates!
             </p>
           </div>
