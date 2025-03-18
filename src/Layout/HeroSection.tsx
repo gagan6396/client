@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/public/hero1.jpg";
+import heroImage1 from "@/public/hero1.jpg"; // Rename or add more images
+import heroImage2 from "@/public/hero2.jpg"; // Example additional image
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +20,10 @@ const HeroSection = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Array of hero images for the carousel
+  const heroImages = [heroImage2, heroImage1]; // Add your image paths here
 
   let accessToken;
   if (typeof window !== "undefined") {
@@ -42,6 +47,7 @@ const HeroSection = () => {
     setShowSearchInput((prev) => !prev);
   };
 
+  // Sticky header effect
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 50);
@@ -51,16 +57,39 @@ const HeroSection = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Carousel auto-slide effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 10000); // Change slide every 5 seconds
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
+  // Manual slide navigation
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <div className="relative">
-      {/* Hero Image Section */}
+      {/* Hero Carousel Section */}
       <div id="hero-section" className="relative h-screen">
-        <Image
-          src={heroImage.src}
-          alt="Hero Background"
-          fill
-          className="object-cover brightness-75"
-        />
+        {/* Carousel Images */}
+        {heroImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              currentSlide === index ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <Image
+              src={image.src}
+              alt={`Hero Slide ${index + 1}`}
+              fill
+              className="object-cover brightness-75"
+            />
+          </div>
+        ))}
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" />
         {/* Hero Text Section */}
@@ -80,6 +109,18 @@ const HeroSection = () => {
               Shop Now
             </Button>
           </div>
+        </div>
+        {/* Carousel Dots */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full ${
+                currentSlide === index ? "bg-white" : "bg-white/50"
+              } hover:bg-white transition-all duration-300`}
+            />
+          ))}
         </div>
       </div>
 

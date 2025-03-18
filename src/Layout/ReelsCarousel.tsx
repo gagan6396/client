@@ -193,7 +193,11 @@ export function ProductsVideoCarousel() {
 
   const handleAddToCart = async (productId: string, variantId: string) => {
     try {
-      const response = await addToCartAPI({ productId, variantId, quantity: 1 });
+      const response = await addToCartAPI({
+        productId,
+        variantId,
+        quantity: 1,
+      });
       const updatedProducts = productsWithVideos.map((p) =>
         p._id === productId ? { ...p, inCart: true } : p
       );
@@ -296,7 +300,7 @@ export function ProductsVideoCarousel() {
   };
 
   return (
-    <section className="container py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
       <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 text-center mb-10 md:mb-12 tracking-tight">
         Featured Product Videos
       </h2>
