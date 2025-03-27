@@ -1,240 +1,194 @@
 "use client";
-import { getAllReviews } from "@/apis/reviewAPIs";
+import { getAllpublicReviewAPI } from "@/apis/publicReviewAPI";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import backgroundImage from "@/public/l4.jpg";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Slider from "react-slick"; // Import react-slick
+import { useCallback, useEffect, useState } from "react";
+import Slider from "react-slick";
 import { toast } from "react-toastify";
-import "slick-carousel/slick/slick-theme.css"; // Import slick theme styles
-import "slick-carousel/slick/slick.css"; // Import slick styles
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
-// Example background image (replace with your own)
-import backgroundImage from "@/public/l4.jpg"; // Add this image to your public folder
+// Types
+interface Review {
+  _id: string;
+  comment: string;
+  profile: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface Stats {
+  totalReviews: number;
+}
 
 // Skeleton Testimonial Card
 const SkeletonTestimonialCard = () => (
-  <div className="bg-white bg-opacity-90 rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
-    <div className="p-6 md:p-8 space-y-4">
-      {/* Rating */}
-      <div className="flex space-x-1">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-6 w-6 bg-gray-300 rounded-full" />
-        ))}
+  <div className="bg-white/95 rounded-2xl shadow-lg h-[380px] animate-pulse border border-green-100/30 p-6">
+    <div className="space-y-6">
+      <div className="flex justify-center">
+        <div className="w-20 h-20 bg-gray-200/70 rounded-full md:w-24 md:h-24" />
       </div>
-      {/* Comment */}
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-300 rounded w-full" />
-        <div className="h-4 bg-gray-300 rounded w-3/4" />
-        <div className="h-4 bg-gray-300 rounded w-1/2" />
+      <div className="space-y-3">
+        <div className="h-4 bg-gray-200/70 rounded w-full" />
+        <div className="h-4 bg-gray-200/70 rounded w-5/6" />
+        <div className="h-4 bg-gray-200/70 rounded w-3/4" />
       </div>
-      {/* User Info */}
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-300 rounded-full" />
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-300 rounded w-24" />
-          <div className="h-3 bg-gray-300 rounded w-16" />
-        </div>
+      <div className="text-center space-y-2">
+        <div className="h-5 bg-gray-200/70 rounded w-32 mx-auto" />
+        <div className="h-3 bg-gray-200/70 rounded w-24 mx-auto" />
       </div>
     </div>
   </div>
 );
 
-// Testimonial Card Component (Extracted for reusability)
-const TestimonialCard = ({ review, handleReviewClick }: any) => (
-  <div
-    className="group relative bg-white bg-opacity-90 rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer border border-gray-100"
-    onClick={() => handleReviewClick(review.productId._id)}
-  >
-    {/* Decorative Element */}
-    <div className="absolute top-0 left-0 w-24 h-24 bg-yellow-100 rounded-full -translate-x-12 -translate-y-12 opacity-50 group-hover:opacity-70 transition-opacity" />
+// Parse comment
+const parseComment = (comment: string) => {
+  const match = comment.match(/^"(.+)"\s*–\s*(.+)$/);
+  return match
+    ? { text: match[1], reviewer: match[2] }
+    : { text: comment, reviewer: "Anonymous" };
+};
 
-    {/* Content */}
-    <div className="p-6 md:p-8 relative z-10">
-      {/* Rating */}
-      <div className="flex mb-4">
-        {[...Array(5)].map((_, i) => (
-          <span
-            key={i}
-            className={`text-xl md:text-2xl ${
-              i < review?.rating ? "text-yellow-500" : "text-gray-200"
-            }`}
-          >
-            ★
-          </span>
-        ))}
-      </div>
+// Testimonial Card Component
+const TestimonialCard = ({ review }: { review: Review }) => {
+  const { text, reviewer } = parseComment(review.comment);
+  const [name, title] = reviewer.split(", ");
 
-      {/* Comment */}
-      <p className="text-gray-700 text-base md:text-lg leading-relaxed line-clamp-2 italic mb-6">
-        {`"${review?.comment}"`}
-      </p>
-
-      {/* User Info */}
-      <div className="flex items-center gap-4">
-        <Avatar className="w-12 h-12 md:w-14 md:h-14 border-2 border-yellow-200 shadow-sm">
+  return (
+    <div className="group relative bg-white/95 rounded-2xl shadow-lg h-[380px] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-green-100/30 overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+      <div className="p-6 flex flex-col h-full items-center text-center">
+        <Avatar className="w-20 h-20 md:w-24 md:h-24 border-2 border-green-50 shadow-md transition-all group-hover:scale-105 mb-4 md:mb-6">
           <AvatarImage
-            src={review?.userId?.profileImage || "/default-avatar.png"}
-            alt={`${review?.userId?.first_name} ${review?.userId?.last_name}`}
+            src={review.profile || "/default-avatar.png"}
+            alt={"Reviewer"}
           />
-          <AvatarFallback className="bg-gray-200 text-gray-600 font-medium">
-            {review?.userId?.first_name[0] || "R"}
-            {review?.userId?.last_name[0] || "G"}
+          <AvatarFallback className="bg-green-50 text-green-600 font-semibold text-xl md:text-2xl">
+            {name ? name.slice(0, 2).toUpperCase() : "AN"}
           </AvatarFallback>
         </Avatar>
-        <div>
-          <h4 className="font-semibold text-gray-800 text-lg md:text-xl">
-            {review?.userId?.first_name || "Rishabh"}{" "}
-            {review?.userId?.last_name || "Gehlot"}
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed line-clamp-4 font-normal mb-4 md:mb-6">
+          {text}
+        </p>
+        <div className="mt-auto">
+          <h4 className="font-semibold text-gray-900 text-lg md:text-xl tracking-tight">
+            {name || "Anonymous"}
           </h4>
-          <p className="text-sm text-gray-500">Verified Buyer</p>
+          {title && (
+            <p className="text-sm md:text-base text-green-600 font-medium">
+              {title}
+            </p>
+          )}
         </div>
       </div>
     </div>
-
-    {/* Hover Overlay */}
-    <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none" />
-  </div>
-);
+  );
+};
 
 const Testimonials: React.FC = () => {
-  const [reviews, setReviews] = useState([]);
-  const [stats, setStats] = useState({ totalReviews: 0, averageRating: 0 });
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [stats, setStats] = useState<Stats>({ totalReviews: 0 });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getAllReviews();
-      setReviews(response.data.data);
-
-      const totalReviews = response.data.data.length;
-      const totalRating = response.data.data.reduce(
-        (sum: number, review: any) => sum + review.rating,
-        0
-      );
-      const averageRating = totalRating / totalReviews;
-
-      setStats({
-        totalReviews,
-        averageRating: parseFloat(averageRating.toFixed(1)),
-      });
-    } catch (error: any) {
+      const response = await getAllpublicReviewAPI();
+      const reviewData = response.data.data;
+      setReviews(reviewData);
+      setStats({ totalReviews: reviewData.length });
+    } catch (error) {
       console.error("Error fetching reviews:", error);
       toast.error("Failed to load reviews. Please try again later.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchReviews();
-  }, []);
+  }, [fetchReviews]);
 
-  const handleReviewClick = (productId: string) => {
-    router.push(`/products/${productId}`);
-  };
-
-  // Slider settings for all screens
   const sliderSettings = {
     dots: true,
     infinite: true,
-    speed: 500,
-    slidesToShow: 3, // Default for large screens
+    speed: 600,
+    slidesToShow: 3,
     slidesToScroll: 1,
-    arrows: true,
+    arrows: false,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 4000,
+    pauseOnHover: true,
+    className: "max-h-[430px]",
+    customPaging: () => (
+      <div className="w-2 h-2 bg-green-400/50 rounded-full transition-all hover:bg-green-500 hover:scale-125 border border-green-200/50" />
+    ),
     responsive: [
-      {
-        breakpoint: 1024, // lg breakpoint
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768, // md breakpoint
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 640, // sm breakpoint
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          arrows: false, // Hide arrows on mobile
-        },
-      },
+      { breakpoint: 1280, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 2 } },
+      { breakpoint: 640, settings: { slidesToShow: 1 } },
     ],
   };
 
   return (
     <section
-      className="py-16 md:py-24 relative bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: `url(${backgroundImage.src})`,
-      }}
+      className="relative bg-cover bg-center bg-no-repeat py-16 md:py-24 overflow-hidden"
+      style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gray-900 bg-opacity-40"></div>
-
+      <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-green-50/50 to-transparent" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header with Stats */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-md">
-            Voices of Our Happy Customers
+        <div className="text-center mb-10 md:mb-12 relative">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-3 md:mb-4 tracking-tight animate-fade-in-down">
+            <span className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text font-extrabold text-transparent">
+              Voices That Matter
+            </span>
           </h2>
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-20 h-20 bg-green-200/20 rounded-full blur-xl animate-pulse" />
           {loading ? (
-            <div className="animate-pulse">
-              <div className="h-6 bg-gray-300 rounded w-48 mx-auto" />
-            </div>
+            <div className="animate-pulse h-5 w-48 bg-gray-300/40 rounded-full mx-auto" />
           ) : (
-            <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto drop-shadow-sm">
-              {stats.totalReviews} reviews with an average rating of{" "}
-              <span className="font-semibold text-yellow-400">
-                {stats.averageRating} ★
-              </span>
+            <p className="text-lg md:text-xl text-gray-700 font-medium animate-fade-in-up">
+              <span className="text-green-600">{stats.totalReviews}</span> Happy
+              Customers
             </p>
           )}
         </div>
 
-        {/* Slider for Testimonials */}
         {loading ? (
           <Slider {...sliderSettings}>
-            {[...Array(3)].map((_, index) => (
-              <div key={index} className="px-2">
-                <SkeletonTestimonialCard />
-              </div>
-            ))}
+            {Array(3)
+              .fill(null)
+              .map((_, index) => (
+                <div key={index} className="px-2 sm:px-3">
+                  <SkeletonTestimonialCard />
+                </div>
+              ))}
           </Slider>
         ) : reviews.length === 0 ? (
-          <p className="text-center text-gray-200 text-lg md:text-xl">
-            No reviews available yet. Be the first to share your experience!
+          <p className="text-center text-gray-700 text-lg md:text-xl font-medium animate-fade-in">
+            Share your story with us!
           </p>
         ) : (
           <Slider {...sliderSettings}>
-            {reviews.slice(0, 3).map((review: any) => (
-              <div key={review._id} className="px-2">
-                <TestimonialCard
-                  review={review}
-                  handleReviewClick={handleReviewClick}
-                />
+            {reviews.map((review) => (
+              <div key={review._id} className="px-2 sm:px-3">
+                <TestimonialCard review={review} />
               </div>
             ))}
           </Slider>
         )}
 
-        {/* Optional CTA */}
-        <div className="mt-12 text-center">
+        <div className="mt-10 md:mt-12 text-center">
           <Button
-            className="bg-yellow-500 text-white hover:bg-yellow-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition-all duration-300"
+            className="relative bg-green-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-base md:text-lg font-semibold overflow-hidden group shadow-md hover:shadow-lg transition-all duration-300"
             onClick={() => router.push("/products")}
           >
-            Explore Our Products
+            <span className="absolute inset-0 bg-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="relative z-10">Explore Now</span>
           </Button>
         </div>
       </div>
