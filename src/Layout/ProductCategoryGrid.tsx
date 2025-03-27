@@ -383,7 +383,7 @@ const ProductCategories: React.FC = () => {
               ? Array(10)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
-              : products.slice(0, 10).map((product) => {
+              : products.slice(45, 55).map((product) => {
                   const firstVariant = product.variants?.[0];
                   return (
                     <ProductCard
