@@ -152,8 +152,7 @@ const Testimonials: React.FC = () => {
             <div className="animate-pulse h-5 w-48 bg-gray-300/40 rounded-full mx-auto" />
           ) : (
             <p className="text-lg md:text-xl text-gray-700 font-medium animate-fade-in-up">
-              <span className="text-green-600">{stats.totalReviews}</span> Happy
-              Customers
+              Happy Customers
             </p>
           )}
         </div>
