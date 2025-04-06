@@ -36,7 +36,7 @@ const Footer = () => {
                 </p>
                 <div className="flex gap-4 py-1">
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/gauraaj1/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-700 hover:text-[#3b5998] transition-colors duration-300"
@@ -44,7 +44,7 @@ const Footer = () => {
                     <AiFillFacebook size={24} />
                   </a>
                   <a
-                    href="https://instagram.com"
+                    href="https://www.instagram.com/gauraaj1/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-700 hover:text-[#E1306C] transition-colors duration-300"
@@ -149,18 +149,18 @@ const Footer = () => {
                 <h3 className="uppercase font-bold text-gray-800">Legal</h3>
                 <ul>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    <Link href="/Terms&Conditions">Terms & Conditions</Link>
+                    <Link href="/terms-and-conditions">Terms & Conditions</Link>
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    <Link href="/PrivacyPolicy">Privacy Policy</Link>
+                    <Link href="/privacy-policy">Privacy Policy</Link>
                   </li>
-                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    <Link href="/CancellationRefundPolicy">
+                  <li className="text-sm py-1 hover:text-[rgb(43,5,4)] transition-colors duration-300">
+                    <Link href="/cancellation-and-refund">
                       Cancellation & Refund Policy
                     </Link>
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    <Link href="/ShippingDeliveryPolicy">
+                    <Link href="/shipping-and-delivery">
                       Shipping & Delivery Policy
                     </Link>
                   </li>

@@ -53,7 +53,7 @@ export default function ContactFormSection() {
   });
 
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50">
+    <div className="bg-gradient-to-b bg-white">
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
@@ -211,7 +211,7 @@ export default function ContactFormSection() {
       </div>
 
       {/* Contact Info Section */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
         {/* Left Section - Info */}
         <div className="space-y-6 md:space-y-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600 mb-4 md:mb-6 tracking-tight">

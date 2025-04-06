@@ -53,35 +53,57 @@ const parseComment = (comment: string) => {
 };
 
 // Testimonial Card Component
+// Testimonial Card Component
 const TestimonialCard = ({ review }: { review: Review }) => {
   const { text, reviewer } = parseComment(review.comment);
   const [name, title] = reviewer.split(", ");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const MAX_LENGTH = 150; // Maximum characters before truncating
+
+  const handleToggle = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const displayText = isExpanded
+    ? text
+    : text.slice(0, MAX_LENGTH) + (text.length > MAX_LENGTH ? "..." : "");
 
   return (
-    <div className="group relative bg-white/95 rounded-2xl shadow-lg h-[380px] transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-green-100/30 overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+    <div className="group relative bg-white/95 rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-green-100/30 overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent " />
       <div className="p-6 flex flex-col h-full items-center text-center">
         <Avatar className="w-20 h-20 md:w-24 md:h-24 border-2 border-green-50 shadow-md transition-all group-hover:scale-105 mb-4 md:mb-6">
           <AvatarImage
             src={review.profile || "/default-avatar.png"}
             alt={"Reviewer"}
+            className="object-cover"
           />
           <AvatarFallback className="bg-green-50 text-green-600 font-semibold text-xl md:text-2xl">
             {name ? name.slice(0, 2).toUpperCase() : "AN"}
           </AvatarFallback>
         </Avatar>
-        <p className="text-gray-700 text-base md:text-lg leading-relaxed line-clamp-4 font-normal mb-4 md:mb-6">
-          {text}
-        </p>
+        <div className="flex-1">
+          <p className="text-gray-700 text-base md:text-lg leading-relaxed font-normal mb-4 md:mb-6">
+            {displayText}
+            {text.length > MAX_LENGTH && (
+              <button
+                onClick={handleToggle}
+                className="text-green-600 hover:text-green-700 font-medium ml-1 transition-colors duration-300"
+              >
+                {isExpanded ? "See Less" : "See More"}
+              </button>
+            )}
+          </p>
+        </div>
         <div className="mt-auto">
           <h4 className="font-semibold text-gray-900 text-lg md:text-xl tracking-tight">
             {name || "Anonymous"}
           </h4>
-          {title && (
+          {
             <p className="text-sm md:text-base text-green-600 font-medium">
-              {title}
+              {title ?? "Customer"}
             </p>
-          )}
+          }
         </div>
       </div>
     </div>
@@ -174,7 +196,7 @@ const Testimonials: React.FC = () => {
         ) : (
           <Slider {...sliderSettings}>
             {reviews.map((review) => (
-              <div key={review._id} className="px-2 sm:px-3">
+              <div key={review._id} className="px-2 sm:px-3 h-full">
                 <TestimonialCard review={review} />
               </div>
             ))}
