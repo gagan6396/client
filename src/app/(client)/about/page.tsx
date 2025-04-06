@@ -1,5 +1,3 @@
-
-
 import AboutHeroSection from "@/Layout/About/AboutHeroSection";
 import AwardsAchievements from "@/Layout/About/AwardsAchievements";
 import { MissionVision } from "@/Layout/About/MissionVision";
