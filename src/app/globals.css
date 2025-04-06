@@ -107,3 +107,23 @@ body {
 .animate-slideIn {
   animation: slideIn 0.8s ease-in-out;
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.slick-dots li button:before {
+  font-size: 12px;
+  color: #facc15; /* Tailwind yellow-400 */
+}
+.slick-prev,
+.slick-next {
+  color: #facc15;
+}

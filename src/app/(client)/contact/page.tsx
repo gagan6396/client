@@ -3,7 +3,6 @@ import { ContactCard } from "@/Layout/ContactCard";
 import ContactFormSection from "@/Layout/ContactFormSection";
 import { LocationCard } from "@/Layout/LocationCard";
 import StoreCards from "@/Layout/StoreCards";
-import SubscriptionForm from "@/Layout/SubscriptionForm";
 
 
 const page = () => {
@@ -15,7 +14,7 @@ const page = () => {
       
       <StoreCards />
       <ContactCard />
-      <SubscriptionForm />
+      {/* <SubscriptionForm /> */}
 
     </div>
   );

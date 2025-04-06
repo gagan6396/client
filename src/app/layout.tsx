@@ -2,8 +2,11 @@
 import { store } from "@/app/store";
 import Footer from "@/Layout/Footer";
 import Header from "@/Layout/Header";
+import HeroSection from "@/Layout/HeroSection";
 import MobileNavBar from "@/Layout/MobileHeader";
 import { Geist, Geist_Mono } from "next/font/google";
+import { usePathname } from "next/navigation";
+import Script from "next/script";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
@@ -21,6 +24,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   return (
     <html lang="en">
       <body
@@ -28,14 +34,19 @@ export default function RootLayout({
       >
         {" "}
         <Provider store={store}>
-          <Header />
-          <div className=" pb-14">{children}</div>
+          {!isHome && <Header />}
+          {isHome && <HeroSection />}
+          <div className="pt-20">{children}</div>
           <MobileNavBar />
           <Footer />
           {/* Toast Notifications */}
-          <ToastContainer />
+          <ToastContainer position="top-center" />
         </Provider>
       </body>
+      <Script
+        id="razorpay-checkout-js"
+        src="https://checkout.razorpay.com/v1/checkout.js"
+      />
     </html>
   );
 }

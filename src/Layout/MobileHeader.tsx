@@ -1,47 +1,142 @@
 "use client";
 
-import { Heart, Home, List, ShoppingBag, User } from "lucide-react";
+import { Heart, Home, List, ShoppingBag, Store, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const MobileNavBar = () => {
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isHomePage = pathname === "/";
 
   // Function to apply active link style
   const getLinkClass = (path: string) => {
-    return pathname === path ? "text-green-600" : "text-gray-700";
+    const isActive = pathname === path;
+    return `flex flex-col items-center transition-all duration-300 ${
+      isActive
+        ? "text-green-600 scale-110" // Active state with scale effect
+        : isScrolled || !isHomePage
+        ? "text-gray-600 hover:text-green-600 hover:scale-105" // Default state when scrolled or not on home
+        : "text-white hover:text-green-600 hover:scale-105 bg-transprint" // Default state on home page
+    }`;
   };
 
+  // Effect to handle scroll event
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50); // Trigger at 50px for smoother transition
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="w-full h-20 px-5 py-2 fixed bottom-0 left-0 bg-[#FEFDFC] flex justify-between items-center border-t border-gray-200 md:hidden">
+    <div
+      className={`w-full h-20 fixed bottom-0 left-0 flex justify-around items-center border-t border-gray-200 shadow-lg md:hidden z-50 transition-all duration-300 ${
+        isScrolled || !isHomePage
+          ? "bg-white/90 backdrop-blur-md"
+          : "bg-transparent"
+      }`}
+    >
+      {/* Home Link */}
       <Link href={"/"}>
-        <div className={`flex flex-col items-center ${getLinkClass("/")}`}>
-          <Home size={24} />
-          <span className="text-xs mt-1">Home</span>
+        <div className={getLinkClass("/")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <Home size={26} strokeWidth={pathname === "/" ? 2.5 : 2} />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Home</span>
         </div>
       </Link>
+
+      {/* Categories Link */}
       <Link href={"/categories"}>
-        <div className={`flex flex-col items-center ${getLinkClass("/categories")}`}>
-          <List size={24} />
-          <span className="text-xs mt-1">Categories</span>
+        <div className={getLinkClass("/categories")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/categories"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <List size={26} strokeWidth={pathname === "/categories" ? 2.5 : 2} />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Categories</span>
         </div>
       </Link>
+
+      {/* Shop Link */}
+      <Link href={"/products"}>
+        <div className={getLinkClass("/products")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/products"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <Store size={26} strokeWidth={pathname === "/products" ? 2.5 : 2} />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Shop</span>
+        </div>
+      </Link>
+
+      {/* Wishlist Link */}
       <Link href={"/wishlist"}>
-        <div className={`flex flex-col items-center ${getLinkClass("/wishlist")}`}>
-          <Heart size={24} />
-          <span className="text-xs mt-1">Wishlist</span>
+        <div className={getLinkClass("/wishlist")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/wishlist"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <Heart
+              size={26}
+              strokeWidth={pathname === "/wishlist" ? 2.5 : 2}
+              fill={pathname === "/wishlist" ? "currentColor" : "none"}
+            />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Wishlist</span>
         </div>
       </Link>
+
+      {/* Account Link */}
       <Link href={"/user-account"}>
-        <div className={`flex flex-col items-center ${getLinkClass("/user-account")}`}>
-          <User size={24} />
-          <span className="text-xs mt-1">Account</span>
+        <div className={getLinkClass("/user-account")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/user-account"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <User size={26} strokeWidth={pathname === "/user-account" ? 2.5 : 2} />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Account</span>
         </div>
       </Link>
+
+      {/* Cart Link */}
       <Link href={"/add-to-cart"}>
-        <div className={`flex flex-col items-center ${getLinkClass("/add-to-cart")}`}>
-          <ShoppingBag size={24} />
-          <span className="text-xs mt-1">Cart</span>
+        <div className={getLinkClass("/add-to-cart")}>
+          <div
+            className={`p-2 rounded-full ${
+              pathname === "/add-to-cart"
+                ? "bg-green-100 text-green-600"
+                : "group-hover:bg-green-50"
+            } transition-colors duration-300`}
+          >
+            <ShoppingBag size={26} strokeWidth={pathname === "/add-to-cart" ? 2.5 : 2} />
+          </div>
+          <span className="text-xs md:text-sm mt-1 font-medium">Cart</span>
         </div>
       </Link>
     </div>
