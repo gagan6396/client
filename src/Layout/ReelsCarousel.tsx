@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
-import Slider from "react-slick";
 import { toast } from "react-toastify";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -306,19 +305,19 @@ export function ProductsVideoCarousel() {
       </h2>
       <main>
         {loading ? (
-          <Slider {...sliderSettings}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="px-2">
                 <SkeletonVideoCard />
               </div>
             ))}
-          </Slider>
+          </div>
         ) : productsWithVideos.length === 0 ? (
           <p className="text-center text-gray-500 text-lg md:text-xl">
             No product videos available yet. Stay tuned!
           </p>
         ) : (
-          <Slider {...sliderSettings}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {productsWithVideos.map((product) => (
               <div key={product._id} className="px-2">
                 <ProductCard
@@ -331,7 +330,7 @@ export function ProductsVideoCarousel() {
                 />
               </div>
             ))}
-          </Slider>
+          </div>
         )}
       </main>
     </section>
