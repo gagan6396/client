@@ -8,6 +8,7 @@ import impactImage from "@/public/l4.jpg"; // New placeholder for "Our Impact"
 import whyGauraajImage from "@/public/l6.jpg"; // New placeholder for "Why Gauraaj"
 import organicProducts from "@/public/organic-foof.jpg";
 import womenWorking from "@/public/women-working.jpg";
+import Link from "next/link";
 
 const ImpactSection: FC = () => {
   return (
@@ -186,12 +187,12 @@ const ImpactSection: FC = () => {
               <p className="text-sm sm:text-base md:text-lg leading-relaxed">
                 Bring home authenticity, wellness, and the soul of Uttarakhand — all in one basket.
               </p>
-              <a
+              <Link
                 href="/products"
                 className="inline-block bg-green-600 text-white font-semibold py-3 px-6 sm:px-8 rounded-full hover:bg-green-700 transition-colors duration-300"
               >
                 Shop now and bring home the purity of the Himalayas
-              </a>
+              </Link>
             </div>
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image

@@ -81,7 +81,7 @@ export function MissionVision() {
               Our Vision
             </h2>
             <p className="text-center text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-6 md:mb-8">
-              To transform lives by nurturing hill communities, empowering women, and celebrating Uttarakhand's rich agricultural heritage, fostering a future where nature and people thrive together.
+              To transform lives by nurturing hill communities, empowering women, and celebrating Uttarakhand&apos;s rich agricultural heritage, fostering a future where nature and people thrive together.
             </p>
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-start bg-green-50 p-4 rounded-lg shadow-sm hover:bg-green-100 transition-colors duration-300">

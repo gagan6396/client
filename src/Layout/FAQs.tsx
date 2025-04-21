@@ -9,7 +9,7 @@ const FAQs: React.FC = () => {
         <Accordion type="single" collapsible className="space-y-2">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-base font-medium">
-              What makes Gauraaj's products organic?
+              What makes Gauraaj&apos;s products organic?
             </AccordionTrigger>
             <AccordionContent>
               Our products are sourced from certified organic farms, free from synthetic fertilizers, pesticides, or chemicals.
