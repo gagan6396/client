@@ -292,7 +292,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
               isInCart
                 ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-green-500 text-white hover:bg-green-600"
+                : "bg-[#7A6E18] text-white hover:bg-[#7A6E18]"
             }`}
             onClick={isInCart ? deleteToCart : addToCart}
           >

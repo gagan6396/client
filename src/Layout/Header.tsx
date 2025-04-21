@@ -33,8 +33,8 @@ const Header: React.FC = () => {
 
   const getLinkClass = (path: string) =>
     pathname === path
-      ? "text-green-600 font-semibold border-b-2 border-green-600"
-      : "text-gray-700 hover:text-green-600 transition-colors duration-300";
+      ? "text-[#7A6E18] font-semibold border-b-2 border-[#7A6E18]"
+      : "text-gray-700 hover:text-[#7A6E18] transition-colors duration-300";
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
@@ -104,7 +104,7 @@ const Header: React.FC = () => {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-56 md:w-64 lg:w-72 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300"
+                  className="pl-10 pr-4 py-2 w-56 md:w-64 lg:w-72 rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A6E18] transition-all duration-300"
                 />
                 <AiOutlineSearch
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -115,7 +115,7 @@ const Header: React.FC = () => {
               <AiOutlineSearch
                 onClick={toggleSearchInput}
                 size={26}
-                className="text-gray-700 hover:text-green-500 cursor-pointer transition-colors duration-300"
+                className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
               />
             )}
           </div>
@@ -128,20 +128,20 @@ const Header: React.FC = () => {
                   <div className="cursor-pointer">
                     <AiOutlineUser
                       size={26}
-                      className="text-gray-700 hover:text-green-500 transition-colors duration-300"
+                      className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
                     />
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48 bg-white shadow-lg rounded-md border border-gray-100">
                   <DropdownMenuItem
                     onClick={() => router.push("/user-account")}
-                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors duration-200"
+                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-[#7A6E18] transition-colors duration-200"
                   >
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors duration-200"
+                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-[#7A6E18] transition-colors duration-200"
                   >
                     Logout
                   </DropdownMenuItem>
@@ -154,7 +154,7 @@ const Header: React.FC = () => {
               >
                 <AiOutlineHeart
                   size={26}
-                  className="text-gray-700 hover:text-green-500 transition-colors duration-300"
+                  className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
                 />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
               </div>
@@ -165,7 +165,7 @@ const Header: React.FC = () => {
               >
                 <AiOutlineShoppingCart
                   size={26}
-                  className="text-gray-700 hover:text-green-500 transition-colors duration-300"
+                  className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
                 />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
               </div>
@@ -175,7 +175,7 @@ const Header: React.FC = () => {
               <AiOutlineUser
                 onClick={() => router.push("/login")}
                 size={26}
-                className="text-gray-700 hover:text-green-500 cursor-pointer transition-colors duration-300"
+                className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
               />
               <div
                 className="relative cursor-pointer group"
@@ -183,7 +183,7 @@ const Header: React.FC = () => {
               >
                 <AiOutlineHeart
                   size={26}
-                  className="text-gray-700 hover:text-green-500 transition-colors duration-300"
+                  className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
                 />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
               </div>
@@ -193,7 +193,7 @@ const Header: React.FC = () => {
               >
                 <AiOutlineShoppingCart
                   size={26}
-                  className="text-gray-700 hover:text-green-500 transition-colors duration-300"
+                  className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
                 />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
               </div>
@@ -206,12 +206,12 @@ const Header: React.FC = () => {
           <AiOutlineSearch
             onClick={toggleSearchInput}
             size={26}
-            className="text-gray-700 hover:text-green-500 cursor-pointer transition-colors duration-300"
+            className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
           />
           <AiOutlineMenu
             onClick={toggleMobileMenu}
             size={26}
-            className="text-gray-700 hover:text-green-500 cursor-pointer transition-colors duration-300"
+            className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
           />
         </div>
       </div>
@@ -240,7 +240,7 @@ const Header: React.FC = () => {
                 <Link href="/user-account" className={`${getLinkClass("/user-account")} text-lg font-medium`} onClick={toggleMobileMenu}>
                   Profile
                 </Link>
-                <button onClick={() => { handleLogout(); toggleMobileMenu(); }} className="text-lg font-medium text-gray-700 hover:text-green-600 transition-colors duration-300 text-left">
+                <button onClick={() => { handleLogout(); toggleMobileMenu(); }} className="text-lg font-medium text-gray-700 hover:text-[#7A6E18] transition-colors duration-300 text-left">
                   Logout
                 </button>
               </>
@@ -268,7 +268,7 @@ const Header: React.FC = () => {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300"
+              className="pl-10 pr-4 py-2 w-full rounded-full border border-gray-200 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A6E18] transition-all duration-300"
             />
             <AiOutlineSearch
               className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"

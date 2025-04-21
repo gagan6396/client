@@ -32,8 +32,8 @@ const HeroSection = () => {
 
   const getLinkClass = (path: string) =>
     pathname === path
-      ? "text-green-600 font-semibold"
-      : "text-gray-700 hover:text-green-600 transition-colors duration-300";
+      ? "text-[#7A6E18] font-semibold"
+      : "text-gray-700 hover:text-[#7A6E18] transition-colors duration-300";
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +104,7 @@ const HeroSection = () => {
             </p>
             <Button
               onClick={() => router.push("/products")}
-              className="bg-green-600 text-white hover:bg-green-700 px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-[#7A6E18] text-white hover:bg-green-700 px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Shop Now
             </Button>
@@ -206,7 +206,7 @@ const HeroSection = () => {
                       isSticky
                         ? "border-gray-200 bg-white text-gray-700"
                         : "border-white/30 bg-white/10 text-white placeholder-white/70"
-                    } focus:outline-none focus:ring-2 focus:ring-green-500 transition-all duration-300`}
+                    } focus:outline-none focus:ring-2 focus:ring-[#7A6E18] transition-all duration-300`}
                   />
                   <AiOutlineSearch
                     className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${
@@ -221,7 +221,7 @@ const HeroSection = () => {
                   size={26}
                   className={`cursor-pointer ${
                     isSticky ? "text-gray-700" : "text-white"
-                  } hover:text-green-500 transition-colors duration-300`}
+                  } hover:text-[#7A6E18] transition-colors duration-300`}
                 />
               )}
             </div>
@@ -234,7 +234,7 @@ const HeroSection = () => {
                   size={26}
                   className={`${getLinkClass("/user-account")} cursor-pointer ${
                     isSticky ? "text-gray-700" : "text-white"
-                  } hover:text-green-500 transition-colors duration-300`}
+                  } hover:text-[#7A6E18] transition-colors duration-300`}
                 />
                 <div
                   className="relative cursor-pointer"
@@ -244,7 +244,7 @@ const HeroSection = () => {
                     size={26}
                     className={`${getLinkClass("/wishlist")} ${
                       isSticky ? "text-gray-700" : "text-white"
-                    } hover:text-green-500 transition-colors duration-300`}
+                    } hover:text-[#7A6E18] transition-colors duration-300`}
                   />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                 </div>
@@ -256,7 +256,7 @@ const HeroSection = () => {
                     size={26}
                     className={`${getLinkClass("/add-to-cart")} ${
                       isSticky ? "text-gray-700" : "text-white"
-                    } hover:text-green-500 transition-colors duration-300`}
+                    } hover:text-[#7A6E18] transition-colors duration-300`}
                   />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                 </div>
@@ -268,7 +268,7 @@ const HeroSection = () => {
                   size={26}
                   className={`${getLinkClass("/login")} cursor-pointer ${
                     isSticky ? "text-gray-700" : "text-white"
-                  } hover:text-green-500 transition-colors duration-300`}
+                  } hover:text-[#7A6E18] transition-colors duration-300`}
                 />
                 <div
                   className="relative cursor-pointer"
@@ -278,7 +278,7 @@ const HeroSection = () => {
                     size={26}
                     className={`${getLinkClass("/wishlist")} ${
                       isSticky ? "text-gray-700" : "text-white"
-                    } hover:text-green-500 transition-colors duration-300`}
+                    } hover:text-[#7A6E18] transition-colors duration-300`}
                   />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                 </div>
@@ -290,7 +290,7 @@ const HeroSection = () => {
                     size={26}
                     className={`${getLinkClass("/add-to-cart")} ${
                       isSticky ? "text-gray-700" : "text-white"
-                    } hover:text-green-500 transition-colors duration-300`}
+                    } hover:text-[#7A6E18] transition-colors duration-300`}
                   />
                   <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse" />
                 </div>
