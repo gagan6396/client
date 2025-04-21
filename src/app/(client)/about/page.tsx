@@ -1,5 +1,6 @@
 import AboutHeroSection from "@/Layout/About/AboutHeroSection";
 import AwardsAchievements from "@/Layout/About/AwardsAchievements";
+import ImpactSection from "@/Layout/About/ImpactSection";
 import { MissionVision } from "@/Layout/About/MissionVision";
 import { OrganicCollection } from "@/Layout/About/OrganicCollection";
 import SubscriptionForm from "@/Layout/SubscriptionForm";
@@ -11,14 +12,13 @@ const page = () => {
       <AboutHeroSection />
       <MissionVision />
       {/* <TeamAndTargets /> */}
+      <ImpactSection />
       <AwardsAchievements />
       <Testimonials />
       <OrganicCollection />
       <SubscriptionForm />
     </div>
-  )
-}
+  );
+};
 
-export default page
-
-
+export default page;

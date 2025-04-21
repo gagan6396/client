@@ -1,5 +1,4 @@
 "use client";
-import award1 from "@/public/About/award1.png";
 import award2 from "@/public/About/award2.png";
 import award4 from "@/public/About/award4.png";
 import award5 from "@/public/About/award5.png";
@@ -13,7 +12,7 @@ interface Award {
 }
 
 const awards: Award[] = [
-  { id: 1, image: award1, alt: "Award 1" },
+  // { id: 1, image: award1, alt: "Award 1" },
   { id: 2, image: award2, alt: "Award 2" },
   // { id: 3, image: award3, alt: "Award 3" },
   { id: 4, image: award4, alt: "Award 4" },
@@ -30,7 +29,7 @@ export default function AwardsAchievements() {
       </h2>
 
       {/* Awards Grid */}
-      <div className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
+      <div className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
         {awards.map((award) => (
           <div
             key={award.id}

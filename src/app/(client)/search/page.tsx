@@ -77,23 +77,18 @@ export interface Product {
 // Skeleton Product Card
 const SkeletonProductCard = () => (
   <div className="rounded-xl overflow-hidden animate-pulse border border-gray-100">
-    <div className="w-full aspect-square bg-gray-300 rounded-t-xl" />
-    <div className="p-4 space-y-3 bg-white">
-      <div className="h-4 bg-gray-300 rounded w-3/4" />
+    <div className="w-full aspect-square bg-gray-200 rounded-t-xl" />
+    <div className="p-3 space-y-2 bg-white">
+      <div className="h-3 bg-gray-200 rounded w-3/4" />
       <div className="flex space-x-1">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-4 w-4 bg-gray-300 rounded-full" />
+          <div key={i} className="h-3 w-3 bg-gray-200 rounded-full" />
         ))}
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
-          <div className="h-5 bg-gray-300 rounded w-16" />
-          <div className="h-4 bg-gray-300 rounded w-12" />
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 h-10 bg-gray-300 rounded-full" />
-        <div className="h-6 w-6 bg-gray-300 rounded-full" />
+      <div className="h-4 bg-gray-200 rounded w-1/2" />
+      <div className="flex gap-2">
+        <div className="h-8 bg-gray-200 rounded-full flex-1" />
+        <div className="h-5 w-5 bg-gray-200 rounded-full" />
       </div>
     </div>
   </div>
@@ -108,7 +103,7 @@ const ProductGrid = ({
   isLoading: boolean;
 }) => {
   return (
-    <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="w-11/12 mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {isLoading ? (
         [...Array(8)].map((_, index) => <SkeletonProductCard key={index} />)
       ) : products.length > 0 ? (
@@ -118,38 +113,20 @@ const ProductGrid = ({
             return null;
           }
 
-          const firstVariant = product.variants[0];
-          const currentDate = new Date();
-          const isDiscountActive =
-            firstVariant?.discount?.active &&
-            (!firstVariant.discount.startDate ||
-              new Date(firstVariant.discount.startDate) <= currentDate) &&
-            (!firstVariant.discount.endDate ||
-              new Date(firstVariant.discount.endDate) >= currentDate);
-          const discountValue = isDiscountActive
-            ? firstVariant?.discount?.value
-            : 0;
-          const price = parseFloat(firstVariant?.price?.$numberDecimal || "0");
-          const originalPrice = discountValue
-            ? price / (1 - discountValue / 100)
-            : price + 10; // Fallback to +10 if no discount
-
           return (
             <div
               key={product._id}
-              className="embla__slide rounded-xl p-2 sm:p-4 my-2 sm:my-3 relative hover:shadow-lg transition-shadow duration-300"
+              className="embla__slide rounded-xl p-2 relative hover:shadow-lg transition-shadow duration-300"
             >
               <ProductCard
-                images={product.images} // Pass the full images array for hover effect
-                title={`${product.name} - ${firstVariant?.name || "Default"}`}
-                price={firstVariant.price.$numberDecimal || "N/A"}
-                originalPrice={originalPrice}
+                images={product.images}
+                title={product.name}
+                variants={product.variants}
+                rating={product.rating}
                 isBestSeller={product.isBestSeller}
                 productId={product._id}
-                variantId={firstVariant._id}
-                inWishlist={product?.inWishlist}
-                inCart={product?.inCart}
-                discount={firstVariant?.discount}
+                inWishlist={product.inWishlist}
+                inCart={product.inCart}
               />
             </div>
           );
@@ -160,14 +137,13 @@ const ProductGrid = ({
             <img
               src={noProductFound.src}
               alt="No Products Found"
-              className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6 animate-pulse"
+              className="w-32 h-32 mx-auto mb-4 animate-pulse"
             />
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
               No Products Found
             </h3>
-            <p className="text-sm sm:text-base text-gray-500">
-              We couldn&apos;t find any products matching your criteria. Stay tuned
-              for updates!
+            <p className="text-sm text-gray-500">
+              We couldn't find any products matching your criteria. Stay tuned for updates!
             </p>
           </div>
         </div>
@@ -238,22 +214,22 @@ const SearchPage = () => {
           <img
             src={noProductFound.src}
             alt="Error"
-            className="w-32 h-32 sm:w-48 sm:h-48 mx-auto mb-4 sm:mb-6 animate-pulse"
+            className="w-32 h-32 mx-auto mb-4 animate-pulse"
           />
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Oops! Something Went Wrong
           </h3>
-          <p className="text-sm sm:text-base text-gray-500">{error}</p>
+          <p className="text-sm text-gray-500">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8 sm:py-12">
+    <div className="bg-gray-50 min-h-screen py-8">
       {/* Carousel Section */}
-      <section className="my-8 sm:my-12">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 text-gray-900">
+      <section className="my-8">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 text-gray-900">
           Search Results
         </h2>
         <div ref={emblaRef} className="embla w-full overflow-hidden">
@@ -274,9 +250,7 @@ export default function SuspenseWrapper() {
         <div className="flex justify-center items-center h-screen bg-gray-50">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-sm sm:text-base text-gray-700">
-              Loading products...
-            </p>
+            <p className="text-sm text-gray-700">Loading products...</p>
           </div>
         </div>
       }

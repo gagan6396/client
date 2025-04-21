@@ -13,50 +13,89 @@ import { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { toast } from "react-toastify";
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
 
-// Define Product interface based on API response
+// Product interface aligned with previous artifacts
 interface Product {
   _id: string;
+  supplier_id: {
+    shop_address: {
+      street: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+    _id: string;
+    email: string;
+    phone: string;
+    shop_name: string;
+  };
+  category_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  subcategory_id: {
+    _id: string;
+    name: string;
+    description: string;
+    slug: string;
+  };
+  reviews: any[];
   name: string;
-  price: { $numberDecimal: string };
-  video: string;
+  description: string;
   variants: {
+    dimensions: {
+      height: number;
+      length: number;
+      width: number;
+    };
+    discount: {
+      type?: string;
+      value?: number;
+      active: boolean;
+      startDate?: string;
+      endDate?: string;
+    };
     name: string;
     price: { $numberDecimal: string };
     stock: number;
     weight: number;
-    dimensions: { height: number; length: number; width: number };
     sku: string;
     images: string[];
     _id: string;
   }[];
-  inWishlist?: boolean;
-  inCart?: boolean;
+  images: {
+    url: string;
+    sequence: number;
+    _id: string;
+  }[];
+  video: string | null;
+  rating: number;
+  brand: string;
+  isBestSeller: boolean;
+  createdAt: string;
+  inWishlist: boolean;
+  inCart: boolean;
 }
 
 // Skeleton Card Component
 const SkeletonVideoCard = () => (
-  <Card className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse border border-gray-100">
+  <Card className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse border border-gray-100">
     <CardContent className="p-0">
-      <div className="w-full aspect-[9/16] bg-gray-300 rounded-t-2xl" />
-      <div className="p-4 md:p-6 space-y-3">
-        <div className="h-4 bg-gray-300 rounded w-3/4" />
+      <div className="w-full aspect-square bg-gray-200 rounded-t-xl" />
+      <div className="p-3 space-y-2">
+        <div className="h-3 bg-gray-200 rounded w-3/4" />
         <div className="flex space-x-1">
           {[...Array(5)].map((_, index) => (
-            <div key={index} className="h-4 w-4 bg-gray-300 rounded-full" />
+            <div key={index} className="h-3 w-3 bg-gray-200 rounded-full" />
           ))}
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <div className="h-5 bg-gray-300 rounded w-16" />
-            <div className="h-4 bg-gray-300 rounded w-12" />
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex-1 h-10 bg-gray-300 rounded-full" />
-          <div className="h-6 w-6 bg-gray-300 rounded-full" />
+        <div className="h-4 bg-gray-200 rounded w-1/2" />
+        <div className="flex gap-2">
+          <div className="h-8 bg-gray-200 rounded-full flex-1" />
+          <div className="h-5 w-5 bg-gray-200 rounded-full" />
         </div>
       </div>
     </CardContent>
@@ -79,88 +118,151 @@ const ProductCard = ({
   handleAddToWishlist: (productId: string) => void;
   handleDeleteFromWishlist: (productId: string) => void;
 }) => {
-  const firstVariant = product.variants[0]; // Use first variant for price and ID
+  const [hovered, setHovered] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  const router = useRouter();
+
+  const primaryImage =
+    product.images?.find((img) => img.sequence === 0)?.url ||
+    "/placeholder-image.jpg";
+  const secondaryImage =
+    product.images?.find((img) => img.sequence === 1)?.url || primaryImage;
+
+  const currentDate = new Date();
+  const isDiscountActive =
+    selectedVariant.discount?.active &&
+    (!selectedVariant.discount.startDate ||
+      new Date(selectedVariant.discount.startDate) <= currentDate) &&
+    (!selectedVariant.discount.endDate ||
+      new Date(selectedVariant.discount.endDate) >= currentDate);
+  const discountPercentage = isDiscountActive
+    ? selectedVariant.discount?.value || 0
+    : 0;
+  const originalPrice = parseFloat(selectedVariant.price.$numberDecimal);
+  const discountAmount = discountPercentage
+    ? (originalPrice * discountPercentage) / 100
+    : 0;
+  const finalPrice = originalPrice - discountAmount;
 
   return (
-    <Card className="group bg-white rounded-2xl shadow-md overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-gray-100">
+    <Card
+      className="group bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <CardContent className="p-0">
-        <div
-          className="relative overflow-hidden cursor-pointer"
-          onClick={() => handleVideoClick(product._id)}
-        >
-          <video
-            src={product.video}
-            className="w-full rounded-t-2xl aspect-[9/16] object-cover transition-transform duration-500 group-hover:scale-105"
-            muted
-            autoPlay
-            loop
-            playsInline
-            title={`${product.name} Video`}
-          />
-          <div className="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
-            Best Seller
+        <div className="relative overflow-hidden cursor-pointer">
+          {product.video ? (
+            <video
+              src={product.video}
+              className="w-full aspect-square object-cover rounded-t-xl transition-transform duration-300 group-hover:scale-105"
+              muted
+              autoPlay
+              loop
+              playsInline
+              title={`${product.name} Video`}
+              onClick={() => handleVideoClick(product._id)}
+            />
+          ) : (
+            <img
+              src={hovered ? secondaryImage : primaryImage}
+              alt={product.name}
+              className="w-full aspect-square object-cover rounded-t-xl transition-all duration-300"
+              onClick={() => handleVideoClick(product._id)}
+            />
+          )}
+          {product.isBestSeller && (
+            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+              Best Seller
+            </div>
+          )}
+          {isDiscountActive && discountPercentage > 0 && (
+            <div className="absolute top-2 left-2 mt-8 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+              -{discountPercentage}% (₹{discountAmount.toFixed(2)})
+            </div>
+          )}
+          <div
+            className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm"
+            onClick={
+              product.inWishlist
+                ? () => handleDeleteFromWishlist(product._id)
+                : () => handleAddToWishlist(product._id)
+            }
+          >
+            {product.inWishlist ? (
+              <FaHeart className="text-red-500 hover:text-red-600 transition-all cursor-pointer" />
+            ) : (
+              <CiHeart className="text-gray-500 hover:text-red-500 transition-all cursor-pointer" />
+            )}
           </div>
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-sm">
-            -5%
-          </div>
-          <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300" />
         </div>
-        <div className="p-4 md:p-6 space-y-3">
-          <h3 className="text-gray-800 text-base md:text-lg font-semibold line-clamp-1 group-hover:text-green-700 transition-colors">
+        <div className="p-3 space-y-2">
+          <h3
+            className="text-gray-800 text-sm font-medium group-hover:text-green-700 transition-colors"
+            title={product.name}
+          >
             {product.name}
           </h3>
-          <div className="flex">
+          <div className="flex items-center">
             {[...Array(5)].map((_, index) => (
               <svg
                 key={index}
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 md:h-5 md:w-5 text-yellow-400"
-                viewBox="0 0 20 20"
+                className={`h-3 w-3 ${
+                  index < Math.round(product.rating)
+                    ? "text-yellow-400"
+                    : "text-gray-300"
+                }`}
                 fill="currentColor"
+                viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.908c.969 0 1.372 1.24.588 1.81l-3.974 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.974-2.89a1 1 0 00-1.176 0l-3.974 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.147 9.101c-.784-.57-.381-1.81.588-1.81h4.908a1 1 0 00.95-.69l1.518-4.674z" />
               </svg>
             ))}
+            <span className="ml-1 text-xs text-gray-500">
+              ({product.rating.toFixed(1)})
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {product.variants.map((variant) => (
+              <button
+                key={variant._id}
+                className={`text-xs px-2 py-1 rounded-full border ${
+                  selectedVariant._id === variant._id
+                    ? "bg-green-100 border-green-500"
+                    : "border-gray-300"
+                }`}
+                onClick={() => setSelectedVariant(variant)}
+              >
+                {variant.weight}kg
+              </button>
+            ))}
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              <span className="text-green-600 font-bold text-lg md:text-xl">
-                ₹{firstVariant.price.$numberDecimal}
+            <div className="flex items-baseline gap-1">
+              <span className="text-green-600 font-bold text-sm">
+                ₹{finalPrice.toFixed(2)}
               </span>
-              <span className="text-gray-400 line-through text-sm md:text-base">
-                ₹{parseFloat(firstVariant.price.$numberDecimal) + 10}
-              </span>
+              {discountPercentage > 0 && (
+                <span className="text-gray-400 line-through text-xs">
+                  ₹{originalPrice.toFixed(2)}
+                </span>
+              )}
             </div>
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <Button
-              className={`flex-1 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
-                product.inCart
-                  ? "bg-red-500 text-white hover:bg-red-600"
-                  : "bg-green-500 text-white hover:bg-green-600"
-              }`}
-              onClick={
-                product.inCart
-                  ? () => handleDeleteFromCart(product._id, firstVariant._id)
-                  : () => handleAddToCart(product._id, firstVariant._id)
-              }
-            >
-              {product.inCart ? "Remove" : "Add to Cart"}
-            </Button>
-            {product.inWishlist ? (
-              <FaHeart
-                onClick={() => handleDeleteFromWishlist(product._id)}
-                size={24}
-                className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300 cursor-pointer"
-              />
-            ) : (
-              <CiHeart
-                onClick={() => handleAddToWishlist(product._id)}
-                size={24}
-                className="text-gray-500 hover:text-red-500 hover:scale-110 transition-all duration-300 cursor-pointer"
-              />
-            )}
-          </div>
+          <Button
+            className={`w-full rounded-full text-xs font-medium transition-all ${
+              product.inCart
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-[#7A6E18] text-white hover:bg-[#7A6E18]/90"
+            }`}
+            onClick={
+              product.inCart
+                ? () => handleDeleteFromCart(product._id, selectedVariant._id)
+                : () => handleAddToCart(product._id, selectedVariant._id)
+            }
+          >
+            {product.inCart ? "Remove" : "Add to Cart"}
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -178,10 +280,11 @@ export function ProductsVideoCarousel() {
         setLoading(true);
         const response = await getProductsAPI();
         const products = response.data.data.products || [];
-        const videoProducts = products.filter((product: any) => product.video);
+        const videoProducts = products.filter((product: Product) => product.video);
         setProductsWithVideos(videoProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
+        toast.error("Failed to load products. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -262,73 +365,36 @@ export function ProductsVideoCarousel() {
     router.push(`/products/${productId}`);
   };
 
-  // Slider settings for all screens
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4, // Default for large screens
-    slidesToScroll: 1,
-    arrows: true,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    responsive: [
-      {
-        breakpoint: 1024, // lg breakpoint
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 768, // md breakpoint
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 640, // sm breakpoint
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          arrows: false, // Hide arrows on mobile for cleaner UI
-        },
-      },
-    ],
-  };
-
   return (
-    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 text-center mb-10 md:mb-12 tracking-tight">
+    <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-6">
         Featured Product Videos
       </h2>
-      <main>
+      <main className="container mx-auto">
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="px-2">
-                <SkeletonVideoCard />
-              </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[...Array(6)].map((_, index) => (
+              <SkeletonVideoCard key={index} />
             ))}
           </div>
         ) : productsWithVideos.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg md:text-xl">
-            No product videos available yet. Stay tuned!
-          </p>
+          <div className="text-center py-12">
+            <p className="text-sm text-gray-500">
+              No product videos available yet. Stay tuned!
+            </p>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {productsWithVideos.map((product) => (
-              <div key={product._id} className="px-2">
-                <ProductCard
-                  product={product}
-                  handleVideoClick={handleVideoClick}
-                  handleAddToCart={handleAddToCart}
-                  handleDeleteFromCart={handleDeleteFromCart}
-                  handleAddToWishlist={handleAddToWishlist}
-                  handleDeleteFromWishlist={handleDeleteFromWishlist}
-                />
-              </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {productsWithVideos.slice(0, 6).map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                handleVideoClick={handleVideoClick}
+                handleAddToCart={handleAddToCart}
+                handleDeleteFromCart={handleDeleteFromCart}
+                handleAddToWishlist={handleAddToWishlist}
+                handleDeleteFromWishlist={handleDeleteFromWishlist}
+              />
             ))}
           </div>
         )}

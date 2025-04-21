@@ -22,7 +22,7 @@ import { FilterIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-// Updated Product interface based on new data structure
+// Product interface
 interface Product {
   _id: string;
   supplier_id: {
@@ -90,29 +90,25 @@ interface Product {
 
 // Skeleton Product Card
 const SkeletonProductCard = () => (
-  <div className="group rounded-2xl overflow-hidden animate-pulse border border-gray-100">
-    <div className="w-full aspect-square bg-gray-300 rounded-t-2xl" />
-    <div className="p-4 md:p-6 space-y-3 bg-white">
-      <div className="h-4 bg-gray-300 rounded w-3/4" />
+  <div className="rounded-xl overflow-hidden animate-pulse border border-gray-100">
+    <div className="w-full aspect-square bg-gray-200 rounded-t-xl" />
+    <div className="p-3 space-y-2 bg-white">
+      <div className="h-3 bg-gray-200 rounded w-3/4" />
       <div className="flex space-x-1">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-4 w-4 bg-gray-300 rounded-full" />
+          <div key={i} className="h-3 w-3 bg-gray-200 rounded-full" />
         ))}
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
-          <div className="h-5 bg-gray-300 rounded w-16" />
-          <div className="h-4 bg-gray-300 rounded w-12" />
-        </div>
-      </div>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1 h-10 bg-gray-300 rounded-full" />
-        <div className="h-6 w-6 bg-gray-300 rounded-full" />
+      <div className="h-4 bg-gray-200 rounded w-1/2" />
+      <div className="flex gap-2">
+        <div className="h-8 bg-gray-200 rounded-full flex-1" />
+        <div className="h-5 w-5 bg-gray-200 rounded-full" />
       </div>
     </div>
   </div>
 );
 
+// Product Grid Component
 const ProductGrid = ({
   products,
   title,
@@ -123,53 +119,35 @@ const ProductGrid = ({
   isLoading: boolean;
 }) => {
   return (
-    <section className="bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 text-center mb-10 md:mb-12 tracking-tight">
+    <section className="bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-6">
           {title}
         </h2>
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
-            {[...Array(10)].map((_, index) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[...Array(8)].map((_, index) => (
               <SkeletonProductCard key={index} />
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {products.map((product) => {
               if (!product?.images || product.images.length === 0) {
                 console.warn(`Product ${product._id} has no images`, product);
                 return null;
               }
-              const firstVariant = product.variants[0];
-              const currentDate = new Date();
-              const isDiscountActive =
-                firstVariant?.discount?.active &&
-                (!firstVariant.discount.startDate ||
-                  new Date(firstVariant.discount.startDate) <= currentDate) &&
-                (!firstVariant.discount.endDate ||
-                  new Date(firstVariant.discount.endDate) >= currentDate);
-              const discountValue = isDiscountActive
-                ? firstVariant?.discount?.value
-                : 0;
-              const price = parseFloat(firstVariant?.price?.$numberDecimal || "0");
-              const originalPrice = discountValue
-                ? price / (1 - discountValue / 100)
-                : price + 10; // Fallback to +10 if no discount
-
               return (
                 <ProductCard
                   key={product._id}
-                  images={product.images} // Pass the full images array for hover effect
-                  title={`${product.name} - ${firstVariant?.name || "Default"}`}
-                  price={firstVariant.price.$numberDecimal}
-                  originalPrice={originalPrice}
+                  images={product.images}
+                  title={product.name}
+                  variants={product.variants}
+                  rating={product.rating}
                   isBestSeller={product.isBestSeller}
                   productId={product._id}
-                  variantId={firstVariant._id}
                   inWishlist={product.inWishlist}
                   inCart={product.inCart}
-                  discount={firstVariant.discount}
                 />
               );
             })}
@@ -180,14 +158,13 @@ const ProductGrid = ({
               <img
                 src={noProductFound.src}
                 alt="No Products Found"
-                className="w-40 h-40 md:w-48 md:h-48 mx-auto mb-6 animate-pulse"
+                className="w-32 h-32 mx-auto mb-4 animate-pulse"
               />
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+              <h3 className="text-xl font-bold text-gray-800 mb-2">
                 No Products Found
               </h3>
-              <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-                We couldn’t find any products matching your criteria. Check back
-                soon for updates!
+              <p className="text-sm text-gray-500 leading-relaxed">
+                We couldn’t find any products matching your criteria. Check back soon for updates!
               </p>
             </div>
           </div>
@@ -197,6 +174,138 @@ const ProductGrid = ({
   );
 };
 
+// Filter Sidebar Component
+const FilterSidebar = ({
+  priceRange,
+  setPriceRange,
+  categories,
+  selectedCategories,
+  setSelectedCategories,
+  minRating,
+  setMinRating,
+  sortOption,
+  setSortOption,
+  applyFilters,
+  resetFilters,
+}: {
+  priceRange: [number, number];
+  setPriceRange: (value: [number, number]) => void;
+  categories: string[];
+  selectedCategories: string[];
+  setSelectedCategories: (value: string[]) => void;
+  minRating: number;
+  setMinRating: (value: number) => void;
+  sortOption: string;
+  setSortOption: (value: string) => void;
+  applyFilters: () => void;
+  resetFilters: () => void;
+}) => {
+  return (
+    <div className="w-[280px] h-[1000px] bg-white p-6 rounded-lg shadow-md border border-gray-100 sticky -top-20">
+      <h3 className="text-base font-semibold mb-4">Filter Products</h3>
+      <div className="space-y-6">
+        {/* Price Range Filter */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-2">
+            Price Range
+          </label>
+          <Slider
+            min={0}
+            max={1000}
+            step={10}
+            value={priceRange}
+            onValueChange={(value) => setPriceRange([value[0], value[1]])}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-gray-600 mt-1">
+            <span>₹{priceRange[0]}</span>
+            <span>₹{priceRange[1]}</span>
+          </div>
+        </div>
+
+        {/* Category Filter */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-2">
+            Categories
+          </label>
+          <div className="space-y-2">
+            {categories.map((cat) => (
+              <div key={cat} className="flex items-center gap-2">
+                <Checkbox
+                  id={cat}
+                  checked={selectedCategories.includes(cat)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSelectedCategories([...selectedCategories, cat]);
+                    } else {
+                      setSelectedCategories(
+                        selectedCategories.filter((c) => c !== cat)
+                      );
+                    }
+                  }}
+                />
+                <label htmlFor={cat} className="text-xs text-gray-600">
+                  {cat}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rating Filter */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-2">
+            Minimum Rating
+          </label>
+          <Slider
+            min={0}
+            max={5}
+            step={0.5}
+            value={[minRating]}
+            onValueChange={(value) => setMinRating(value[0])}
+            className="w-full"
+          />
+          <div className="text-xs text-gray-600 mt-1">
+            {minRating} ★ and above
+          </div>
+        </div>
+
+        {/* Sort Options */}
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-2">
+            Sort By
+          </label>
+          <Select value={sortOption} onValueChange={setSortOption}>
+            <SelectTrigger className="w-full text-xs">
+              <SelectValue placeholder="Select sorting option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default" className="text-xs">Default</SelectItem>
+              <SelectItem value="price-asc" className="text-xs">Price: Low to High</SelectItem>
+              <SelectItem value="price-desc" className="text-xs">Price: High to Low</SelectItem>
+              <SelectItem value="rating-desc" className="text-xs">Rating: High to Low</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Apply and Reset Buttons */}
+        <div className="flex gap-3">
+          <Button
+            onClick={applyFilters}
+            className="w-full bg-green-600 hover:bg-green-700 text-xs py-2"
+          >
+            Apply
+          </Button>
+          <Button onClick={resetFilters} className="w-full text-xs py-2">
+            Reset
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main ProductPage Component
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -301,150 +410,175 @@ const ProductPage = () => {
           <img
             src={noProductFound.src}
             alt="Error"
-            className="w-40 h-40 md:w-48 md:h-48 mx-auto mb-6 animate-pulse"
+            className="w-32 h-32 mx-auto mb-4 animate-pulse"
           />
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Oops! Something Went Wrong
           </h3>
-          <p className="text-base md:text-lg text-gray-500 leading-relaxed">
-            {error}
-          </p>
+          <p className="text-sm text-gray-500 leading-relaxed">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Filter Trigger Button */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-end">
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild>
-            <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 md:px-4 md:py-2">
-              <FilterIcon className="w-5 h-5" />
-              <span className="hidden md:inline">Filter Products</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-[90%] sm:w-[400px] max-w-[400px] overflow-y-auto">
-            <h3 className="text-lg font-semibold mb-6">Filter Products</h3>
-            <div className="space-y-8">
-              {/* Price Range Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Price Range
-                </label>
-                <Slider
-                  min={0}
-                  max={1000}
-                  step={10}
-                  value={priceRange}
-                  onValueChange={(value) => setPriceRange([value[0], value[1]])}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-gray-600 mt-2">
-                  <span>₹{priceRange[0]}</span>
-                  <span>₹{priceRange[1]}</span>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar for Desktop */}
+          <div className="hidden lg:block">
+            <FilterSidebar
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              categories={categories}
+              selectedCategories={selectedCategories}
+              setSelectedCategories={setSelectedCategories}
+              minRating={minRating}
+              setMinRating={setMinRating}
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              applyFilters={applyFilters}
+              resetFilters={resetFilters}
+            />
+          </div>
 
-              {/* Category Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Categories
-                </label>
-                <div className="space-y-3">
-                  {categories.map((cat) => (
-                    <div key={cat} className="flex items-center gap-2">
-                      <Checkbox
-                        id={cat}
-                        checked={selectedCategories.includes(cat)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedCategories([...selectedCategories, cat]);
-                          } else {
-                            setSelectedCategories(
-                              selectedCategories.filter((c) => c !== cat)
-                            );
-                          }
-                        }}
-                      />
-                      <label htmlFor={cat} className="text-sm text-gray-600">
-                        {cat}
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Floating Filter Button for Mobile */}
+            <div className="lg:hidden fixed top-20 right-6 z-50">
+              <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button className="rounded-full bg-green-600 hover:bg-green-700 text-white p-4 shadow-lg transform hover:scale-105 transition-transform">
+                    <FilterIcon className="w-6 h-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="w-[90%] sm:w-[300px] max-w-[300px] overflow-y-auto">
+                  <h3 className="text-base font-semibold mb-4">Filter Products</h3>
+                  <div className="space-y-6">
+                    {/* Price Range Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-2">
+                        Price Range
                       </label>
+                      <Slider
+                        min={0}
+                        max={1000}
+                        step={10}
+                        value={priceRange}
+                        onValueChange={(value) => setPriceRange([value[0], value[1]])}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-gray-600 mt-1">
+                        <span>₹{priceRange[0]}</span>
+                        <span>₹{priceRange[1]}</span>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Rating Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Minimum Rating
-                </label>
-                <Slider
-                  min={0}
-                  max={5}
-                  step={0.5}
-                  value={[minRating]}
-                  onValueChange={(value) => setMinRating(value[0])}
-                  className="w-full"
-                />
-                <div className="text-sm text-gray-600 mt-2">
-                  {minRating} ★ and above
-                </div>
-              </div>
+                    {/* Category Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-2">
+                        Categories
+                      </label>
+                      <div className="space-y-2">
+                        {categories.map((cat) => (
+                          <div key={cat} className="flex items-center gap-2">
+                            <Checkbox
+                              id={cat}
+                              checked={selectedCategories.includes(cat)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setSelectedCategories([...selectedCategories, cat]);
+                                } else {
+                                  setSelectedCategories(
+                                    selectedCategories.filter((c) => c !== cat)
+                                  );
+                                }
+                              }}
+                            />
+                            <label htmlFor={cat} className="text-xs text-gray-600">
+                              {cat}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-              {/* Sort Options */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Sort By
-                </label>
-                <Select value={sortOption} onValueChange={setSortOption}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select sorting option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                    <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                    <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                    {/* Rating Filter */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-2">
+                        Minimum Rating
+                      </label>
+                      <Slider
+                        min={0}
+                        max={5}
+                        step={0.5}
+                        value={[minRating]}
+                        onValueChange={(value) => setMinRating(value[0])}
+                        className="w-full"
+                      />
+                      <div className="text-xs text-gray-600 mt-1">
+                        {minRating} ★ and above
+                      </div>
+                    </div>
 
-              {/* Apply and Reset Buttons */}
-              <div className="flex gap-4">
-                <Button
-                  onClick={applyFilters}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  Apply Filters
-                </Button>
-                <Button onClick={resetFilters} className="w-full">
-                  Reset
-                </Button>
-              </div>
+                    {/* Sort Options */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-2">
+                        Sort By
+                      </label>
+                      <Select value={sortOption} onValueChange={setSortOption}>
+                        <SelectTrigger className="w-full text-xs">
+                          <SelectValue placeholder="Select sorting option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="default" className="text-xs">Default</SelectItem>
+                          <SelectItem value="price-asc" className="text-xs">Price: Low to High</SelectItem>
+                          <SelectItem value="price-desc" className="text-xs">Price: High to Low</SelectItem>
+                          <SelectItem value="rating-desc" className="text-xs">Rating: High to Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Apply and Reset Buttons */}
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={applyFilters}
+                        className="w-full bg-green-600 hover:bg-green-700 text-xs py-2"
+                      >
+                        Apply
+                      </Button>
+                      <Button onClick={resetFilters} className="w-full text-xs py-2">
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
 
-      {/* Organic Products Section */}
-      <ProductGrid
-        products={filteredProducts}
-        title="Discover Organic Products"
-        isLoading={isLoading}
-      />
+            {/* Organic Products Section */}
+            <ProductGrid
+              products={filteredProducts}
+              title="Discover Organic Products"
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
+// Suspense Wrapper
 export default function SuspenseWrapper() {
   return (
     <Suspense
       fallback={
         <div className="flex justify-center items-center h-screen bg-gray-50">
-          <div className="text-lg text-gray-700">Loading products...</div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-sm text-gray-700">Loading products...</p>
+          </div>
         </div>
       }
     >

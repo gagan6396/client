@@ -3,8 +3,8 @@ import { createContactAPI } from "@/apis/contactAPIs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import bg1 from "@/public/contact.jpg";
 import bg2 from "@/public/l2.jpg";
-import bg1 from "@/public/l3.jpg";
 import { useFormik } from "formik";
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
@@ -68,9 +68,9 @@ export default function ContactFormSection() {
       />
 
       {/* Contact Form Section */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
         {/* Left Section - Image */}
-        <div className="relative h-64 sm:h-80 md:h-96 lg:h-full rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative h-64 sm:h-80 md:h-96 lg:h-full rounded-2xl overflow-hidden">
           <Image
             src={bg1}
             alt="Contact Background"
@@ -78,24 +78,24 @@ export default function ContactFormSection() {
             objectFit="cover"
             className="transition-transform duration-500 hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" /> */}
         </div>
 
         {/* Right Section - Form */}
         <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-100">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 md:mb-8 text-center tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 md:mb-6 text-center tracking-tight">
             Get in Touch
           </h2>
-          <form onSubmit={formik.handleSubmit} className="space-y-5 sm:space-y-6">
+          <form onSubmit={formik.handleSubmit} className="space-y-4 sm:space-y-5">
             {/* Name */}
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Your Name
               </label>
               <Input
                 name="name"
                 placeholder="Enter your name"
-                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 shadow-sm"
+                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -109,7 +109,7 @@ export default function ContactFormSection() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Your Phone
               </label>
               <PhoneInput
@@ -118,7 +118,7 @@ export default function ContactFormSection() {
                 value={formik.values.phone}
                 onChange={(value) => formik.setFieldValue("phone", value)}
                 onBlur={formik.handleBlur}
-                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 shadow-sm"
+                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
               />
               {formik.touched.phone && formik.errors.phone && (
                 <p className="text-red-500 text-xs sm:text-sm mt-1">
@@ -129,12 +129,12 @@ export default function ContactFormSection() {
 
             {/* Category */}
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Category
               </label>
               <select
                 name="category"
-                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 shadow-sm"
+                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
                 value={formik.values.category}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -153,13 +153,13 @@ export default function ContactFormSection() {
 
             {/* Message */}
             <div>
-              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+              <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
                 Your Message
               </label>
               <Textarea
                 name="message"
                 placeholder="Write your message here..."
-                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 shadow-sm"
+                className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
                 value={formik.values.message}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -175,7 +175,7 @@ export default function ContactFormSection() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? (
@@ -211,20 +211,20 @@ export default function ContactFormSection() {
       </div>
 
       {/* Contact Info Section */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         {/* Left Section - Info */}
-        <div className="space-y-6 md:space-y-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600 mb-4 md:mb-6 tracking-tight">
+        <div className="space-y-4 md:space-y-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600 mb-3 md:mb-4 tracking-tight">
             Let’s Connect
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-6 md:mb-8">
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-4 md:mb-6">
             We’d love to hear from you! Reach out for inquiries, feedback, or support.
           </p>
 
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-3 sm:space-y-4">
             {/* Address */}
-            <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <MapPin className="text-green-600 w-6 h-6 md:w-7 md:h-7 flex-shrink-0" />
+            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+              <MapPin className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 Gauraj Valleyfood Pvt. Ltd. <br />
                 New Mothorowala Road, Uttarakhand 248001
@@ -232,33 +232,33 @@ export default function ContactFormSection() {
             </div>
 
             {/* Email */}
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <Mail className="text-green-600 w-6 h-6 md:w-7 md:h-7 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+              <Mail className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700">
-                support@gauraj.org
+                info@gauraaj.org
               </p>
             </div>
 
             {/* Phone */}
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <Phone className="text-green-600 w-6 h-6 md:w-7 md:h-7 flex-shrink-0" />
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+              <Phone className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700">
                 +91-6397-90-4655
               </p>
             </div>
 
             {/* Working Hours */}
-            <div className="p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                Monday – Saturday: 9:00–20:00 <br />
-                Sunday: 10:00–19:00
+                Monday – Saturday: 10:00–20:00 <br />
+                Sunday: Closed
               </p>
             </div>
           </div>
         </div>
 
         {/* Right Section - Image */}
-        <div className="relative h-64 sm:h-80 md:h-96 lg:h-full rounded-2xl overflow-hidden shadow-lg">
+        <div className="relative h-64 sm:h-80 md:h-96 lg:h-full rounded-2xl overflow-hidden">
           <Image
             src={bg2}
             alt="Contact Background"
@@ -266,7 +266,7 @@ export default function ContactFormSection() {
             objectFit="cover"
             className="transition-transform duration-500 hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
+          {/* <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" /> */}
         </div>
       </div>
     </div>

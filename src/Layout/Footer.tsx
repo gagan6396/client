@@ -7,7 +7,7 @@ import {
   AiFillFacebook,
   AiFillInstagram,
   AiFillLinkedin,
-  AiFillTwitterCircle,
+  AiFillYoutube
 } from "react-icons/ai";
 
 const Footer = () => {
@@ -25,7 +25,7 @@ const Footer = () => {
       <div className="w-full h-full flex flex-col justify-end">
         <div className="bg-[rgba(255,255,255,0.8)] backdrop-blur-sm pt-5 px-3">
           <div className="container mx-auto">
-            <div className="grid md:grid-cols-6 gap-6 grid-cols-2">
+            <div className="grid md:grid-cols-7 gap-6 grid-cols-2">
               {/* Logo and Social Media Section */}
               <div className="col-span-2 flex items-center flex-col">
                 <div className="font-bold py-1">
@@ -52,7 +52,7 @@ const Footer = () => {
                     <AiFillInstagram size={24} />
                   </a>
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-700 hover:text-[#0077B5] transition-colors duration-300"
@@ -60,12 +60,12 @@ const Footer = () => {
                     <AiFillLinkedin size={24} />
                   </a>
                   <a
-                    href="https://twitter.com"
+                    href="https://www.youtube.com/@gauraaj1"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-700 hover:text-[#1DA1F2] transition-colors duration-300"
+                    className="text-gray-700 hover:text-[#FF0000] transition-colors duration-300"
                   >
-                    <AiFillTwitterCircle size={24} />
+                    <AiFillYoutube size={24} />
                   </a>
                 </div>
               </div>
@@ -95,7 +95,7 @@ const Footer = () => {
                 <ul>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
                     <a
-                      href="https://instagram.com"
+                      href="https://www.instagram.com/gauraaj1/"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -104,20 +104,29 @@ const Footer = () => {
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
                     <a
-                      href="https://twitter.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Twitter
-                    </a>
-                  </li>
-                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    <a
-                      href="https://facebook.com"
+                      href="https://www.facebook.com/gauraaj1/"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       Facebook
+                    </a>
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    <a
+                      href="https://www.youtube.com/@gauraaj1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      YouTube
+                    </a>
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    <a
+                      href="https://www.linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      LinkedIn
                     </a>
                   </li>
                 </ul>
@@ -125,21 +134,43 @@ const Footer = () => {
 
               {/* Top Selling Products Section */}
               <div>
-                <h3 className="uppercase font-bold text-gray-800">
-                  Top Selling Products
-                </h3>
+                <h3 className="uppercase font-bold text-gray-800">Top Selling Products</h3>
                 <ul>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    Ghee & Oils
+                    Cold Pressed Flours
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    Hand Grounded Products
+                    Cold Pressed Spices
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    Herbal Tea
+                    Ghee & Oil
                   </li>
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
-                    Organic Honey
+                    Handgrounded Salts
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Herbal Teas
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Healthy Sweet & Snacks
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Rice & Millets
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Hill Grown Pulses
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Pickles
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Seeds & Condiment
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Natural Sweeteners
+                  </li>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    Other Products
                   </li>
                 </ul>
               </div>
@@ -154,7 +185,7 @@ const Footer = () => {
                   <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
                     <Link href="/privacy-policy">Privacy Policy</Link>
                   </li>
-                  <li className="text-sm py-1 hover:text-[rgb(43,5,4)] transition-colors duration-300">
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
                     <Link href="/cancellation-and-refund">
                       Cancellation & Refund Policy
                     </Link>
@@ -163,6 +194,16 @@ const Footer = () => {
                     <Link href="/shipping-and-delivery">
                       Shipping & Delivery Policy
                     </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Bulk Enquiry Section */}
+              <div>
+                <h3 className="uppercase font-bold text-gray-800">Bulk Enquiry</h3>
+                <ul>
+                  <li className="text-sm py-1 hover:text-[#2B0504] transition-colors duration-300">
+                    <Link href="/b2b-enquiry">B2B Enquiry</Link>
                   </li>
                 </ul>
               </div>

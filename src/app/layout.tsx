@@ -47,7 +47,7 @@ export default function RootLayout({
           <MobileNavBar />
           <Footer />
           {/* Contact Button and Social Buttons */}
-          <div className="fixed bottom-6 right-6 z-50">
+          <div className="fixed bottom-24 md:bottom-6 right-3 z-50">
             {/* Contact Button */}
             <button
               onClick={toggleContact}

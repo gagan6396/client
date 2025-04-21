@@ -171,7 +171,7 @@ const HeroSection = () => {
                 isSticky ? "text-gray-700" : "text-white"
               } text-base lg:text-lg font-medium`}
             >
-              Products
+              Shop
             </Link>
             <Link
               href="/blogs"

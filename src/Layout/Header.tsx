@@ -83,7 +83,7 @@ const Header: React.FC = () => {
             About Us
           </Link>
           <Link href="/products" className={`${getLinkClass("/products")} text-base lg:text-lg font-medium`}>
-            Products
+            Shop
           </Link>
           <Link href="/blogs" className={`${getLinkClass("/blogs")} text-base lg:text-lg font-medium`}>
             Blogs
@@ -227,7 +227,7 @@ const Header: React.FC = () => {
               About Us
             </Link>
             <Link href="/products" className={`${getLinkClass("/products")} text-lg font-medium`} onClick={toggleMobileMenu}>
-              Products
+              Shop
             </Link>
             <Link href="/blogs" className={`${getLinkClass("/blogs")} text-lg font-medium`} onClick={toggleMobileMenu}>
               Blogs

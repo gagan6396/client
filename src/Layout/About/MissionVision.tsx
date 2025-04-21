@@ -38,7 +38,7 @@ export function MissionVision() {
                     Connecting Communities
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Support local farmers and prevent migration.
+                    Support farmers, stop migration.
                   </p>
                 </div>
               </div>
@@ -53,7 +53,7 @@ export function MissionVision() {
                     Empowerment Focus
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Enable women to lead and thrive.
+                    Women at the heart of our mission.
                   </p>
                 </div>
               </div>
@@ -68,7 +68,7 @@ export function MissionVision() {
                     Sustainability Commitment
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Advocate for eco-friendly and healthy farming practices.
+                    Preserve eco-friendly farming values.
                   </p>
                 </div>
               </div>
@@ -81,7 +81,7 @@ export function MissionVision() {
               Our Vision
             </h2>
             <p className="text-center text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-6 md:mb-8">
-              To transform lives by nurturing hill communities, empowering women, and celebrating Uttarakhand&apos;s rich agricultural heritage, fostering a future where nature and people thrive together.
+              To transform lives by nurturing hill communities, empowering women, and celebrating Uttarakhand's rich agricultural heritage, fostering a future where nature and people thrive together.
             </p>
             <div className="space-y-4 sm:space-y-5">
               <div className="flex items-start bg-green-50 p-4 rounded-lg shadow-sm hover:bg-green-100 transition-colors duration-300">
@@ -95,7 +95,7 @@ export function MissionVision() {
                     Holistic Growth
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Foster socio-economic growth in hill regions.
+                    Socio-economic progress in hilly regions.
                   </p>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export function MissionVision() {
                     Healthy Living
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Promote a culture of health and well-being through natural products.
+                    Advocate wellness through natural food.
                   </p>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export function MissionVision() {
                     Community Strength
                   </h3>
                   <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                    Build empowered and self-reliant communities.
+                    Empowered, self-sustaining villages.
                   </p>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export function MissionVision() {
           </div>
           <div className="w-full lg:w-1/2 text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
             <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-              Gauraj is dedicated to bringing the pure, natural bounty of Uttarakhand’s hills to consumers while supporting the resilient farmers who cultivate it. Nestled in the heart of the enchanting mountains, we aim to create sustainable livelihoods that keep families together and preserve the vibrant hill culture. Migration to far-off cities has long disrupted these communities, but Gauraj stands as a pledge to reverse this trend by connecting small farmers to markets and fostering economic stability. Led by a passionate team of women, we champion empowerment, sustainability, and the celebration of the Himalayan way of life, making Gauraj more than a venture—it’s a movement for meaningful change.
+              Gauraaj is dedicated to uniting small farmers from Uttarakhand’s hills under a nurturing platform, preserving traditional farming methods, and promoting sustainable livelihoods. By connecting these farmers to broader markets, we aim to curb migration, strengthen communities, and empower women, ensuring the rich agricultural heritage of the Himalayas thrives for generations to come.
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@ export function MissionVision() {
         <div className="flex flex-col-reverse lg:flex-row items-center gap-6 md:gap-8 lg:gap-12">
           <div className="w-full lg:w-1/2 text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
             <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-              At Gauraj, we strive to empower women by integrating them into every aspect of our operations, helping elevate their social and economic status. From cultivating organic produce to preserving it and promoting healthy living, we believe that empowered women are the backbone of empowered communities. Our mission transcends food production—we foster a lifestyle rooted in health, well-being, and harmony with nature. Every product we deliver reflects our respect for the environment and commitment to quality. By choosing Gauraj, you are not only opting for fresh, natural produce but also contributing to a movement that uplifts hill communities, nurtures dreams, and celebrates the rich culture and resilience of Uttarakhand.
+              Our mission at Gauraaj places women at the forefront, empowering them through active participation in organic farming and community initiatives. We strive to promote healthy, pure, and natural produce, fostering a lifestyle that harmonizes with nature while uplifting the socio-economic status of hill communities. Choosing Gauraaj means supporting a movement for sustainability, empowerment, and the celebration of Uttarakhand’s vibrant culture.
             </p>
           </div>
           <div className="w-full lg:w-1/2 relative h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
