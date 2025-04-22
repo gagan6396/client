@@ -345,7 +345,7 @@ const ProductCategories: React.FC = () => {
               ? Array(6)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
-              : products.slice(45, 51).map((product) => (
+              : products.slice(0, 12).map((product) => (
                   <ProductCard
                     key={product._id}
                     images={product.images}
