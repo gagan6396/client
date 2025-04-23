@@ -34,14 +34,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
-// Interfaces based on updated API response
+// Updated interfaces based on new API response
 interface User {
   _id: string;
   first_name: string;
@@ -58,8 +58,8 @@ interface Product {
   };
   variantId: string;
   quantity: number;
-  price: number; // Unit price at order time
-  name: string; // Combined product and variant name (e.g., "Rishabh Gehlot - 400 ml")
+  price: number;
+  name: string;
   skuParameters: { weight: string };
   _id: string;
 }
@@ -70,7 +70,7 @@ interface Payment {
   orderId: string;
   paymentMethod: string;
   transactionId: string;
-  amount: { $numberDecimal: string };
+  amount: number; // Updated to number
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -79,14 +79,22 @@ interface Payment {
 
 interface Order {
   _id: string;
-  user_id: string; // Changed to string to match response
+  user_id: string;
+  userDetails: {
+    name: string;
+    phone: string;
+    email: string;
+  };
   orderDate: string;
   totalAmount: number;
   orderStatus: string;
   shippingStatus: string;
   products: Product[];
   shippingAddressId: string | null;
-  payment_id: Payment;
+  paymentMethod: number;
+  estimatedDeliveryDays: number;
+  courierService: string;
+  payment_id?: Payment; // Made optional
   shipRocketOrderId?: number;
   createdAt: string;
   updatedAt: string;
@@ -192,8 +200,7 @@ export default function UserAccount() {
     resolver: yupResolver(profileSchema),
     defaultValues: userProfile,
   });
-  const returnExchangeForm: any = useForm({
-    resolver: yupResolver(returnExchangeSchema),
+  const returnExchangeForm = useForm<ReturnExchangeFormData>({
     defaultValues: { reason: "", products: [] },
   });
 
@@ -210,7 +217,7 @@ export default function UserAccount() {
 
         const ordersResponse = await getUserOrdersAPI();
         if (ordersResponse.success) {
-          setOrders(ordersResponse.data.orders); // Assuming orders are under `data.orders`
+          setOrders(ordersResponse.data.orders);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -221,11 +228,11 @@ export default function UserAccount() {
     fetchData();
   }, [profileForm]);
 
-  const handleUpdateProfile = async (data: any) => {
+  const handleUpdateProfile: any = async (data: UserProfile) => {
     try {
       const response = await updateUserProfileAPI(data);
       if (response.data.success) {
-        setUserProfile(response.data);
+        setUserProfile(response.data.data);
         toast.success("Profile updated successfully!");
       }
     } catch (error) {
@@ -307,8 +314,8 @@ export default function UserAccount() {
     try {
       const response = await trackOrderAPI(orderId);
       if (response.success) {
-        const trackingKey = Object.keys(response.data);
-        setTrackingData(response.data[trackingKey[0]]);
+        const trackingKey = Object.keys(response.data)[0];
+        setTrackingData(response.data[trackingKey]);
         setSelectedOrder(orders.find((o) => o._id === orderId) || null);
         toast.success("Tracking details retrieved!");
       }
@@ -572,446 +579,487 @@ export default function UserAccount() {
             </CardHeader>
             <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
               {orders.length > 0 ? (
-                orders.map((order) => (
-                  <Card
-                    key={order._id}
-                    className="shadow-md hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-100 overflow-hidden"
-                  >
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
-                        <div className="space-y-1 sm:space-y-2">
-                          <p className="text-gray-800 font-semibold text-sm sm:text-base md:text-lg">
-                            Order ID: {order._id}
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-600">
-                            Date:{" "}
-                            {format(new Date(order.orderDate), "yyyy-MM-dd")}
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-600">
-                            Status:{" "}
-                            <span
-                              className={
-                                order.orderStatus === "Delivered"
-                                  ? "text-green-600 font-medium"
-                                  : order.orderStatus === "Cancelled"
-                                  ? "text-red-600 font-medium"
-                                  : "text-yellow-600 font-medium"
-                              }
-                            >
-                              {order.orderStatus}
-                            </span>
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-600">
-                            Shipping: {order.shippingStatus}
+                orders.map((order) => {
+                  // Calculate estimated delivery date
+                  const estimatedDeliveryDate = format(
+                    addDays(
+                      new Date(order.orderDate),
+                      order.estimatedDeliveryDays
+                    ),
+                    "yyyy-MM-dd"
+                  );
+
+                  return (
+                    <Card
+                      key={order._id}
+                      className="shadow-md hover:shadow-xl transition-all duration-300 rounded-lg border border-gray-100 overflow-hidden"
+                    >
+                      <CardContent className="p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
+                          <div className="space-y-1 sm:space-y-2">
+                            <p className="text-gray-800 font-semibold text-sm sm:text-base md:text-lg">
+                              Order ID: {order._id}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              Date:{" "}
+                              {format(new Date(order.orderDate), "yyyy-MM-dd")}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              Status:{" "}
+                              <span
+                                className={
+                                  order.orderStatus === "Delivered"
+                                    ? "text-green-600 font-medium"
+                                    : order.orderStatus === "Cancelled"
+                                    ? "text-red-600 font-medium"
+                                    : "text-yellow-600 font-medium"
+                                }
+                              >
+                                {order.orderStatus}
+                              </span>
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              Shipping: {order.shippingStatus}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              Estimated Delivery: {estimatedDeliveryDate}
+                            </p>
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              Courier: {order.courierService}
+                            </p>
+                          </div>
+                          <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+                            ₹{order.totalAmount.toFixed(2)}
                           </p>
                         </div>
-                        <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                          ₹{order.totalAmount.toFixed(2)}
-                        </p>
-                      </div>
 
-                      {/* Shipping Address */}
-                      <div className="mb-4 sm:mb-6">
-                        <p className="text-gray-800 font-medium text-sm sm:text-base">
-                          Shipping Address:
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                          {userProfile.shoppingAddress.addressLine1}
-                          {userProfile.shoppingAddress.addressLine2 &&
-                            ", " + userProfile.shoppingAddress.addressLine2}
-                          , {userProfile.shoppingAddress.city},{" "}
-                          {userProfile.shoppingAddress.state},{" "}
-                          {userProfile.shoppingAddress.country},{" "}
-                          {userProfile.shoppingAddress.postalCode}
-                        </p>
-                      </div>
-
-                      {/* Payment Details */}
-                      <div className="mb-4 sm:mb-6">
-                        <p className="text-gray-800 font-medium text-sm sm:text-base">
-                          Payment:
-                        </p>
-                        <p className="text-xs sm:text-sm text-gray-600">
-                          {order.payment_id.paymentMethod} -{" "}
-                          <span
-                            className={
-                              order.payment_id.status === "Completed"
-                                ? "text-green-600"
-                                : "text-yellow-600"
-                            }
-                          >
-                            {order.payment_id.status}
-                          </span>{" "}
-                          - ₹
-                          {parseFloat(
-                            order.payment_id.amount.$numberDecimal
-                          ).toFixed(2)}
-                        </p>
-                      </div>
-
-                      {/* Products */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-                        {order.products.map((product) => (
-                          <div
-                            key={product._id}
-                            className="flex items-center gap-3 sm:gap-4 border-b py-2 sm:py-3"
-                          >
-                            <Image
-                              src={
-                                product.productId.images.find(
-                                  (img) => img.sequence === 0
-                                )?.url || "/placeholder-image.jpg"
-                              }
-                              alt={product.name}
-                              width={60}
-                              height={60}
-                              className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
-                            />
-                            <div className="flex-1">
-                              <p className="text-gray-800 font-medium text-sm sm:text-base">
-                                {product.name}
-                              </p>
-                              <p className="text-xs sm:text-sm text-gray-600">
-                                Qty: {product.quantity} | ₹
-                                {product.price.toFixed(2)}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex flex-wrap gap-2 sm:gap-3">
-                        {order.orderStatus === "Pending" && (
-                          <Button
-                            variant="destructive"
-                            onClick={() => handleCancelOrder(order._id)}
-                            className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
-                          >
-                            Cancel Order
-                          </Button>
-                        )}
-                        {order.orderStatus === "Delivered" && (
-                          <>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => setSelectedOrder(order)}
-                                  className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
-                                >
-                                  Return Order
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="rounded-xl shadow-lg">
-                                <DialogHeader>
-                                  <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
-                                    Request Return
-                                  </DialogTitle>
-                                </DialogHeader>
-                                <Form {...returnExchangeForm}>
-                                  <form
-                                    onSubmit={returnExchangeForm.handleSubmit(
-                                      handleReturnOrder
-                                    )}
-                                    className="space-y-4 sm:space-y-6"
-                                  >
-                                    <FormField
-                                      control={returnExchangeForm.control}
-                                      name="reason"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel className="text-sm sm:text-base text-gray-700">
-                                            Reason
-                                          </FormLabel>
-                                          <FormControl>
-                                            <Input
-                                              {...field}
-                                              className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                                            />
-                                          </FormControl>
-                                          <FormMessage className="text-xs sm:text-sm" />
-                                        </FormItem>
-                                      )}
-                                    />
-                                    {order.products.map((product, index) => (
-                                      <div
-                                        key={product._id}
-                                        className="flex items-center gap-2 sm:gap-3"
-                                      >
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.productId`}
-                                          render={() => (
-                                            <FormItem>
-                                              <FormControl>
-                                                <Input
-                                                  type="hidden"
-                                                  value={product.productId._id}
-                                                />
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.variantId`}
-                                          render={() => (
-                                            <FormItem>
-                                              <FormControl>
-                                                <Input
-                                                  type="hidden"
-                                                  value={product.variantId}
-                                                />
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.quantity`}
-                                          render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                              <FormLabel className="text-sm sm:text-base text-gray-700">
-                                                {product.name}
-                                              </FormLabel>
-                                              <FormControl>
-                                                <Input
-                                                  type="number"
-                                                  min={1}
-                                                  max={product.quantity}
-                                                  {...field}
-                                                  className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                                                />
-                                              </FormControl>
-                                              <FormMessage className="text-xs sm:text-sm" />
-                                            </FormItem>
-                                          )}
-                                        />
-                                      </div>
-                                    ))}
-                                    <Button
-                                      type="submit"
-                                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
-                                    >
-                                      Submit Return
-                                    </Button>
-                                  </form>
-                                </Form>
-                              </DialogContent>
-                            </Dialog>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => setSelectedOrder(order)}
-                                  className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
-                                >
-                                  Exchange Order
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="rounded-xl shadow-lg">
-                                <DialogHeader>
-                                  <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
-                                    Request Exchange
-                                  </DialogTitle>
-                                </DialogHeader>
-                                <Form {...returnExchangeForm}>
-                                  <form
-                                    onSubmit={returnExchangeForm.handleSubmit(
-                                      handleExchangeOrder
-                                    )}
-                                    className="space-y-4 sm:space-y-6"
-                                  >
-                                    <FormField
-                                      control={returnExchangeForm.control}
-                                      name="reason"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel className="text-sm sm:text-base text-gray-700">
-                                            Reason
-                                          </FormLabel>
-                                          <FormControl>
-                                            <Input
-                                              {...field}
-                                              className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                                            />
-                                          </FormControl>
-                                          <FormMessage className="text-xs sm:text-sm" />
-                                        </FormItem>
-                                      )}
-                                    />
-                                    {order.products.map((product, index) => (
-                                      <div
-                                        key={product._id}
-                                        className="flex items-center gap-2 sm:gap-3"
-                                      >
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.productId`}
-                                          render={() => (
-                                            <FormItem>
-                                              <FormControl>
-                                                <Input
-                                                  type="hidden"
-                                                  value={product.productId._id}
-                                                />
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.variantId`}
-                                          render={() => (
-                                            <FormItem>
-                                              <FormControl>
-                                                <Input
-                                                  type="hidden"
-                                                  value={product.variantId}
-                                                />
-                                              </FormControl>
-                                            </FormItem>
-                                          )}
-                                        />
-                                        <FormField
-                                          control={returnExchangeForm.control}
-                                          name={`products.${index}.quantity`}
-                                          render={({ field }) => (
-                                            <FormItem className="flex-1">
-                                              <FormLabel className="text-sm sm:text-base text-gray-700">
-                                                {product.name}
-                                              </FormLabel>
-                                              <FormControl>
-                                                <Input
-                                                  type="number"
-                                                  min={1}
-                                                  max={product.quantity}
-                                                  {...field}
-                                                  className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                                                />
-                                              </FormControl>
-                                              <FormMessage className="text-xs sm:text-sm" />
-                                            </FormItem>
-                                          )}
-                                        />
-                                      </div>
-                                    ))}
-                                    <Button
-                                      type="submit"
-                                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
-                                    >
-                                      Submit Exchange
-                                    </Button>
-                                  </form>
-                                </Form>
-                              </DialogContent>
-                            </Dialog>
-                          </>
-                        )}
-                        <Button
-                          variant="secondary"
-                          onClick={() => handleTrackOrder(order._id)}
-                          className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
-                        >
-                          Track Order
-                        </Button>
-                      </div>
-
-                      {/* Tracking Details */}
-                      {trackingData && selectedOrder?._id === order._id && (
-                        <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-                          <p className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
-                            Tracking Details
+                        {/* Customer Details */}
+                        <div className="mb-4 sm:mb-6">
+                          <p className="text-gray-800 font-medium text-sm sm:text-base">
+                            Customer Details:
                           </p>
-                          {trackingData.tracking_data.error ? (
-                            <p className="text-sm sm:text-base text-red-600">
-                              {trackingData.tracking_data.error}
+                          <p className="text-xs sm:text-sm text-gray-600">
+                            Name: {order.userDetails.name}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600">
+                            Email: {order.userDetails.email}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600">
+                            Phone: {order.userDetails.phone}
+                          </p>
+                        </div>
+
+                        {/* Shipping Address */}
+                        <div className="mb-4 sm:mb-6">
+                          <p className="text-gray-800 font-medium text-sm sm:text-base">
+                            Shipping Address:
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            {order.shippingAddressId
+                              ? `${userProfile.shoppingAddress.addressLine1}${
+                                  userProfile.shoppingAddress.addressLine2
+                                    ? ", " +
+                                      userProfile.shoppingAddress.addressLine2
+                                    : ""
+                                }, ${userProfile.shoppingAddress.city}, ${
+                                  userProfile.shoppingAddress.state
+                                }, ${userProfile.shoppingAddress.country}, ${
+                                  userProfile.shoppingAddress.postalCode
+                                }`
+                              : "Not provided"}
+                          </p>
+                        </div>
+
+                        {/* Payment Details */}
+                        {order.payment_id && (
+                          <div className="mb-4 sm:mb-6">
+                            <p className="text-gray-800 font-medium text-sm sm:text-base">
+                              Payment:
                             </p>
-                          ) : (
-                            <>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700">
-                                    AWB Code:
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.awb_code ||
-                                      "Not Available"}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700">
-                                    Courier:
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.courier_name ||
-                                      "Not Assigned"}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700">
-                                    Current Status:
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.current_status ||
-                                      "Pending"}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700">
-                                    Estimated Delivery:
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {trackingData.tracking_data
-                                      .shipment_track[0]?.edd ||
-                                      "Not Available"}
-                                  </p>
-                                </div>
-                              </div>
-                              <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">
-                                Tracking Updates:
-                              </p>
-                              {trackingData.tracking_data
-                                .shipment_track_activities &&
-                              trackingData.tracking_data
-                                .shipment_track_activities.length > 0 ? (
-                                <ul className="space-y-2 sm:space-y-3">
-                                  {trackingData.tracking_data.shipment_track_activities.map(
-                                    (activity, index) => (
-                                      <li
-                                        key={index}
-                                        className="flex items-start gap-2 sm:gap-3"
-                                      >
-                                        <span className="w-2 h-2 bg-green-600 rounded-full mt-1.5 sm:mt-2"></span>
-                                        <div>
-                                          <p className="text-sm font-medium text-gray-800">
-                                            {activity.activity}
-                                          </p>
-                                          <p className="text-xs text-gray-500">
-                                            {activity.date} -{" "}
-                                            {activity.location}
-                                          </p>
-                                        </div>
-                                      </li>
-                                    )
-                                  )}
-                                </ul>
-                              ) : (
-                                <p className="text-sm text-gray-500">
-                                  No tracking updates available yet.
+                            <p className="text-xs sm:text-sm text-gray-600">
+                              {order.payment_id.paymentMethod} -{" "}
+                              <span
+                                className={
+                                  order.payment_id.status === "Completed"
+                                    ? "text-green-600"
+                                    : "text-yellow-600"
+                                }
+                              >
+                                {order.payment_id.status}
+                              </span>{" "}
+                              - ₹{order.payment_id.amount.toFixed(2)}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Products */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                          {order.products.map((product) => (
+                            <div
+                              key={product._id}
+                              className="flex items-center gap-3 sm:gap-4 border-b py-2 sm:py-3"
+                            >
+                              <Image
+                                src={
+                                  product.productId.images.find(
+                                    (img) => img.sequence === 0
+                                  )?.url || "/placeholder-image.jpg"
+                                }
+                                alt={product.name}
+                                width={60}
+                                height={60}
+                                className="rounded-md object-cover w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
+                              />
+                              <div className="flex-1">
+                                <p className="text-gray-800 font-medium text-sm sm:text-base">
+                                  {product.name}
                                 </p>
-                              )}
+                                <p className="text-xs sm:text-sm text-gray-600">
+                                  Qty: {product.quantity} | ₹
+                                  {product.price.toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-wrap gap-2 sm:gap-3">
+                          {order.orderStatus === "Pending" && (
+                            <Button
+                              variant="destructive"
+                              onClick={() => handleCancelOrder(order._id)}
+                              className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base hover:bg-red-700 transition-all duration-300 transform hover:scale-105"
+                            >
+                              Cancel Order
+                            </Button>
+                          )}
+                          {order.orderStatus === "Delivered" && (
+                            <>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setSelectedOrder(order)}
+                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
+                                  >
+                                    Return Order
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="rounded-xl shadow-lg">
+                                  <DialogHeader>
+                                    <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                                      Request Return
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <Form {...returnExchangeForm}>
+                                    <form
+                                      onSubmit={returnExchangeForm.handleSubmit(
+                                        handleReturnOrder
+                                      )}
+                                      className="space-y-4 sm:space-y-6"
+                                    >
+                                      <FormField
+                                        control={returnExchangeForm.control}
+                                        name="reason"
+                                        render={({ field }) => (
+                                          <FormItem>
+                                            <FormLabel className="text-sm sm:text-base text-gray-700">
+                                              Reason
+                                            </FormLabel>
+                                            <FormControl>
+                                              <Input
+                                                {...field}
+                                                className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
+                                              />
+                                            </FormControl>
+                                            <FormMessage className="text-xs sm:text-sm" />
+                                          </FormItem>
+                                        )}
+                                      />
+                                      {order.products.map((product, index) => (
+                                        <div
+                                          key={product._id}
+                                          className="flex items-center gap-2 sm:gap-3"
+                                        >
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.productId`}
+                                            render={() => (
+                                              <FormItem>
+                                                <FormControl>
+                                                  <Input
+                                                    type="hidden"
+                                                    value={
+                                                      product.productId._id
+                                                    }
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.variantId`}
+                                            render={() => (
+                                              <FormItem>
+                                                <FormControl>
+                                                  <Input
+                                                    type="hidden"
+                                                    value={product.variantId}
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.quantity`}
+                                            render={({ field }) => (
+                                              <FormItem className="flex-1">
+                                                <FormLabel className="text-sm sm:text-base text-gray-700">
+                                                  {product.name}
+                                                </FormLabel>
+                                                <FormControl>
+                                                  <Input
+                                                    type="number"
+                                                    min={1}
+                                                    max={product.quantity}
+                                                    {...field}
+                                                    className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
+                                                  />
+                                                </FormControl>
+                                                <FormMessage className="text-xs sm:text-sm" />
+                                              </FormItem>
+                                            )}
+                                          />
+                                        </div>
+                                      ))}
+                                      <Button
+                                        type="submit"
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                                      >
+                                        Submit Return
+                                      </Button>
+                                    </form>
+                                  </Form>
+                                </DialogContent>
+                              </Dialog>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setSelectedOrder(order)}
+                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
+                                  >
+                                    Exchange Order
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="rounded-xl shadow-lg">
+                                  <DialogHeader>
+                                    <DialogTitle className="text-xl sm:text-2xl font-semibold text-gray-900">
+                                      Request Exchange
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <Form {...returnExchangeForm}>
+                                    <form
+                                      onSubmit={returnExchangeForm.handleSubmit(
+                                        handleExchangeOrder
+                                      )}
+                                      className="space-y-4 sm:space-y-6"
+                                    >
+                                      <FormField
+                                        control={returnExchangeForm.control}
+                                        name="reason"
+                                        render={({ field }) => (
+                                          <FormItem>
+                                            <FormLabel className="text-sm sm:text-base text-gray-700">
+                                              Reason
+                                            </FormLabel>
+                                            <FormControl>
+                                              <Input
+                                                {...field}
+                                                className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
+                                              />
+                                            </FormControl>
+                                            <FormMessage className="text-xs sm:text-sm" />
+                                          </FormItem>
+                                        )}
+                                      />
+                                      {order.products.map((product, index) => (
+                                        <div
+                                          key={product._id}
+                                          className="flex items-center gap-2 sm:gap-3"
+                                        >
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.productId`}
+                                            render={() => (
+                                              <FormItem>
+                                                <FormControl>
+                                                  <Input
+                                                    type="hidden"
+                                                    value={
+                                                      product.productId._id
+                                                    }
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.variantId`}
+                                            render={() => (
+                                              <FormItem>
+                                                <FormControl>
+                                                  <Input
+                                                    type="hidden"
+                                                    value={product.variantId}
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <FormField
+                                            control={returnExchangeForm.control}
+                                            name={`products.${index}.quantity`}
+                                            render={({ field }) => (
+                                              <FormItem className="flex-1">
+                                                <FormLabel className="text-sm sm:text-base text-gray-700">
+                                                  {product.name}
+                                                </FormLabel>
+                                                <FormControl>
+                                                  <Input
+                                                    type="number"
+                                                    min={1}
+                                                    max={product.quantity}
+                                                    {...field}
+                                                    className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
+                                                  />
+                                                </FormControl>
+                                                <FormMessage className="text-xs sm:text-sm" />
+                                              </FormItem>
+                                            )}
+                                          />
+                                        </div>
+                                      ))}
+                                      <Button
+                                        type="submit"
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                                      >
+                                        Submit Exchange
+                                      </Button>
+                                    </form>
+                                  </Form>
+                                </DialogContent>
+                              </Dialog>
                             </>
                           )}
+                          <Button
+                            variant="secondary"
+                            onClick={() => handleTrackOrder(order._id)}
+                            className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+                          >
+                            Track Order
+                          </Button>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
+
+                        {/* Tracking Details */}
+                        {trackingData && selectedOrder?._id === order._id && (
+                          <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                            <p className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
+                              Tracking Details
+                            </p>
+                            {trackingData.tracking_data.error ? (
+                              <p className="text-sm sm:text-base text-red-600">
+                                {trackingData.tracking_data.error}
+                              </p>
+                            ) : (
+                              <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-700">
+                                      AWB Code:
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {trackingData.tracking_data
+                                        .shipment_track[0]?.awb_code ||
+                                        "Not Available"}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-700">
+                                      Courier:
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {trackingData.tracking_data
+                                        .shipment_track[0]?.courier_name ||
+                                        "Not Assigned"}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-700">
+                                      Current Status:
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {trackingData.tracking_data
+                                        .shipment_track[0]?.current_status ||
+                                        "Pending"}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-700">
+                                      Estimated Delivery:
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {trackingData.tracking_data
+                                        .shipment_track[0]?.edd ||
+                                        estimatedDeliveryDate}
+                                    </p>
+                                  </div>
+                                </div>
+                                <p className="text-sm font-medium text-gray-700 mb-2 sm:mb-3">
+                                  Tracking Updates:
+                                </p>
+                                {trackingData.tracking_data
+                                  .shipment_track_activities &&
+                                trackingData.tracking_data
+                                  .shipment_track_activities.length > 0 ? (
+                                  <ul className="space-y-2 sm:space-y-3">
+                                    {trackingData.tracking_data.shipment_track_activities.map(
+                                      (activity, index) => (
+                                        <li
+                                          key={index}
+                                          className="flex items-start gap-2 sm:gap-3"
+                                        >
+                                          <span className="w-2 h-2 bg-green-600 rounded-full mt-1.5 sm:mt-2"></span>
+                                          <div>
+                                            <p className="text-sm font-medium text-gray-800">
+                                              {activity.activity}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                              {activity.date} -{" "}
+                                              {activity.location}
+                                            </p>
+                                          </div>
+                                        </li>
+                                      )
+                                    )}
+                                  </ul>
+                                ) : (
+                                  <p className="text-sm text-gray-500">
+                                    No tracking updates available yet.
+                                  </p>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })
               ) : (
                 <p className="text-center text-gray-600 text-sm sm:text-base md:text-lg">
                   No orders found. Start shopping to see your history!

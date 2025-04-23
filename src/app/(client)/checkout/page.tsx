@@ -1,7 +1,7 @@
 "use client";
 
 import { getAddToCartProductsAPI } from "@/apis/addToCartAPIs";
-import { createOrderAPI } from "@/apis/orderAPIs";
+import { calculateShippingChargesAPI, createOrderAPI } from "@/apis/orderAPIs";
 import { verifyPaymentAPI } from "@/apis/paymentAPIs";
 import { getUserProfileAPI } from "@/apis/userProfile";
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-// Updated CartItem interface based on new cart response structure
 interface CartItem {
-  id: string; // Product ID
-  variantId: string; // Variant ID
+  id: string;
+  variantId: string;
   imageSrc: string;
-  title: string; // Product name
-  variantName: string; // Variant name
-  price: string; // Variant price as $numberDecimal string
+  title: string;
+  variantName: string;
+  price: string;
   quantity: number;
   discount?: {
     type?: string;
@@ -30,7 +29,7 @@ interface CartItem {
     active: boolean;
     startDate?: string;
     endDate?: string;
-  }; // Added discount field
+  };
 }
 
 interface UserProfile {
@@ -49,6 +48,13 @@ interface UserProfile {
   };
 }
 
+interface ShippingOption {
+  courierName: string;
+  rate: number;
+  estimatedDeliveryDays: number;
+  type: "Standard" | "Express";
+}
+
 const CheckoutPage = () => {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -57,6 +63,10 @@ const CheckoutPage = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">(
     "Razorpay"
+  );
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(
+    null
   );
 
   const formik = useFormik({
@@ -114,18 +124,17 @@ const CheckoutPage = () => {
           });
         }
 
-        // Map cart items based on the new API response structure
         const mappedItems = cartRes.data.data.products.map((item: any) => ({
           id: item.productId,
           variantId: item.variantId,
           imageSrc:
-            item.productDetails.images.find((img: any) => img.sequence === 0)?.url ||
-            "/placeholder-image.jpg",
+            item.productDetails.images.find((img: any) => img.sequence === 0)
+              ?.url || "/placeholder-image.jpg",
           title: item.productDetails.name,
           variantName: item.productDetails.variant.name,
-          price: item.productDetails.variant.price.$numberDecimal, // Keep as string
+          price: item.productDetails.variant.price.$numberDecimal,
           quantity: item.quantity,
-          discount: item.productDetails.variant.discount, // Add discount field
+          discount: item.productDetails.variant.discount,
         }));
         setCartItems(mappedItems);
       } catch (error) {
@@ -139,6 +148,46 @@ const CheckoutPage = () => {
     fetchData();
   }, []);
 
+  // Fetch shipping charges when postal code, cart items, or payment method change
+  useEffect(() => {
+    const fetchShippingCharges = async () => {
+      if (!formik.values.postalCode || !cartItems.length) return;
+
+      try {
+        const products = cartItems.map((item) => ({
+          productId: item.id,
+          variantId: item.variantId,
+          quantity: item.quantity,
+        }));
+        const response = await calculateShippingChargesAPI(
+          formik.values.postalCode,
+          products,
+          paymentMethod
+        );
+        const { shippingOptions } = response.data;
+        // Parse estimatedDeliveryDays to number
+        const parsedOptions = shippingOptions.map((option: any) => ({
+          ...option,
+          estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
+        }));
+        setShippingOptions(parsedOptions);
+
+        // Select the cheapest option by default
+        const cheapestOption = parsedOptions.reduce(
+          (min: ShippingOption, option: ShippingOption) =>
+            option.rate < min.rate ? option : min,
+          parsedOptions[0]
+        );
+        setSelectedCourier(cheapestOption);
+      } catch (error) {
+        console.error("Error fetching shipping charges:", error);
+        toast.error("Failed to calculate shipping charges");
+      }
+    };
+
+    fetchShippingCharges();
+  }, [formik.values.postalCode, cartItems, paymentMethod]);
+
   const handlePlaceOrder = async (values: typeof formik.values) => {
     setLoading(true);
     try {
@@ -150,23 +199,25 @@ const CheckoutPage = () => {
         postalCode: values.postalCode,
       };
 
-      const orderData = {
+      const orderData: any = {
         products: cartItems.map((item) => ({
           productId: item.id,
           variantId: item.variantId,
           quantity: item.quantity,
-          discount: item.discount?.active && item.discount?.value
-            ? item.discount.value
-            : 0, // Include discount if active
+          discount:
+            item.discount?.active && item.discount?.value
+              ? item.discount.value
+              : 0,
           tax: 0,
         })),
         shippingAddress: addressSnapshot,
-        paymentMethod,
+        paymentMethod: paymentMethod === "COD" ? 1 : 0, // Send 1 for COD, 0 for Razorpay
         userDetails: {
           name: values.name,
           phone: values.phone,
           email: profile?.email || "",
         },
+        shippingMethod: selectedCourier?.type || "Standard",
       };
 
       const response = await createOrderAPI(orderData);
@@ -184,6 +235,7 @@ const CheckoutPage = () => {
         router.push(`/order-confirmation/${orderId}`);
       }
     } catch (error: any) {
+      console.error("Order placement error:", error);
       toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
@@ -207,7 +259,7 @@ const CheckoutPage = () => {
         amount: totalAmount * 100,
         currency: "INR",
         order_id: razorpayOrderId,
-        name: "Your Company Name",
+        name: "Gauraaj",
         description: "Order Payment",
         handler: async (paymentResponse: any) => {
           try {
@@ -217,6 +269,7 @@ const CheckoutPage = () => {
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_signature: paymentResponse.razorpay_signature,
               addressSnapshot,
+              paymentMethod: paymentMethod === "COD" ? 1 : 0,
             });
 
             if (verifyResponse.data.success) {
@@ -248,17 +301,23 @@ const CheckoutPage = () => {
     });
   };
 
-  // Calculate total with discounts
-  const calculateTotal = () => {
+  const calculateSubtotal = () => {
     return cartItems
       .reduce((total, item) => {
         const numericPrice = parseFloat(item.price);
-        const discountedPrice = item.discount?.active && item.discount?.value
-          ? numericPrice * (1 - (item.discount.value / 100))
-          : numericPrice;
+        const discountedPrice =
+          item.discount?.active && item.discount?.value
+            ? numericPrice * (1 - item.discount.value / 100)
+            : numericPrice;
         return total + discountedPrice * item.quantity;
       }, 0)
       .toFixed(2);
+  };
+
+  const calculateTotal = () => {
+    return (
+      parseFloat(calculateSubtotal()) + (selectedCourier?.rate || 0)
+    ).toFixed(2);
   };
 
   if (profileLoading) {
@@ -366,9 +425,10 @@ const CheckoutPage = () => {
           <div className="space-y-4">
             {cartItems.map((item) => {
               const numericPrice = parseFloat(item.price);
-              const discountedPrice = item.discount?.active && item.discount?.value
-                ? numericPrice * (1 - (item.discount.value / 100))
-                : numericPrice;
+              const discountedPrice =
+                item.discount?.active && item.discount?.value
+                  ? numericPrice * (1 - item.discount.value / 100)
+                  : numericPrice;
 
               return (
                 <div
@@ -416,8 +476,58 @@ const CheckoutPage = () => {
             <div className="flex justify-between">
               <span className="text-gray-600">Subtotal:</span>
               <span className="text-gray-800 font-bold">
+                ₹{calculateSubtotal()}
+              </span>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-gray-600">
+                Shipping ({selectedCourier?.courierName || "Standard"}):
+              </span>
+              <span className="text-gray-800 font-bold">
+                ₹{(selectedCourier?.rate || 0).toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-gray-600">Total:</span>
+              <span className="text-gray-800 font-bold">
                 ₹{calculateTotal()}
               </span>
+            </div>
+            {selectedCourier && (
+              <div className="mt-2">
+                <span className="text-gray-600">
+                  Estimated Delivery: {selectedCourier.estimatedDeliveryDays}{" "}
+                  days
+                </span>
+              </div>
+            )}
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">Select Courier</h3>
+              <RadioGroup
+                value={selectedCourier?.courierName || ""}
+                onValueChange={(value) => {
+                  const courier = shippingOptions.find(
+                    (option) => option.courierName === value
+                  );
+                  setSelectedCourier(courier || null);
+                }}
+              >
+                {shippingOptions.map((option) => (
+                  <div
+                    key={option.courierName}
+                    className="flex items-center space-x-2"
+                  >
+                    <RadioGroupItem
+                      value={option.courierName}
+                      id={option.courierName}
+                    />
+                    <Label htmlFor={option.courierName}>
+                      {option.courierName} (₹{option.rate.toFixed(2)},{" "}
+                      {option.estimatedDeliveryDays} days)
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
             </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-2">Payment Method</h3>
@@ -440,7 +550,7 @@ const CheckoutPage = () => {
             <Button
               type="submit"
               onClick={() => formik.handleSubmit()}
-              disabled={loading || !cartItems.length}
+              disabled={loading || !cartItems.length || !selectedCourier}
               className="w-full mt-6 bg-[#2B0504] text-white hover:bg-[#3C0606]"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

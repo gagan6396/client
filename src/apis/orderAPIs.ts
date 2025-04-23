@@ -12,10 +12,13 @@ interface ReturnExchangePayload {
   products: { productId: string; variantId: string; quantity: number }[];
 }
 
+// Create a new order
+
+// Create a new order
 export const createOrderAPI = (data: {
   products: {
     productId: string;
-    variantId: string; // Added variantId
+    variantId: string;
     quantity: number;
     discount?: number;
     tax?: number;
@@ -27,13 +30,14 @@ export const createOrderAPI = (data: {
     country: string;
     postalCode: string;
   };
-  paymentMethod: "Razorpay" | "COD";
+  paymentMethod: 0 | 1; // Updated to number (0 for Razorpay, 1 for COD)
   userDetails: { name: string; phone: string; email: string };
+  shippingMethod: "Standard" | "Express";
 }) => {
   return axiosInstance.post("/orders", data);
 };
 
-// paymentAPIs.ts
+// Verify payment
 export const verifyPaymentAPI = (data: {
   orderId: string;
   razorpay_order_id: string;
@@ -42,6 +46,49 @@ export const verifyPaymentAPI = (data: {
   addressSnapshot?: any;
 }) => {
   return axiosInstance.post("/payment/verify", data);
+};
+
+// Add product to cart
+export const addProductToCartAPI = async (
+  productId: string,
+  variantId: string,
+  quantity: number,
+  postalCode: string
+): Promise<OrderResponse> => {
+  try {
+    const response = await axiosInstance.post(
+      `/orders/cart/add/${productId}/${variantId}`,
+      {
+        quantity,
+        postalCode,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error adding product ${productId} to cart:`, error);
+    throw error;
+  }
+};
+
+// Calculate shipping charges
+export const calculateShippingChargesAPI = async (
+  postalCode: string,
+  products: { productId: string; variantId: string; quantity: number }[],
+  paymentMethod: "Razorpay" | "COD"
+): Promise<OrderResponse> => {
+  try {
+    const isCOD = paymentMethod === "COD" ? 1 : 0;
+    const response = await axiosInstance.post("/orders/calculate-shipping", {
+      postalCode,
+      products,
+      isCOD,
+    });
+    console.log("Shipping options:", response.data.data.shippingOptions);
+    return response.data;
+  } catch (error) {
+    console.error("Error calculating shipping charges:", error);
+    throw error;
+  }
 };
 
 // Fetch a specific order by ID
@@ -139,6 +186,48 @@ export const trackOrderAPI = async (
     return response.data;
   } catch (error) {
     console.error(`Error tracking order ${orderId}:`, error);
+    throw error;
+  }
+};
+
+// Ship an order
+export const shipOrderAPI = async (orderId: string): Promise<OrderResponse> => {
+  try {
+    const response = await axiosInstance.post(`/orders/${orderId}/ship`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error shipping order ${orderId}:`, error);
+    throw error;
+  }
+};
+
+// Perform post-order actions
+export const postOrderActionsAPI = async (
+  orderId: string
+): Promise<OrderResponse> => {
+  try {
+    const response = await axiosInstance.post(
+      `/orders/${orderId}/post-actions`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error performing post-order actions for ${orderId}:`, error);
+    throw error;
+  }
+};
+
+// Fetch shipping analytics
+export const getShippingAnalyticsAPI = async (
+  startDate: string,
+  endDate: string
+): Promise<OrderResponse> => {
+  try {
+    const response = await axiosInstance.get(`/orders/analytics/shipping`, {
+      params: { startDate, endDate },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching shipping analytics:", error);
     throw error;
   }
 };
