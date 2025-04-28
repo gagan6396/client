@@ -3,6 +3,7 @@ import ProductCategories from "@/Layout/ProductCategories";
 import ProductCategoryGrid from "@/Layout/ProductCategoryGrid";
 import ReelsCarousel from "@/Layout/ReelsCarousel";
 import Testimonials from "@/Layout/Testimonials";
+import YouTubeShortsCarousel from "@/Layout/YouTubeShortsCarousel";
 export default function Home() {
   return (
     <div>
@@ -10,6 +11,7 @@ export default function Home() {
       <ProductCategories />
       <ProductCategoryGrid />
       <ReelsCarousel />
+      <YouTubeShortsCarousel />
       <Testimonials />
       <FAQs />
     </div>

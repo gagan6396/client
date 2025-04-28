@@ -1,8 +1,8 @@
-"use client";
-import { createContactAPI } from "@/apis/contactAPIs";
+'use client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { sendCollaborationEmail } from "@/lib/sendCollaborationEmail";
 import { useFormik } from "formik";
 import { FC } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -28,7 +28,7 @@ const collaborationSchema = Yup.object().shape({
 });
 
 const CollaborateSection: FC = () => {
-  const formik: any = useFormik({
+  const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
@@ -37,13 +37,48 @@ const CollaborateSection: FC = () => {
       message: "",
     },
     validationSchema: collaborationSchema,
-    onSubmit: async (values: any, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      formData.append('organization', values.organization);
+      formData.append('collaborationType', values.collaborationType);
+      formData.append('message', values.message);
+
       try {
-        await createContactAPI(values);
-        toast.success("Collaboration inquiry sent successfully!");
-        formik.resetForm();
+        const result = await sendCollaborationEmail(formData);
+        if (result.success) {
+          toast.success(result.message, {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: 'light',
+          });
+          resetForm();
+        } else {
+          toast.error(result.message, {
+            position: 'bottom-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: 'light',
+          });
+        }
       } catch (error) {
-        toast.error("Failed to send inquiry. Please try again.");
+        toast.error("An unexpected error occurred.", {
+          position: 'bottom-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: 'light',
+        });
         console.error(error);
       } finally {
         setSubmitting(false);
@@ -93,7 +128,9 @@ const CollaborateSection: FC = () => {
             <Input
               name="name"
               placeholder="Enter your name"
-              className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+                formik.touched.name && formik.errors.name ? 'border-red-500' : ''
+              }`}
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -114,7 +151,9 @@ const CollaborateSection: FC = () => {
               name="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+                formik.touched.email && formik.errors.email ? 'border-red-500' : ''
+              }`}
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -134,7 +173,9 @@ const CollaborateSection: FC = () => {
             <Input
               name="organization"
               placeholder="E.g., NGO name, company, or individual role"
-              className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+                formik.touched.organization && formik.errors.organization ? 'border-red-500' : ''
+              }`}
               value={formik.values.organization}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -153,7 +194,9 @@ const CollaborateSection: FC = () => {
             </label>
             <select
               name="collaborationType"
-              className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+                formik.touched.collaborationType && formik.errors.collaborationType ? 'border-red-500' : ''
+              }`}
               value={formik.values.collaborationType}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -180,7 +223,9 @@ const CollaborateSection: FC = () => {
             <Textarea
               name="message"
               placeholder="Tell us about your collaboration ideas..."
-              className="w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm"
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+                formik.touched.message && formik.errors.message ? 'border-red-500' : ''
+              }`}
               value={formik.values.message}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}

@@ -179,7 +179,7 @@ const HeroSection = () => {
                 isSticky ? "text-gray-700" : "text-white"
               } text-base lg:text-lg font-medium`}
             >
-              Blogs
+              Voice of the Valley
             </Link>
             <Link
               href="/contact"
