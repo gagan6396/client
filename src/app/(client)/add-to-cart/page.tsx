@@ -5,7 +5,7 @@ import {
   getAddToCartProductsAPI,
   updateToCartAPI,
 } from "@/apis/addToCartAPIs";
-import { addProductToCartAPI, calculateShippingChargesAPI } from "@/apis/orderAPIs";
+import { calculateShippingChargesAPI } from "@/apis/orderAPIs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,8 +37,7 @@ type CartItemProps = {
 interface ShippingOption {
   courierName: string;
   rate: number;
-  estimatedDeliveryDays: number; // Updated to number
-  type: "Standard";
+  estimatedDeliveryDays: number;
 }
 
 const CartItem: React.FC<CartItemProps> = ({
@@ -55,9 +54,10 @@ const CartItem: React.FC<CartItemProps> = ({
   isUpdating,
 }) => {
   const numericPrice = parseFloat(price);
-  const discountedPrice = discount?.active && discount?.value
-    ? numericPrice * (1 - discount.value / 100)
-    : numericPrice;
+  const discountedPrice =
+    discount?.active && discount?.value
+      ? numericPrice * (1 - discount.value / 100)
+      : numericPrice;
 
   return (
     <div className="group flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
@@ -133,7 +133,9 @@ const AddToCartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
   const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
   const [postalCode, setPostalCode] = useState<string>("");
-  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(null);
+  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(
+    null
+  );
   const router = useRouter();
 
   const getAllCartProducts = async () => {
@@ -144,8 +146,8 @@ const AddToCartPage: React.FC = () => {
         productId: item.productId,
         variantId: item.variantId,
         imageSrc:
-          item.productDetails.images.find((img: any) => img.sequence === 0)?.url ||
-          "/placeholder-image.jpg",
+          item.productDetails.images.find((img: any) => img.sequence === 0)
+            ?.url || "/placeholder-image.jpg",
         title: item.productDetails.name,
         price: item.productDetails.variant.price.$numberDecimal,
         quantity: item.quantity,
@@ -164,22 +166,6 @@ const AddToCartPage: React.FC = () => {
   useEffect(() => {
     getAllCartProducts();
   }, []);
-
-  const addItemToCart = async (productId: string, variantId: string) => {
-    if (!postalCode.match(/^\d{6}$/)) {
-      toast.error("Please enter a valid 6-digit postal code");
-      return;
-    }
-
-    try {
-      await addProductToCartAPI(productId, variantId, 1, postalCode);
-      await getAllCartProducts();
-      toast.success("Product added to cart!");
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
-      toast.error("Failed to add product to cart.");
-    }
-  };
 
   const updateQuantity = async (
     productId: string,
@@ -229,16 +215,19 @@ const AddToCartPage: React.FC = () => {
     return cartItems
       .reduce((total, item) => {
         const numericPrice = parseFloat(item.price);
-        const discountedPrice = item.discount?.active && item.discount?.value
-          ? numericPrice * (1 - item.discount.value / 100)
-          : numericPrice;
+        const discountedPrice =
+          item.discount?.active && item.discount?.value
+            ? numericPrice * (1 - item.discount.value / 100)
+            : numericPrice;
         return total + discountedPrice * item.quantity;
       }, 0)
       .toFixed(2);
   };
 
   const calculateTotal = () => {
-    return (parseFloat(calculateSubtotal()) + (selectedCourier?.rate || 0)).toFixed(2);
+    return (
+      parseFloat(calculateSubtotal()) + (selectedCourier?.rate || 0)
+    ).toFixed(2);
   };
 
   // Fetch shipping charges when postal code or cart items change
@@ -252,14 +241,24 @@ const AddToCartPage: React.FC = () => {
           variantId: item.variantId,
           quantity: item.quantity,
         }));
-        const response = await calculateShippingChargesAPI(postalCode, products, "Razorpay");
+        const response = await calculateShippingChargesAPI(
+          postalCode,
+          products,
+          0
+        ); // Default to prepaid
         const { shippingOptions } = response.data;
 
+        // Parse estimatedDeliveryDays to number
+        const parsedOptions = shippingOptions.map((option: any) => ({
+          ...option,
+          estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
+        }));
+
         // Select the cheapest option by default
-        const cheapestOption = shippingOptions.reduce(
+        const cheapestOption = parsedOptions.reduce(
           (min: ShippingOption, option: ShippingOption) =>
             option.rate < min.rate ? option : min,
-          shippingOptions[0]
+          parsedOptions[0]
         );
         setSelectedCourier(cheapestOption);
       } catch (error) {
@@ -316,7 +315,9 @@ const AddToCartPage: React.FC = () => {
                     updateQuantity(item.productId, item.variantId, amount)
                   }
                   onRemove={() => removeItem(item.productId, item.variantId)}
-                  isUpdating={updatingItemId === `${item.productId}-${item.variantId}`}
+                  isUpdating={
+                    updatingItemId === `${item.productId}-${item.variantId}`
+                  }
                 />
               ))}
             </div>
@@ -347,14 +348,16 @@ const AddToCartPage: React.FC = () => {
               Cart Summary
             </h2>
             <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-600 text-base md:text-lg">Subtotal:</span>
+              <span className="text-gray-600 text-base md:text-lg">
+                Subtotal:
+              </span>
               <span className="text-green-600 font-bold text-lg md:text-xl">
                 ₹{calculateSubtotal()}
               </span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600 text-base md:text-lg">
-                Shipping ({selectedCourier?.courierName || "Standard"}):
+                Shipping ({selectedCourier?.courierName || "Not selected"}):
               </span>
               <span className="text-green-600 font-bold text-lg md:text-xl">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
@@ -369,7 +372,8 @@ const AddToCartPage: React.FC = () => {
             {selectedCourier && (
               <div className="mb-4">
                 <span className="text-gray-600 text-base md:text-lg">
-                  Estimated Delivery: {selectedCourier.estimatedDeliveryDays} days
+                  Estimated Delivery: {selectedCourier.estimatedDeliveryDays}{" "}
+                  days
                 </span>
               </div>
             )}

@@ -52,7 +52,6 @@ interface ShippingOption {
   courierName: string;
   rate: number;
   estimatedDeliveryDays: number;
-  type: "Standard" | "Express";
 }
 
 const CheckoutPage = () => {
@@ -93,6 +92,10 @@ const CheckoutPage = () => {
     onSubmit: async (values) => {
       if (!cartItems.length) {
         toast.error("Cart is empty");
+        return;
+      }
+      if (!selectedCourier) {
+        toast.error("Please select a courier");
         return;
       }
       await handlePlaceOrder(values);
@@ -162,7 +165,7 @@ const CheckoutPage = () => {
         const response = await calculateShippingChargesAPI(
           formik.values.postalCode,
           products,
-          paymentMethod
+          paymentMethod === "COD" ? 1 : 0
         );
         const { shippingOptions } = response.data;
         // Parse estimatedDeliveryDays to number
@@ -197,9 +200,12 @@ const CheckoutPage = () => {
         state: values.state,
         country: "India",
         postalCode: values.postalCode,
+        name: values.name,
+        phone: values.phone,
+        email: profile?.email || "",
       };
 
-      const orderData: any = {
+      const orderData = {
         products: cartItems.map((item) => ({
           productId: item.id,
           variantId: item.variantId,
@@ -211,13 +217,13 @@ const CheckoutPage = () => {
           tax: 0,
         })),
         shippingAddress: addressSnapshot,
-        paymentMethod: paymentMethod === "COD" ? 1 : 0, // Send 1 for COD, 0 for Razorpay
+        paymentMethod: paymentMethod === "COD" ? (1 as 1) : (0 as 0), // Explicitly cast to 0 | 1
         userDetails: {
           name: values.name,
           phone: values.phone,
           email: profile?.email || "",
         },
-        shippingMethod: selectedCourier?.type || "Standard",
+        courierName: selectedCourier?.courierName || "", // Use selected courier name
       };
 
       const response = await createOrderAPI(orderData);
@@ -231,8 +237,19 @@ const CheckoutPage = () => {
           addressSnapshot,
         });
       } else {
-        toast.success("Order placed successfully!");
-        router.push(`/order-confirmation/${orderId}`);
+        // For COD, verify payment with courierName
+        const verifyResponse = await verifyPaymentAPI({
+          orderId,
+          addressSnapshot,
+          paymentMethod: 1,
+          courierName: selectedCourier?.courierName || "",
+        });
+        if (verifyResponse.data.success) {
+          toast.success("Order placed successfully!");
+          router.push(`/order-confirmation/${orderId}`);
+        } else {
+          throw new Error("COD order verification failed");
+        }
       }
     } catch (error: any) {
       console.error("Order placement error:", error);
@@ -269,7 +286,8 @@ const CheckoutPage = () => {
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_signature: paymentResponse.razorpay_signature,
               addressSnapshot,
-              paymentMethod: paymentMethod === "COD" ? 1 : 0,
+              paymentMethod: 0,
+              courierName: selectedCourier?.courierName || "",
             });
 
             if (verifyResponse.data.success) {
@@ -329,7 +347,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="container mx-auto py-7 p-3">
+    <div className="container mx-auto py-7 p-3 min-h-screen">
       <h1 className="text-2xl md:text-4xl font-bold text-center">Checkout</h1>
       <main className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -481,7 +499,7 @@ const CheckoutPage = () => {
             </div>
             <div className="flex justify-between mt-2">
               <span className="text-gray-600">
-                Shipping ({selectedCourier?.courierName || "Standard"}):
+                Shipping ({selectedCourier?.courierName || "Not selected"}):
               </span>
               <span className="text-gray-800 font-bold">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}

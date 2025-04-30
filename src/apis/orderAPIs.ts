@@ -1,3 +1,4 @@
+
 import axiosInstance from ".";
 
 interface OrderResponse {
@@ -11,8 +12,6 @@ interface ReturnExchangePayload {
   reason: string;
   products: { productId: string; variantId: string; quantity: number }[];
 }
-
-// Create a new order
 
 // Create a new order
 export const createOrderAPI = (data: {
@@ -30,54 +29,20 @@ export const createOrderAPI = (data: {
     country: string;
     postalCode: string;
   };
-  paymentMethod: 0 | 1; // Updated to number (0 for Razorpay, 1 for COD)
+  paymentMethod: 0 | 1; // 0 for Razorpay, 1 for COD
   userDetails: { name: string; phone: string; email: string };
-  shippingMethod: "Standard" | "Express";
+  courierName: string; // Replaced shippingMethod with courierName
 }) => {
   return axiosInstance.post("/orders", data);
-};
-
-// Verify payment
-export const verifyPaymentAPI = (data: {
-  orderId: string;
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  addressSnapshot?: any;
-}) => {
-  return axiosInstance.post("/payment/verify", data);
-};
-
-// Add product to cart
-export const addProductToCartAPI = async (
-  productId: string,
-  variantId: string,
-  quantity: number,
-  postalCode: string
-): Promise<OrderResponse> => {
-  try {
-    const response = await axiosInstance.post(
-      `/orders/cart/add/${productId}/${variantId}`,
-      {
-        quantity,
-        postalCode,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error(`Error adding product ${productId} to cart:`, error);
-    throw error;
-  }
 };
 
 // Calculate shipping charges
 export const calculateShippingChargesAPI = async (
   postalCode: string,
   products: { productId: string; variantId: string; quantity: number }[],
-  paymentMethod: "Razorpay" | "COD"
+  isCOD: 0 | 1 // Changed to number to align with backend
 ): Promise<OrderResponse> => {
   try {
-    const isCOD = paymentMethod === "COD" ? 1 : 0;
     const response = await axiosInstance.post("/orders/calculate-shipping", {
       postalCode,
       products,

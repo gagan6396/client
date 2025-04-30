@@ -35,8 +35,8 @@ axiosInstance.interceptors.response.use(
         if (error.response) {
             if (error.response.status === 401) {
                 if (typeof window !== 'undefined') { // Ensure this runs only on the client side
-                    // Remove accessToken from localStorage
-                    localStorage.removeItem('accessToken');
+                    // Clear all local storage items
+                    localStorage.clear(); // Clear all local storage items
 
                     // Redirect to login page
                     window.location.href = '/login'; // Use window.location for redirection

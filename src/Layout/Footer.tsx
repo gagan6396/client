@@ -1,4 +1,4 @@
-import bgImage from "@/public/l5.jpg"; // Import your background image
+import bgImage from "@/public/l5.jpg";
 import logo from "@/public/logo.png";
 import moment from "moment";
 import Image from "next/image";
@@ -7,13 +7,13 @@ import {
   AiFillFacebook,
   AiFillInstagram,
   AiFillLinkedin,
-  AiFillYoutube
+  AiFillYoutube,
 } from "react-icons/ai";
 
 const Footer = () => {
   return (
     <div
-      className="w-full h-screen"
+      className="w-full block"
       style={{
         backgroundImage: `url(${bgImage.src})`,
         backgroundSize: "cover",
@@ -21,8 +21,7 @@ const Footer = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Footer */}
-      <div className="w-full h-full flex flex-col justify-end">
+      <div className="w-full">
         <div className="bg-[rgba(255,255,255,0.8)] backdrop-blur-sm pt-5 px-3">
           <div className="container mx-auto">
             <div className="grid md:grid-cols-7 gap-6 grid-cols-2">
@@ -69,7 +68,7 @@ const Footer = () => {
                   </a>
                 </div>
               </div>
-
+              {/* Rest of the footer content remains unchanged */}
               {/* Pages Section */}
               <div>
                 <h3 className="uppercase font-bold text-gray-800">Pages</h3>
@@ -88,7 +87,6 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-
               {/* Social Section */}
               <div>
                 <h3 className="uppercase font-bold text-gray-800">Social</h3>
@@ -131,7 +129,6 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-
               {/* Top Selling Products Section */}
               <div>
                 <h3 className="uppercase font-bold text-gray-800">Top Selling Products</h3>
@@ -174,7 +171,6 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-
               {/* Legal Section */}
               <div>
                 <h3 className="uppercase font-bold text-gray-800">Legal</h3>
@@ -197,7 +193,6 @@ const Footer = () => {
                   </li>
                 </ul>
               </div>
-
               {/* Bulk Enquiry Section */}
               <div>
                 <h3 className="uppercase font-bold text-gray-800">Bulk Enquiry</h3>
@@ -209,12 +204,10 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
           {/* Divider */}
           <div className="container mx-auto p-4">
             <hr className="border-gray-300" />
           </div>
-
           {/* Copyright Section */}
           <div className="container mx-auto p-4">
             <div className="flex justify-center items-center flex-col md:flex-row gap-3">
