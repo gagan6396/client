@@ -29,7 +29,7 @@ export const createOrderAPI = (data: {
     country: string;
     postalCode: string;
   };
-  paymentMethod: 0 | 1; // 0 for Razorpay, 1 for COD
+  paymentMethod: 0 | 1; 
   userDetails: { name: string; phone: string; email: string };
   courierName: string; // Replaced shippingMethod with courierName
 }) => {

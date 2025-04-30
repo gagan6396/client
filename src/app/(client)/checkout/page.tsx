@@ -217,7 +217,7 @@ const CheckoutPage = () => {
           tax: 0,
         })),
         shippingAddress: addressSnapshot,
-        paymentMethod: paymentMethod === "COD" ? (1 as 1) : (0 as 0), // Explicitly cast to 0 | 1
+        paymentMethod: paymentMethod === "COD" ? (1 as 0 | 1) : (0 as 0 | 1), // Explicitly cast to 0 | 1
         userDetails: {
           name: values.name,
           phone: values.phone,
