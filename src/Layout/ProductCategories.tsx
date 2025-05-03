@@ -177,7 +177,7 @@ const ProductCategories: React.FC = () => {
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {loading
-              ? Array(8)
+              ? Array(12)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
               : products
@@ -215,10 +215,10 @@ const ProductCategories: React.FC = () => {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {loading
-              ? Array(8)
+              ? Array(12)
                   .fill(0)
                   .map((_, index) => <SkeletonCategoryCard key={index} />)
-              : categories.slice(0, 8).map((category) => (
+              : categories.slice(0, 12).map((category) => (
                   <div
                     key={category?._id || `category-${Math.random()}`}
                     className="group bg-white rounded-xl shadow-sm overflow-hidden flex flex-col items-center text-center p-3 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
