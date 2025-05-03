@@ -272,7 +272,7 @@ const CheckoutPage = () => {
   }) => {
     return new Promise((resolve, reject) => {
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: process.env.RAZORPAY_KEY_ID,
         amount: totalAmount * 100,
         currency: "INR",
         order_id: razorpayOrderId,
