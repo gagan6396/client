@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-    baseURL: process.env.BASE_URL || 'https://gauraaj.boostengine.in/api/v1', // API base URL
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://gauraaj.boostengine.in/api/v1', // API base URL
     timeout: 10000, // Request timeout (in milliseconds)
 });
 
