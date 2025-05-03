@@ -200,12 +200,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           onClick={() => navigation.push(`/products/${productId}`)}
         />
         {isBestSeller && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+          <div className="absolute top-2 left-2 bg-[#7A6E18] text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
             Best Seller
           </div>
         )}
         {isDiscountActive && discountPercentage > 0 && (
-          <div className="absolute top-2 left-2 mt-8 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+          <div className="absolute top-2 left-2 mt-8 bg-[#7A6E18]/90 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
             -{discountPercentage}% (₹{discountAmount.toFixed(2)})
           </div>
         )}
@@ -214,25 +214,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           onClick={isInWishlist ? deleteProductFromWishlist : addToWishList}
         >
           {isInWishlist ? (
-            <FaHeart className="text-red-500 hover:text-red-600 transition-all cursor-pointer" />
+            <FaHeart className="text-[#7A6E18] hover:opacity-90 transition-all cursor-pointer" />
           ) : (
-            <CiHeart className="text-gray-500 hover:text-red-500 transition-all cursor-pointer" />
+            <CiHeart className="text-gray-500 hover:text-[#7A6E18] transition-all cursor-pointer" />
           )}
         </div>
       </div>
+
       <div className="p-3 space-y-2">
         <h3
-          className="text-gray-800 text-sm font-medium group-hover:text-green-700 transition-colors"
+          className="text-gray-800 text-sm font-medium group-hover:text-[#7A6E18] transition-colors line-clamp-2 h-10" // Fixed height for 2 lines
           title={title}
         >
           {title}
         </h3>
+
         <div className="flex items-center">
           {[...Array(5)].map((_, index) => (
             <svg
               key={index}
               className={`h-3 w-3 ${
-                index < Math.round(rating) ? "text-yellow-400" : "text-gray-300"
+                index < Math.round(rating) ? "text-yellow-500" : "text-gray-300"
               }`}
               fill="currentColor"
               viewBox="0 0 20 20"
@@ -244,13 +246,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             ({rating.toFixed(1)})
           </span>
         </div>
+
         <div className="flex flex-wrap gap-2">
           {variants.map((variant) => (
             <button
               key={variant._id}
               className={`text-xs px-2 py-1 rounded-full border ${
                 selectedVariant._id === variant._id
-                  ? "bg-green-100 border-green-500"
+                  ? "bg-[#7A6E18]/10 border-[#7A6E18]"
                   : "border-gray-300"
               }`}
               onClick={() => setSelectedVariant(variant)}
@@ -259,9 +262,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </button>
           ))}
         </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1">
-            <span className="text-green-600 font-bold text-sm">
+            <span className="text-[#7A6E18] font-bold text-sm">
               ₹{finalPrice.toFixed(2)}
             </span>
             {discountPercentage > 0 && (
@@ -271,6 +275,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             )}
           </div>
         </div>
+
         <Button
           className={`w-full rounded-full text-xs font-medium transition-all ${
             isInCart

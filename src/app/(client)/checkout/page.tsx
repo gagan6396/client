@@ -12,6 +12,8 @@ import { useFormik } from "formik";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
@@ -87,7 +89,9 @@ const CheckoutPage = () => {
         .matches(/^\d{6}$/, "Pincode must be 6 digits"),
       phone: Yup.string()
         .required("Phone is required")
-        .matches(/^\d{10}$/, "Phone must be 10 digits"),
+        .test("is-valid-phone", "Phone number is invalid", (value) => {
+          return value ? isValidPhoneNumber(value) : false; // Validates E.164 format
+        }),
     }),
     onSubmit: async (values) => {
       if (!cartItems.length) {
@@ -295,6 +299,7 @@ const CheckoutPage = () => {
               router.push(`/order-confirmation/${orderId}`);
               resolve(true);
             } else {
+              setLoading(true);
               throw new Error("Payment verification failed");
             }
           } catch (error) {
@@ -314,6 +319,11 @@ const CheckoutPage = () => {
       rzp.on("payment.failed", () => {
         toast.error("Payment failed. Please try again.");
         reject(new Error("Payment failed"));
+      });
+
+      rzp.on("modal.closed", () => {
+        toast.info("Payment cancelled.");
+        setLoading(false); // Directly reset loading state
       });
       rzp.open();
     });
@@ -424,12 +434,16 @@ const CheckoutPage = () => {
             </div>
             <div>
               <Label htmlFor="phone">Phone</Label>
-              <Input
+              <PhoneInput
                 id="phone"
                 name="phone"
+                international
+                defaultCountry="IN"
                 value={formik.values.phone}
-                onChange={formik.handleChange}
+                onChange={(value) => formik.setFieldValue("phone", value)} // Update Formik's value
                 onBlur={formik.handleBlur}
+                className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 w-full transition-all duration-300"
+                placeholder="Enter your phone number"
               />
               {formik.touched.phone && formik.errors.phone ? (
                 <p className="text-sm text-red-500">{formik.errors.phone}</p>
