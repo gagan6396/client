@@ -98,7 +98,7 @@ const SkeletonCard = () => (
         ))}
       </div>
       <div className="h-4 bg-gray-200 rounded w-1/2" />
-      <div className="flex gap-2">
+      <div className="drop-shadow-sm flex gap-2">
         <div className="h-8 bg-gray-200 rounded-full flex-1" />
         <div className="h-5 w-5 bg-gray-200 rounded-full" />
       </div>
@@ -121,6 +121,7 @@ const ProductCategories: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -218,36 +219,48 @@ const ProductCategories: React.FC = () => {
               ? Array(12)
                   .fill(0)
                   .map((_, index) => <SkeletonCategoryCard key={index} />)
-              : categories.slice(0, 12).map((category) => (
-                  <div
-                    key={category?._id || `category-${Math.random()}`}
-                    className="group bg-white rounded-xl shadow-sm overflow-hidden flex flex-col items-center text-center p-3 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
-                  >
-                    <div className="relative w-16 h-16 mb-2">
-                      <img
-                        src={
-                          category?.images?.[0] || "/placeholder-category.jpg"
-                        }
-                        alt={category?.name || "Unnamed Category"}
-                        className="w-full h-full object-cover rounded-full border border-green-100 group-hover:border-green-300 transition-colors"
-                      />
-                      <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
-                    </div>
-                    <h3 className="text-sm font-medium text-gray-800">
-                      {category?.name || "Unnamed Category"}
-                    </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2">
-                      {category?.description || "No description available"}
-                    </p>
-                    <Link
-                      href={`/products?category=${category?._id || ""}`}
-                      className="mt-2 inline-block text-green-600 font-medium text-xs hover:text-green-700 transition-colors"
+              : (showAllCategories ? categories : categories.slice(0, 12)).map(
+                  (category) => (
+                    <div
+                      key={category?._id || `category-${Math.random()}`}
+                      className="group bg-white rounded-xl shadow-sm overflow-hidden flex flex-col items-center text-center p-3 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
                     >
-                      Explore Now →
-                    </Link>
-                  </div>
-                ))}
+                      <div className="relative w-16 h-16 mb-2">
+                        <img
+                          src={
+                            category?.images?.[0] || "/placeholder-category.jpg"
+                          }
+                          alt={category?.name || "Unnamed Category"}
+                          className="w-full h-full object-cover rounded-full border border-green-100 group-hover:border-green-300 transition-colors"
+                        />
+                        <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
+                      </div>
+                      <h3 className="text-sm font-medium text-gray-800">
+                        {category?.name || "Unnamed Category"}
+                      </h3>
+                      <p className="text-xs text-gray-500 line-clamp-2">
+                        {category?.description || "No description available"}
+                      </p>
+                      <Link
+                        href={`/products?category=${category?._id || ""}`}
+                        className="mt-2 inline-block text-green-600 font-medium  text-xs hover:text-green-700 transition-colors"
+                      >
+                        Explore Now →
+                      </Link>
+                    </div>
+                  )
+                )}
           </div>
+          {categories.length > 12 && (
+            <div className="mt-8 text-center">
+              <Button
+                onClick={() => setShowAllCategories(!showAllCategories)}
+                className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full"
+              >
+                {showAllCategories ? "Show Less" : "See More"}
+              </Button>
+            </div>
+          )}
         </div>
       </main>
 
