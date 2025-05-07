@@ -22,6 +22,7 @@ type CartItemProps = {
   price: string;
   quantity: number;
   variantName: string;
+  brand: string;
   discount?: {
     type?: string;
     value?: number;
@@ -48,6 +49,7 @@ const CartItem: React.FC<CartItemProps> = ({
   price,
   quantity,
   variantName,
+  brand,
   discount,
   onQuantityChange,
   onRemove,
@@ -74,6 +76,7 @@ const CartItem: React.FC<CartItemProps> = ({
             {title}
           </h3>
           <p className="text-sm text-gray-600">{variantName}</p>
+          <p className="text-sm text-gray-600">Brand: {brand}</p>
           <div className="flex items-center gap-2 mt-1">
             {discount?.active && discount?.value ? (
               <>
@@ -149,10 +152,11 @@ const AddToCartPage: React.FC = () => {
           item.productDetails.images.find((img: any) => img.sequence === 0)
             ?.url || "/placeholder-image.jpg",
         title: item.productDetails.name,
-        price: item.productDetails.variant.price.$numberDecimal,
+        price: item.productDetails.variant?.price?.$numberDecimal || "0",
         quantity: item.quantity,
-        variantName: item.productDetails.variant.name,
-        discount: item.productDetails.variant.discount,
+        variantName: item.productDetails.variant?.name || "Default",
+        brand: item.productDetails.brand,
+        discount: item.productDetails.variant?.discount || { active: false },
       }));
       setCartItems(mappedItems);
     } catch (error) {
@@ -230,7 +234,6 @@ const AddToCartPage: React.FC = () => {
     ).toFixed(2);
   };
 
-  // Fetch shipping charges when postal code or cart items change
   useEffect(() => {
     const fetchShippingCharges = async () => {
       if (!postalCode.match(/^\d{6}$/) || !cartItems.length) return;
@@ -245,16 +248,14 @@ const AddToCartPage: React.FC = () => {
           postalCode,
           products,
           0
-        ); // Default to prepaid
+        );
         const { shippingOptions } = response.data;
 
-        // Parse estimatedDeliveryDays to number
         const parsedOptions = shippingOptions.map((option: any) => ({
           ...option,
           estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
         }));
 
-        // Select the cheapest option by default
         const cheapestOption = parsedOptions.reduce(
           (min: ShippingOption, option: ShippingOption) =>
             option.rate < min.rate ? option : min,

@@ -70,7 +70,7 @@ interface Payment {
   orderId: string;
   paymentMethod: string;
   transactionId: string;
-  amount: number; // Updated to number
+  amount: number;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -94,7 +94,7 @@ interface Order {
   paymentMethod: number;
   estimatedDeliveryDays: number;
   courierService: string;
-  payment_id?: Payment; // Made optional
+  payment_id?: Payment;
   shipRocketOrderId?: number;
   createdAt: string;
   updatedAt: string;
@@ -119,7 +119,7 @@ interface UserProfile {
 
 interface ReturnExchangeFormData {
   reason: string;
-  products: { productId: string; variantId: string; quantity: number }[];
+  products?: { productId: string; variantId: string; quantity: number }[];
 }
 
 interface TrackingData {
@@ -201,6 +201,7 @@ export default function UserAccount() {
     defaultValues: userProfile,
   });
   const returnExchangeForm = useForm<ReturnExchangeFormData>({
+    resolver: yupResolver(returnExchangeSchema),
     defaultValues: { reason: "", products: [] },
   });
 
@@ -217,7 +218,7 @@ export default function UserAccount() {
 
         const ordersResponse = await getUserOrdersAPI();
         if (ordersResponse.success) {
-          setOrders(ordersResponse.data.orders);
+          setOrders(ordersResponse.data.orders || []);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -228,7 +229,7 @@ export default function UserAccount() {
     fetchData();
   }, [profileForm]);
 
-  const handleUpdateProfile: any = async (data: UserProfile) => {
+  const handleUpdateProfile = async (data: UserProfile | any) => {
     try {
       const response = await updateUserProfileAPI(data);
       if (response.data.success) {
@@ -264,7 +265,7 @@ export default function UserAccount() {
       const response = await returnOrderAPI(
         selectedOrder._id,
         data.reason,
-        data.products
+        data.products || []
       );
       if (response.success) {
         setOrders(
@@ -290,7 +291,7 @@ export default function UserAccount() {
       const response = await exchangeOrderAPI(
         selectedOrder._id,
         data.reason,
-        data.products
+        data.products || []
       );
       if (response.success) {
         setOrders(
@@ -314,8 +315,7 @@ export default function UserAccount() {
     try {
       const response = await trackOrderAPI(orderId);
       if (response.success) {
-        const trackingKey = Object.keys(response.data)[0];
-        setTrackingData(response.data[trackingKey]);
+        setTrackingData(response.data);
         setSelectedOrder(orders.find((o) => o._id === orderId) || null);
         toast.success("Tracking details retrieved!");
       }
@@ -329,7 +329,6 @@ export default function UserAccount() {
 
   return (
     <div className="container mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
-      {/* Header */}
       <div className="mb-10 sm:mb-12 md:mb-16 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
           My Account
@@ -355,7 +354,6 @@ export default function UserAccount() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Account Tab */}
         <TabsContent value="account">
           <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
@@ -566,7 +564,6 @@ export default function UserAccount() {
           </Card>
         </TabsContent>
 
-        {/* Order History Tab */}
         <TabsContent value="history">
           <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
@@ -580,7 +577,6 @@ export default function UserAccount() {
             <CardContent className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
               {orders.length > 0 ? (
                 orders.map((order) => {
-                  // Calculate estimated delivery date
                   const estimatedDeliveryDate = format(
                     addDays(
                       new Date(order.orderDate),
@@ -633,7 +629,6 @@ export default function UserAccount() {
                           </p>
                         </div>
 
-                        {/* Customer Details */}
                         <div className="mb-4 sm:mb-6">
                           <p className="text-gray-800 font-medium text-sm sm:text-base">
                             Customer Details:
@@ -649,7 +644,6 @@ export default function UserAccount() {
                           </p>
                         </div>
 
-                        {/* Shipping Address */}
                         <div className="mb-4 sm:mb-6">
                           <p className="text-gray-800 font-medium text-sm sm:text-base">
                             Shipping Address:
@@ -670,7 +664,6 @@ export default function UserAccount() {
                           </p>
                         </div>
 
-                        {/* Payment Details */}
                         {order.payment_id && (
                           <div className="mb-4 sm:mb-6">
                             <p className="text-gray-800 font-medium text-sm sm:text-base">
@@ -692,7 +685,6 @@ export default function UserAccount() {
                           </div>
                         )}
 
-                        {/* Products */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                           {order.products.map((product) => (
                             <div
@@ -723,9 +715,9 @@ export default function UserAccount() {
                           ))}
                         </div>
 
-                        {/* Actions */}
                         <div className="flex flex-wrap gap-2 sm:gap-3">
-                          {order.orderStatus === "Pending" && (
+                          {(order.orderStatus === "Pending" ||
+                            order.orderStatus === "Confirmed") && (
                             <Button
                               variant="destructive"
                               onClick={() => handleCancelOrder(order._id)}
@@ -965,7 +957,6 @@ export default function UserAccount() {
                           </Button>
                         </div>
 
-                        {/* Tracking Details */}
                         {trackingData && selectedOrder?._id === order._id && (
                           <div className="mt-4 sm:mt-6 p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
                             <p className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
@@ -1031,7 +1022,7 @@ export default function UserAccount() {
                                       (activity, index) => (
                                         <li
                                           key={index}
-                                          className="flex items-start gap-2 sm:gap-3"
+                                          className="flex items-start gap-2 experiments sm:gap-3"
                                         >
                                           <span className="w-2 h-2 bg-green-600 rounded-full mt-1.5 sm:mt-2"></span>
                                           <div>

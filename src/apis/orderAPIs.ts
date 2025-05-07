@@ -1,4 +1,5 @@
 
+// services/order.api.ts
 import axiosInstance from ".";
 
 interface OrderResponse {
@@ -29,9 +30,9 @@ export const createOrderAPI = (data: {
     country: string;
     postalCode: string;
   };
-  paymentMethod: 0 | 1; 
+  paymentMethod: 0 | 1;
   userDetails: { name: string; phone: string; email: string };
-  courierName: string; // Replaced shippingMethod with courierName
+  courierName: string;
 }) => {
   return axiosInstance.post("/orders", data);
 };
@@ -40,7 +41,7 @@ export const createOrderAPI = (data: {
 export const calculateShippingChargesAPI = async (
   postalCode: string,
   products: { productId: string; variantId: string; quantity: number }[],
-  isCOD: 0 | 1 // Changed to number to align with backend
+  isCOD: 0 | 1
 ): Promise<OrderResponse> => {
   try {
     const response = await axiosInstance.post("/orders/calculate-shipping", {
@@ -93,10 +94,11 @@ export const getUserOrderHistoryAPI = async (): Promise<OrderResponse> => {
 
 // Cancel an order
 export const cancelOrderAPI = async (
-  orderId: string
+  orderId: string,
+  reason?: string
 ): Promise<OrderResponse> => {
   try {
-    const response = await axiosInstance.post(`/orders/${orderId}/cancel`);
+    const response = await axiosInstance.post(`/orders/${orderId}/cancel`, { reason });
     return response.data;
   } catch (error) {
     console.error(`Error cancelling order ${orderId}:`, error);
@@ -112,10 +114,7 @@ export const returnOrderAPI = async (
 ): Promise<OrderResponse> => {
   try {
     const payload: ReturnExchangePayload = { reason, products };
-    const response = await axiosInstance.post(
-      `/orders/${orderId}/return`,
-      payload
-    );
+    const response = await axiosInstance.post(`/orders/${orderId}/return`, payload);
     return response.data;
   } catch (error) {
     console.error(`Error returning order ${orderId}:`, error);
@@ -131,10 +130,7 @@ export const exchangeOrderAPI = async (
 ): Promise<OrderResponse> => {
   try {
     const payload: ReturnExchangePayload = { reason, products };
-    const response = await axiosInstance.post(
-      `/orders/${orderId}/exchange`,
-      payload
-    );
+    const response = await axiosInstance.post(`/orders/${orderId}/exchange`, payload);
     return response.data;
   } catch (error) {
     console.error(`Error exchanging order ${orderId}:`, error);
@@ -171,9 +167,7 @@ export const postOrderActionsAPI = async (
   orderId: string
 ): Promise<OrderResponse> => {
   try {
-    const response = await axiosInstance.post(
-      `/orders/${orderId}/post-actions`
-    );
+    const response = await axiosInstance.post(`/orders/${orderId}/post-actions`);
     return response.data;
   } catch (error) {
     console.error(`Error performing post-order actions for ${orderId}:`, error);
