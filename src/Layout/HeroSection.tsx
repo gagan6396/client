@@ -8,10 +8,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  AiOutlineHeart,
-  AiOutlineSearch,
-  AiOutlineShoppingCart,
-  AiOutlineUser,
+    AiOutlineHeart,
+    AiOutlineSearch,
+    AiOutlineShoppingCart,
+    AiOutlineUser,
 } from "react-icons/ai";
 
 const HeroSection = () => {
@@ -104,7 +104,7 @@ const HeroSection = () => {
             </p>
             <Button
               onClick={() => router.push("/products")}
-              className="bg-[#7A6E18] text-white hover:bg-green-700 px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Shop Now
             </Button>

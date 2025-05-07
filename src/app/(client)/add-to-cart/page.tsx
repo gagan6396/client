@@ -72,7 +72,7 @@ const CartItem: React.FC<CartItemProps> = ({
       </div>
       <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-[#7A6E18] transition-colors duration-300">
             {title}
           </h3>
           <p className="text-sm text-gray-600">{variantName}</p>
@@ -80,7 +80,7 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="flex items-center gap-2 mt-1">
             {discount?.active && discount?.value ? (
               <>
-                <p className="text-green-600 font-bold text-sm md:text-base">
+                <p className="text-[#7A6E18] font-bold text-sm md:text-base">
                   ₹{discountedPrice.toFixed(2)}
                 </p>
                 <p className="text-gray-500 line-through text-xs md:text-sm">
@@ -91,7 +91,7 @@ const CartItem: React.FC<CartItemProps> = ({
                 </span>
               </>
             ) : (
-              <p className="text-green-600 font-bold text-sm md:text-base">
+              <p className="text-[#7A6E18] font-bold text-sm md:text-base">
                 ₹{numericPrice.toFixed(2)}
               </p>
             )}
@@ -335,7 +335,7 @@ const AddToCartPage: React.FC = () => {
                 Looks like you haven’t added anything yet. Start shopping now!
               </p>
               <Button
-                className="bg-green-600 hover:bg-green-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="bg-[#7A6E18] hover:bg-[#7A6E18] text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
                 onClick={() => router.push("/products")}
               >
                 Browse Products
@@ -352,7 +352,7 @@ const AddToCartPage: React.FC = () => {
               <span className="text-gray-600 text-base md:text-lg">
                 Subtotal:
               </span>
-              <span className="text-green-600 font-bold text-lg md:text-xl">
+              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
                 ₹{calculateSubtotal()}
               </span>
             </div>
@@ -360,13 +360,13 @@ const AddToCartPage: React.FC = () => {
               <span className="text-gray-600 text-base md:text-lg">
                 Shipping ({selectedCourier?.courierName || "Not selected"}):
               </span>
-              <span className="text-green-600 font-bold text-lg md:text-xl">
+              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600 text-base md:text-lg">Total:</span>
-              <span className="text-green-600 font-bold text-lg md:text-xl">
+              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
                 ₹{calculateTotal()}
               </span>
             </div>
@@ -380,7 +380,7 @@ const AddToCartPage: React.FC = () => {
             )}
             <Button
               onClick={() => router.push("/checkout")}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] hover:bg-[#7A6E18]/10600 hover:to-[#7A6E18] text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Proceed to Checkout
             </Button>

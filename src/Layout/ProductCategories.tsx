@@ -159,7 +159,7 @@ const ProductCategories: React.FC = () => {
           <p className="text-gray-600 mb-6">{error}</p>
           <Button
             onClick={fetchData}
-            className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full"
+            className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full"
           >
             Retry
           </Button>
@@ -200,7 +200,7 @@ const ProductCategories: React.FC = () => {
           </div>
           <div className="mt-8 text-center">
             <Link href="/products">
-              <Button className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full">
+              <Button className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full">
                 View All Products
               </Button>
             </Link>
@@ -233,7 +233,7 @@ const ProductCategories: React.FC = () => {
                           alt={category?.name || "Unnamed Category"}
                           className="w-full h-full object-cover rounded-full border border-green-100 group-hover:border-green-300 transition-colors"
                         />
-                        <div className="absolute inset-0 bg-green-500 opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
+                        <div className="absolute inset-0 bg-[#7A6E18] opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
                       </div>
                       <h3 className="text-sm font-medium text-gray-800">
                         {category?.name || "Unnamed Category"}
@@ -243,7 +243,7 @@ const ProductCategories: React.FC = () => {
                       </p>
                       <Link
                         href={`/products?category=${category?._id || ""}`}
-                        className="mt-2 inline-block text-green-600 font-medium  text-xs hover:text-green-700 transition-colors"
+                        className="mt-2 inline-block text-[#7A6E18] font-medium  text-xs hover:text-[#7A6E18] transition-colors"
                       >
                         Explore Now →
                       </Link>
@@ -255,7 +255,7 @@ const ProductCategories: React.FC = () => {
             <div className="mt-8 text-center">
               <Button
                 onClick={() => setShowAllCategories(!showAllCategories)}
-                className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full"
+                className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full"
               >
                 {showAllCategories ? "Show Less" : "See More"}
               </Button>
@@ -288,7 +288,7 @@ const ProductCategories: React.FC = () => {
               </p>
               <Button
                 onClick={() => navigate.push("/about")}
-                className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full"
+                className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full"
               >
                 Learn More
               </Button>

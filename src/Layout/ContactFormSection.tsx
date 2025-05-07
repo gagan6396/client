@@ -175,7 +175,7 @@ export default function ContactFormSection() {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? (
@@ -214,7 +214,7 @@ export default function ContactFormSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         {/* Left Section - Info */}
         <div className="space-y-4 md:space-y-6">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600 mb-3 md:mb-4 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#7A6E18] mb-3 md:mb-4 tracking-tight">
             Let’s Connect
           </h2>
           <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed mb-4 md:mb-6">
@@ -224,7 +224,7 @@ export default function ContactFormSection() {
           <div className="space-y-3 sm:space-y-4">
             {/* Address */}
             <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <MapPin className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
+              <MapPin className="text-[#7A6E18] w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 Gauraj Valleyfood Pvt. Ltd. <br />
                 New Mothorowala Road, Uttarakhand 248001
@@ -233,7 +233,7 @@ export default function ContactFormSection() {
 
             {/* Email */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <Mail className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
+              <Mail className="text-[#7A6E18] w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700">
                 info@gauraaj.org
               </p>
@@ -241,7 +241,7 @@ export default function ContactFormSection() {
 
             {/* Phone */}
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <Phone className="text-green-600 w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
+              <Phone className="text-[#7A6E18] w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               <p className="text-sm sm:text-base text-gray-700">
                 +91-6397-90-4655
               </p>

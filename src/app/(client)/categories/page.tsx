@@ -68,10 +68,10 @@ const CategoriesPage = () => {
 
                 {/* Information Section */}
                 <div className="p-4 md:p-6">
-                  <h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
+                  <h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-800 group-hover:text-[#7A6E18] transition-colors duration-300">
                     {category.name}
                   </h3>
-                  <p className="text-green-600 text-sm md:text-base font-medium mt-2 group-hover:underline transition-all duration-300">
+                  <p className="text-[#7A6E18] text-sm md:text-base font-medium mt-2 group-hover:underline transition-all duration-300">
                     View Products →
                   </p>
                 </div>

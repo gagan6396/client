@@ -1,18 +1,18 @@
 "use client";
 
 import {
-  getCategoriesAPI,
-  getProductByCategoryAPI,
+    getCategoriesAPI,
+    getProductByCategoryAPI,
 } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
@@ -292,7 +292,7 @@ const FilterSidebar = ({
         <div className="flex gap-3">
           <Button
             onClick={applyFilters}
-            className="w-full bg-green-600 hover:bg-green-700 text-xs py-2"
+            className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-xs py-2"
           >
             Apply
           </Button>
@@ -448,7 +448,7 @@ const ProductPage = () => {
             <div className="lg:hidden fixed top-20 right-6 z-50">
               <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
-                  <Button className="rounded-full bg-green-600 hover:bg-green-700 text-white p-4 shadow-lg transform hover:scale-105 transition-transform">
+                  <Button className="rounded-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white p-4 shadow-lg transform hover:scale-105 transition-transform">
                     <FilterIcon className="w-6 h-6" />
                   </Button>
                 </SheetTrigger>
@@ -543,7 +543,7 @@ const ProductPage = () => {
                     <div className="flex gap-3">
                       <Button
                         onClick={applyFilters}
-                        className="w-full bg-green-600 hover:bg-green-700 text-xs py-2"
+                        className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-xs py-2"
                       >
                         Apply
                       </Button>

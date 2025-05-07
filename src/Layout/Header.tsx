@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
@@ -12,11 +12,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  AiOutlineHeart,
-  AiOutlineMenu,
-  AiOutlineSearch,
-  AiOutlineShoppingCart,
-  AiOutlineUser,
+    AiOutlineHeart,
+    AiOutlineMenu,
+    AiOutlineSearch,
+    AiOutlineShoppingCart,
+    AiOutlineUser,
 } from "react-icons/ai";
 
 const Header: React.FC = () => {
@@ -135,13 +135,13 @@ const Header: React.FC = () => {
                 <DropdownMenuContent className="w-48 bg-white shadow-lg rounded-md border border-gray-100">
                   <DropdownMenuItem
                     onClick={() => router.push("/user-account")}
-                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-[#7A6E18] transition-colors duration-200"
+                    className="cursor-pointer text-gray-700 hover:bg-[#7A6E18]/10 hover:text-[#7A6E18] transition-colors duration-200"
                   >
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="cursor-pointer text-gray-700 hover:bg-green-50 hover:text-[#7A6E18] transition-colors duration-200"
+                    className="cursor-pointer text-gray-700 hover:bg-[#7A6E18]/10 hover:text-[#7A6E18] transition-colors duration-200"
                   >
                     Logout
                   </DropdownMenuItem>

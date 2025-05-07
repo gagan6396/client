@@ -4,19 +4,19 @@
 import { resetPasswordAPI } from "@/apis/AuthAPIs";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,7 +94,7 @@ export const ResetPasswordForm = () => {
   if (!token) {
     return (
       <Card className="w-full max-w-md sm:max-w-lg shadow-lg rounded-xl border border-gray-100 overflow-hidden mx-2 sm:mx-0">
-        <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+        <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-center">
             Invalid Link
           </CardTitle>
@@ -109,7 +109,7 @@ export const ResetPasswordForm = () => {
           </p>
           <Button
             onClick={() => router.push("/forgot-password")}
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+            className="w-full sm:w-auto bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
           >
             Request New Link
           </Button>
@@ -120,7 +120,7 @@ export const ResetPasswordForm = () => {
 
   return (
     <Card className="w-full max-w-md sm:max-w-lg shadow-lg rounded-xl border border-gray-100 overflow-hidden mx-2 sm:mx-0">
-      <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+      <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-center">
           Set New Password
         </CardTitle>
@@ -140,7 +140,7 @@ export const ResetPasswordForm = () => {
             </p>
             <Button
               onClick={() => router.push("/login")}
-              className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+              className="w-full sm:w-auto bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
             >
               Go to Login
             </Button>
@@ -218,7 +218,7 @@ export const ResetPasswordForm = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">

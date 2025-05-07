@@ -70,7 +70,7 @@ const ProductDetails = ({
       {/* Price and Stock Status */}
       <div className="flex items-center gap-3 sm:gap-4">
         <div className="flex items-baseline gap-2">
-          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
+          <p className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#7A6E18]">
             ₹{displayPrice}
           </p>
           {isDiscountActive && discountValue > 0 && (
@@ -80,7 +80,7 @@ const ProductDetails = ({
           )}
         </div>
         {isDiscountActive && discountValue > 0 && (
-          <Badge variant="outline" className="bg-green-100 text-green-800 text-xs sm:text-sm">
+          <Badge variant="outline" className="bg-[#7A6E18]/20 text-green-800 text-xs sm:text-sm">
             {discountValue}% off
           </Badge>
         )}
@@ -88,7 +88,7 @@ const ProductDetails = ({
           variant="outline"
           className={`text-xs sm:text-sm ${
             displayStock > 0
-              ? "bg-green-100 text-green-800"
+              ? "bg-[#7A6E18]/20 text-green-800"
               : "bg-red-100 text-red-800"
           }`}
         >
@@ -126,7 +126,7 @@ const ProductDetails = ({
                   }
                   className={`text-xs sm:text-sm px-3 py-1 ${
                     selectedVariant?._id === variant._id
-                      ? "bg-green-600 text-white"
+                      ? "bg-[#7A6E18] text-white"
                       : "border-gray-300 hover:bg-gray-100"
                   }`}
                   onClick={() => handleVariantChange(variant)}
@@ -154,7 +154,7 @@ const ProductDetails = ({
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Button
-          className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
+          className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-xs sm:text-sm md:text-base transition-transform transform hover:scale-105 rounded-full shadow-lg"
           onClick={addToCart}
           disabled={product.inCart || displayStock <= 0}
         >

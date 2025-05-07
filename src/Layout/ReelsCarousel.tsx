@@ -3,8 +3,8 @@
 import { addToCartAPI, deleteToCartAPI } from "@/apis/addToCartAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import {
-  addToWishListAPI,
-  deleteProductFromWishlistAPI,
+    addToWishListAPI,
+    deleteProductFromWishlistAPI,
 } from "@/apis/wishlistAPIs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -177,7 +177,7 @@ const ProductCard = ({
             </div>
           )}
           {isDiscountActive && discountPercentage > 0 && (
-            <div className="absolute top-2 left-2 mt-8 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+            <div className="absolute top-2 left-2 mt-8 bg-[#7A6E18] text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
               -{discountPercentage}% (₹{discountAmount.toFixed(2)})
             </div>
           )}
@@ -198,7 +198,7 @@ const ProductCard = ({
         </div>
         <div className="p-3 space-y-2">
           <h3
-            className="text-gray-800 text-sm font-medium group-hover:text-green-700 transition-colors"
+            className="text-gray-800 text-sm font-medium group-hover:text-[#7A6E18] transition-colors"
             title={product.name}
           >
             {product.name}
@@ -228,7 +228,7 @@ const ProductCard = ({
                 key={variant._id}
                 className={`text-xs px-2 py-1 rounded-full border ${
                   selectedVariant._id === variant._id
-                    ? "bg-green-100 border-green-500"
+                    ? "bg-[#7A6E18]/20 border-green-500"
                     : "border-gray-300"
                 }`}
                 onClick={() => setSelectedVariant(variant)}
@@ -239,7 +239,7 @@ const ProductCard = ({
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-1">
-              <span className="text-green-600 font-bold text-sm">
+              <span className="text-[#7A6E18] font-bold text-sm">
                 ₹{finalPrice.toFixed(2)}
               </span>
               {discountPercentage > 0 && (

@@ -25,7 +25,7 @@ export function ContactCard() {
           something amazing together!&quot;
         </p>
         <Button
-          className="mt-2 sm:mt-4 px-6 py-3 sm:px-8 sm:py-4 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
+          className="mt-2 sm:mt-4 px-6 py-3 sm:px-8 sm:py-4 bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
           onClick={() => (window.location.href = "/contact")} // Adjust navigation as needed
         >
           Contact Now

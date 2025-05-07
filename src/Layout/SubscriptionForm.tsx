@@ -64,7 +64,7 @@ const SubscriptionForm: FC = () => {
 
   return (
     <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 max-w-lg mx-auto my-8 sm:my-12 md:my-16">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-green-600 mb-3 sm:mb-4 md:mb-6 text-center tracking-tight">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#7A6E18] mb-3 sm:mb-4 md:mb-6 text-center tracking-tight">
         🌿 Join Our Organic Community!
       </h2>
       <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed text-center mb-6 sm:mb-8">
@@ -93,7 +93,7 @@ const SubscriptionForm: FC = () => {
         <Button
           type="submit"
           disabled={formik.isSubmitting}
-          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
+          className="w-full sm:w-auto bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
         >
           {formik.isSubmitting ? 'Subscribing...' : 'Subscribe'}
         </Button>

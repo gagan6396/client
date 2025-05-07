@@ -11,7 +11,7 @@ const AboutHeroSection: FC = () => {
     <div className="bg-gradient-to-b from-white to-gray-50 py-12 sm:py-16 md:py-20">
       {/* "Our Story" Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-10 sm:mb-12 md:mb-16 tracking-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-10 sm:mb-12 md:mb-16 tracking-tight">
           Our Story
         </h2>
         <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">

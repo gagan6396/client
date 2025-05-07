@@ -3,19 +3,19 @@
 import { RegisterAPI } from "@/apis/AuthAPIs";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -115,9 +115,9 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-gray-100 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b bg-[#7A6E18]/20 to-gray-100 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md sm:max-w-lg shadow-lg rounded-xl border border-gray-100 overflow-hidden mx-2 sm:mx-0 my-2">
-        <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+        <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-center">
             Create Your Account
           </CardTitle>
@@ -280,7 +280,7 @@ const RegisterPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -297,7 +297,7 @@ const RegisterPage = () => {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-green-600 font-semibold hover:text-green-700 hover:underline transition-colors duration-200"
+              className="text-[#7A6E18] font-semibold hover:text-[#7A6E18] hover:underline transition-colors duration-200"
             >
               Log in
             </Link>

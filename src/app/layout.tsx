@@ -67,7 +67,7 @@ export default function RootLayout({
                   href="https://wa.me/916397904655"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-green-500 text-white rounded-full p-4 shadow-lg hover:bg-green-600 transition-colors"
+                  className="bg-[#7A6E18] text-white rounded-full p-4 shadow-lg hover:bg-[#7A6E18] transition-colors"
                   aria-label="WhatsApp"
                 >
                   <MessageCircle size={24} />

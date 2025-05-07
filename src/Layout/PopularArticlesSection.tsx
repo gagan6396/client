@@ -43,7 +43,7 @@ const PopularArticlesSection: FC = () => {
 
   return (
     <section className="py-10">
-      <h2 className="text-2xl font-bold text-center text-green-700 mb-4">
+      <h2 className="text-2xl font-bold text-center text-[#7A6E18] mb-4">
         Popular Articles
       </h2>
       <div className="embla overflow-hidden" ref={emblaRef}>
@@ -65,7 +65,7 @@ const PopularArticlesSection: FC = () => {
                   <h3 className="font-semibold text-lg text-gray-800">
                     {article.title}
                   </h3>
-                  <a href="#" className="text-green-700 font-medium mt-2 block">
+                  <a href="#" className="text-[#7A6E18] font-medium mt-2 block">
                     {article.description}
                   </a>
                 </div>

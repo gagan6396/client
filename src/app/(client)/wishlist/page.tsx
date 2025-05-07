@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-  deleteProductFromWishlistAPI,
-  getWishListAPI,
+    deleteProductFromWishlistAPI,
+    getWishListAPI,
 } from "../../../apis/wishlistAPIs";
 
 // Updated WishlistItem interface based on new response
@@ -42,11 +42,11 @@ const WishlistItem = ({
       {/* Content Section */}
       <div className="flex-1 flex items-center justify-between">
         <div>
-          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-green-600 transition-colors duration-300">
+          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-[#7A6E18] transition-colors duration-300">
             {title}
           </h3>
           <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-2">
-            <span className="text-green-600 font-bold text-sm md:text-base">
+            <span className="text-[#7A6E18] font-bold text-sm md:text-base">
               ₹{parseFloat(price).toFixed(2)}
             </span>
             {discount && originalPrice && (
@@ -209,7 +209,7 @@ const WishlistPage = () => {
           {!wishlist.length && (
             <div className="flex justify-center mt-10 md:mt-12">
               <Button
-                className="bg-green-600 hover:bg-green-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="bg-[#7A6E18] hover:bg-[#7A6E18] text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
                 onClick={() => (window.location.href = "/products")}
               >
                 Explore Products

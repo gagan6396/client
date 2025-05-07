@@ -9,14 +9,14 @@ export function OrganicCollection() {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-6 md:gap-8 lg:gap-12">
         {/* Left Content */}
         <div className="text-center md:text-left space-y-4 sm:space-y-6 md:space-y-8 max-w-lg mx-auto md:mx-0">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-green-600 leading-tight tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#7A6E18] leading-tight tracking-tight">
             Discover Our Organic Collection
           </h2>
           <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
             Seeking healthy, chemical-free goodness? Gauraaj’s organic collection brings you nature’s finest—curated for cooking, skincare, and wellness. Experience the pure, authentic difference in every product, handpicked to elevate your daily life. Dive in and taste the essence of sustainability today!
           </p>
           <Button
-            className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-md transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
+            className="w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold rounded-full shadow-md transition-all duration-300 transform hover:scale-105 focus:ring-4 focus:ring-green-500"
             onClick={() => window.location.href = "/products"} // Adjust navigation as needed
           >
             Shop Now

@@ -18,13 +18,13 @@ const ProductDescriptionAndDetails = ({
         <TabsList className="grid w-full grid-cols-2 rounded-lg bg-gray-100 p-1 shadow-sm">
           <TabsTrigger
             value="description"
-            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md transition-all duration-200"
+            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#7A6E18] data-[state=active]:shadow-md transition-all duration-200"
           >
             Description
           </TabsTrigger>
           <TabsTrigger
             value="details"
-            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md transition-all duration-200"
+            className="text-base md:text-lg font-medium text-gray-700 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:text-[#7A6E18] data-[state=active]:shadow-md transition-all duration-200"
           >
             Details
           </TabsTrigger>
@@ -120,7 +120,7 @@ const ProductDescriptionAndDetails = ({
                                 ({variant.stock} in stock)
                                 {variant.weight ? `, ${variant.weight} kg` : ""}
                                 {isDiscountActive && discountValue > 0 && (
-                                  <span className="text-green-600 ml-2">
+                                  <span className="text-[#7A6E18] ml-2">
                                     ({discountValue}% off)
                                   </span>
                                 )}

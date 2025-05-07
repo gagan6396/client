@@ -329,7 +329,7 @@ const ProductCategories: React.FC = () => {
           <p className="text-gray-600 mb-6">{error}</p>
           <Button
             onClick={fetchData}
-            className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full"
+            className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full"
           >
             Retry
           </Button>
@@ -366,7 +366,7 @@ const ProductCategories: React.FC = () => {
           </div>
           <div className="mt-8 text-center">
             <Link href="/products">
-              <Button className="bg-green-600 text-white hover:bg-green-700 px-6 py-2 rounded-full">
+              <Button className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full">
                 View All Products
               </Button>
             </Link>

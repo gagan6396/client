@@ -80,7 +80,7 @@ const BlogDetailPage = ({ params }: BlogDetailPageProps) => {
           </p>
           <Link
             href="/blogs"
-            className="mt-4 inline-block text-green-700 font-medium underline"
+            className="mt-4 inline-block text-[#7A6E18] font-medium underline"
           >
             Back to Blogs
           </Link>
@@ -154,7 +154,7 @@ const BlogDetailPage = ({ params }: BlogDetailPageProps) => {
         {/* Back Button */}
         <Link
           href="/blogs"
-          className="mt-8 inline-block text-green-700 font-medium underline"
+          className="mt-8 inline-block text-[#7A6E18] font-medium underline"
         >
           Back to Blogs
         </Link>

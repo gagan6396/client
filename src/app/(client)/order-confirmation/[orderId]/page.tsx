@@ -164,7 +164,7 @@ const OrderConfirmationPage = ({
                   <span
                     className={`font-normal ${
                       order.orderStatus === "Confirmed"
-                        ? "text-green-600"
+                        ? "text-[#7A6E18]"
                         : "text-gray-600"
                     }`}
                   >

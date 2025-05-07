@@ -16,7 +16,7 @@ const ImpactSection: FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Our Impact Section */}
         <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
             Our Impact
           </h2>
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
@@ -50,7 +50,7 @@ const ImpactSection: FC = () => {
 
         {/* Hands Behind Gauraaj Section */}
         <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
             Hands Behind Gauraaj
           </h2>
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
@@ -85,7 +85,7 @@ const ImpactSection: FC = () => {
 
         {/* Community Initiatives Section */}
         <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
             Community Initiatives
           </h2>
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
@@ -125,7 +125,7 @@ const ImpactSection: FC = () => {
 
         {/* Why Gauraaj Section */}
         <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
             Why Gauraaj?
           </h2>
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
@@ -144,7 +144,7 @@ const ImpactSection: FC = () => {
             </div>
             <div className="text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
               <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-green-900 mb-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
                   Himalayan Born & Nature Nurtured
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
@@ -152,7 +152,7 @@ const ImpactSection: FC = () => {
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-green-900 mb-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
                   Powered by Purpose
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
@@ -160,7 +160,7 @@ const ImpactSection: FC = () => {
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-green-900 mb-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
                   Naturally Honest
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
@@ -173,7 +173,7 @@ const ImpactSection: FC = () => {
 
         {/* Discover Our Organic Collection Section */}
         <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-green-600 mb-4 tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
             Discover Our Organic Collection
           </h2>
           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
@@ -189,7 +189,7 @@ const ImpactSection: FC = () => {
               </p>
               <Link
                 href="/products"
-                className="inline-block bg-green-600 text-white font-semibold py-3 px-6 sm:px-8 rounded-full hover:bg-green-700 transition-colors duration-300"
+                className="inline-block bg-[#7A6E18] text-white font-semibold py-3 px-6 sm:px-8 rounded-full hover:bg-[#7A6E18] transition-colors duration-300"
               >
                 Shop now and bring home the purity of the Himalayas
               </Link>

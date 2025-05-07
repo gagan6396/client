@@ -77,7 +77,7 @@ const TestimonialCard = ({ review }: { review: Review }) => {
             alt="Reviewer"
             className="object-cover"
           />
-          <AvatarFallback className="bg-green-50 text-green-600 font-semibold text-sm">
+          <AvatarFallback className="bg-[#7A6E18]/10 text-[#7A6E18] font-semibold text-sm">
             {name ? name.slice(0, 2).toUpperCase() : "AN"}
           </AvatarFallback>
         </Avatar>
@@ -87,7 +87,7 @@ const TestimonialCard = ({ review }: { review: Review }) => {
             {text.length > MAX_LENGTH && (
               <button
                 onClick={handleToggle}
-                className="text-green-600 hover:text-green-700 font-medium text-xs ml-1 transition-colors"
+                className="text-[#7A6E18] hover:text-[#7A6E18] font-medium text-xs ml-1 transition-colors"
               >
                 {isExpanded ? "Less" : "More"}
               </button>
@@ -96,7 +96,7 @@ const TestimonialCard = ({ review }: { review: Review }) => {
         </div>
         <div className="mt-auto">
           <h4 className="font-semibold text-gray-900 text-sm">{name || "Anonymous"}</h4>
-          <p className="text-xs text-green-600 font-medium">{title ?? "Customer"}</p>
+          <p className="text-xs text-[#7A6E18] font-medium">{title ?? "Customer"}</p>
         </div>
       </div>
     </div>
@@ -139,7 +139,7 @@ const Testimonials: React.FC = () => {
     autoplaySpeed: 3000,
     pauseOnHover: true,
     customPaging: () => (
-      <div className="w-2 h-2 bg-green-400/50 rounded-full transition-all hover:bg-green-500" />
+      <div className="w-2 h-2 bg-[#7A6E18]/50 rounded-full transition-all hover:bg-[#7A6E18]" />
     ),
     responsive: [
       { breakpoint: 1280, settings: { slidesToShow: 3 } },
@@ -157,7 +157,7 @@ const Testimonials: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-            <span className="bg-gradient-to-r from-green-500 to-green-600 bg-clip-text font-extrabold text-transparent">
+            <span className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] bg-clip-text font-extrabold text-transparent">
               Voices That Matter
             </span>
           </h2>
@@ -198,7 +198,7 @@ const Testimonials: React.FC = () => {
 
         <div className="mt-6 text-center">
           <Button
-            className="bg-green-500 text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-green-600 transition-all"
+            className="bg-[#7A6E18] text-white px-6 py-2 rounded-full text-sm font-semibold hover:bg-[#7A6E18] transition-all"
             onClick={() => router.push("/products")}
           >
             Explore Now

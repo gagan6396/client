@@ -188,7 +188,7 @@ const ReviewsSection = ({
 
             <Button
               type="submit"
-              className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full md:w-auto bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

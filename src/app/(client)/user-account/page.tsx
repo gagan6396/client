@@ -342,13 +342,13 @@ export default function UserAccount() {
         <TabsList className="grid w-full grid-cols-2 mb-8 sm:mb-10 bg-gray-100 rounded-lg p-1 shadow-sm">
           <TabsTrigger
             value="account"
-            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md rounded-md transition-all duration-200"
+            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#7A6E18] data-[state=active]:shadow-md rounded-md transition-all duration-200"
           >
             Account
           </TabsTrigger>
           <TabsTrigger
             value="history"
-            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-green-600 data-[state=active]:shadow-md rounded-md transition-all duration-200"
+            className="py-2 sm:py-3 text-sm sm:text-base md:text-lg font-medium text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#7A6E18] data-[state=active]:shadow-md rounded-md transition-all duration-200"
           >
             Order History
           </TabsTrigger>
@@ -356,7 +356,7 @@ export default function UserAccount() {
 
         <TabsContent value="account">
           <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+            <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
               <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
                 Profile Details
               </CardTitle>
@@ -553,7 +553,7 @@ export default function UserAccount() {
                   <div className="md:col-span-2">
                     <Button
                       type="submit"
-                      className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                      className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                     >
                       Update Profile
                     </Button>
@@ -566,7 +566,7 @@ export default function UserAccount() {
 
         <TabsContent value="history">
           <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-t-xl p-4 sm:p-6">
+            <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
               <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
                 Order History
               </CardTitle>
@@ -605,7 +605,7 @@ export default function UserAccount() {
                               <span
                                 className={
                                   order.orderStatus === "Delivered"
-                                    ? "text-green-600 font-medium"
+                                    ? "text-[#7A6E18] font-medium"
                                     : order.orderStatus === "Cancelled"
                                     ? "text-red-600 font-medium"
                                     : "text-yellow-600 font-medium"
@@ -674,7 +674,7 @@ export default function UserAccount() {
                               <span
                                 className={
                                   order.payment_id.status === "Completed"
-                                    ? "text-green-600"
+                                    ? "text-[#7A6E18]"
                                     : "text-yellow-600"
                                 }
                               >
@@ -733,7 +733,7 @@ export default function UserAccount() {
                                   <Button
                                     variant="outline"
                                     onClick={() => setSelectedOrder(order)}
-                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
+                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-[#7A6E18] hover:bg-[#7A6E18]/10 hover:text-[#7A6E18] transition-all duration-300 transform hover:scale-105"
                                   >
                                     Return Order
                                   </Button>
@@ -829,7 +829,7 @@ export default function UserAccount() {
                                       ))}
                                       <Button
                                         type="submit"
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                                        className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                                       >
                                         Submit Return
                                       </Button>
@@ -842,7 +842,7 @@ export default function UserAccount() {
                                   <Button
                                     variant="outline"
                                     onClick={() => setSelectedOrder(order)}
-                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700 transition-all duration-300 transform hover:scale-105"
+                                    className="px-3 py-2 sm:px-4 sm:py-2 text-sm sm:text-base border-green-600 text-[#7A6E18] hover:bg-[#7A6E18]/10 hover:text-[#7A6E18] transition-all duration-300 transform hover:scale-105"
                                   >
                                     Exchange Order
                                   </Button>
@@ -938,7 +938,7 @@ export default function UserAccount() {
                                       ))}
                                       <Button
                                         type="submit"
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                                        className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
                                       >
                                         Submit Exchange
                                       </Button>
@@ -1024,7 +1024,7 @@ export default function UserAccount() {
                                           key={index}
                                           className="flex items-start gap-2 experiments sm:gap-3"
                                         >
-                                          <span className="w-2 h-2 bg-green-600 rounded-full mt-1.5 sm:mt-2"></span>
+                                          <span className="w-2 h-2 bg-[#7A6E18] rounded-full mt-1.5 sm:mt-2"></span>
                                           <div>
                                             <p className="text-sm font-medium text-gray-800">
                                               {activity.activity}

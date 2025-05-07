@@ -87,7 +87,7 @@ const CollaborateSection: FC = () => {
   });
 
   return (
-    <section className="mt-10 sm:mt-12 md:mt-16 px-4 sm:px-6 lg:px-8 py-10 md:py-12 bg-gradient-to-br from-green-50 via-white to-yellow-50 overflow-hidden">
+    <section className="mt-10 sm:mt-12 md:mt-16 px-4 sm:px-6 lg:px-8 py-10 md:py-12 bg-gradient-to-br bg-[#7A6E18]/10 via-white to-yellow-50 overflow-hidden">
       {/* Toast Container */}
       <ToastContainer
         position="bottom-right"
@@ -103,14 +103,14 @@ const CollaborateSection: FC = () => {
       />
 
       {/* Title */}
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-green-600 mb-8 md:mb-10 text-center tracking-wide animate-fade-in-down">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#7A6E18] mb-8 md:mb-10 text-center tracking-wide animate-fade-in-down">
         Collaborate With Us
       </h2>
 
       {/* Collaboration Form */}
-      <div className="relative max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-green-100/50 shadow-lg hover:shadow-2xl transition-all duration-500 ease-out animate-slide-up">
+      <div className="relative max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-[#7A6E18]/50 shadow-lg hover:shadow-2xl transition-all duration-500 ease-out animate-slide-up">
         {/* Decorative Elements */}
-        <div className="absolute -top-4 -left-4 w-8 h-8 bg-green-400 rounded-full opacity-20 animate-pulse" />
+        <div className="absolute -top-4 -left-4 w-8 h-8 bg-[#7A6E18] rounded-full opacity-20 animate-pulse" />
         <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-yellow-300 rounded-full opacity-20 animate-pulse" />
 
         {/* Form Content */}
@@ -128,7 +128,7 @@ const CollaborateSection: FC = () => {
             <Input
               name="name"
               placeholder="Enter your name"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
                 formik.touched.name && formik.errors.name ? 'border-red-500' : ''
               }`}
               value={formik.values.name}
@@ -151,7 +151,7 @@ const CollaborateSection: FC = () => {
               name="email"
               type="email"
               placeholder="Enter your email"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
                 formik.touched.email && formik.errors.email ? 'border-red-500' : ''
               }`}
               value={formik.values.email}
@@ -173,7 +173,7 @@ const CollaborateSection: FC = () => {
             <Input
               name="organization"
               placeholder="E.g., NGO name, company, or individual role"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
                 formik.touched.organization && formik.errors.organization ? 'border-red-500' : ''
               }`}
               value={formik.values.organization}
@@ -194,7 +194,7 @@ const CollaborateSection: FC = () => {
             </label>
             <select
               name="collaborationType"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
                 formik.touched.collaborationType && formik.errors.collaborationType ? 'border-red-500' : ''
               }`}
               value={formik.values.collaborationType}
@@ -223,7 +223,7 @@ const CollaborateSection: FC = () => {
             <Textarea
               name="message"
               placeholder="Tell us about your collaboration ideas..."
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-3.5 shadow-sm ${
+              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
                 formik.touched.message && formik.errors.message ? 'border-red-500' : ''
               }`}
               value={formik.values.message}
@@ -241,7 +241,7 @@ const CollaborateSection: FC = () => {
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={formik.isSubmitting}
           >
             {formik.isSubmitting ? (
@@ -276,7 +276,7 @@ const CollaborateSection: FC = () => {
       </div>
 
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-24 h-24 bg-green-300 rounded-full opacity-10 animate-float" />
+      <div className="absolute top-0 left-0 w-24 h-24 bg-[#7A6E18] rounded-full opacity-10 animate-float" />
       <div className="absolute bottom-0 right-0 w-32 h-32 bg-yellow-200 rounded-full opacity-10 animate-float delay-1000" />
     </section>
   );

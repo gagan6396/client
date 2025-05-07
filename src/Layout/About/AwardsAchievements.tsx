@@ -24,7 +24,7 @@ export default function AwardsAchievements() {
   return (
     <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
       {/* Title */}
-      <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-green-600 mb-10 sm:mb-12 md:mb-16 tracking-tight">
+      <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#7A6E18] mb-10 sm:mb-12 md:mb-16 tracking-tight">
         Our Awards & Achievements
       </h2>
 

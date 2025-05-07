@@ -15,10 +15,10 @@ const MobileNavBar = () => {
     const isActive = pathname === path;
     return `flex flex-col items-center transition-all duration-300 ${
       isActive
-        ? "text-green-600 scale-110" // Active state with scale effect
+        ? "text-[#7A6E18] scale-110" // Active state with scale effect
         : isScrolled || !isHomePage
-        ? "text-gray-600 hover:text-green-600 hover:scale-105" // Default state when scrolled or not on home
-        : "text-white hover:text-green-600 hover:scale-105 bg-transprint" // Default state on home page
+        ? "text-gray-600 hover:text-[#7A6E18] hover:scale-105" // Default state when scrolled or not on home
+        : "text-white hover:text-[#7A6E18] hover:scale-105 bg-transprint" // Default state on home page
     }`;
   };
 
@@ -46,8 +46,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <Home size={26} strokeWidth={pathname === "/" ? 2.5 : 2} />
@@ -62,8 +62,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/categories"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <List size={26} strokeWidth={pathname === "/categories" ? 2.5 : 2} />
@@ -78,8 +78,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/products"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <Store size={26} strokeWidth={pathname === "/products" ? 2.5 : 2} />
@@ -94,8 +94,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/wishlist"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <Heart
@@ -114,8 +114,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/user-account"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <User size={26} strokeWidth={pathname === "/user-account" ? 2.5 : 2} />
@@ -130,8 +130,8 @@ const MobileNavBar = () => {
           <div
             className={`p-2 rounded-full ${
               pathname === "/add-to-cart"
-                ? "bg-green-100 text-green-600"
-                : "group-hover:bg-green-50"
+                ? "bg-[#7A6E18]/20 text-[#7A6E18]"
+                : "group-hover:bg-[#7A6E18]/10"
             } transition-colors duration-300`}
           >
             <ShoppingBag size={26} strokeWidth={pathname === "/add-to-cart" ? 2.5 : 2} />

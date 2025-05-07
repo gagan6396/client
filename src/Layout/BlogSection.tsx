@@ -46,7 +46,7 @@ const BlogSection: FC = () => {
   if (isLoading) {
     return (
       <section className="py-10">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-4">
+        <h2 className="text-2xl font-bold text-center text-[#7A6E18] mb-4">
           Our Blogs and Articles
         </h2>
         <p className="text-center text-gray-600 mb-8">
@@ -63,7 +63,7 @@ const BlogSection: FC = () => {
   if (error) {
     return (
       <section className="py-10">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-4">
+        <h2 className="text-2xl font-bold text-center text-[#7A6E18] mb-4">
           Our Blogs and Articles
         </h2>
         <p className="text-center text-gray-600 mb-8">
@@ -78,7 +78,7 @@ const BlogSection: FC = () => {
 
   return (
     <section className="py-10">
-      <h2 className="text-2xl font-bold text-center text-green-700 mb-4">
+      <h2 className="text-2xl font-bold text-center text-[#7A6E18] mb-4">
         Our Blogs and Articles
       </h2>
       <p className="text-center text-gray-600 mb-8">
@@ -111,7 +111,7 @@ const BlogSection: FC = () => {
                   </h3>
                   <a
                     href={`/blogs/${blog._id}`} // Assuming a blog detail page route
-                    className="text-green-700 font-medium mt-2 block"
+                    className="text-[#7A6E18] font-medium mt-2 block"
                   >
                     Read More
                   </a>
