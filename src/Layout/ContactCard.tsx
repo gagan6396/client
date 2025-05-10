@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button"; // Assuming you&apos;re using shadcn/ui Button
-import ContactUsImg from "@/public/moutain.jpg";
+import ContactUsImg from "@/public/about_us/contact/4.png"; // Adjust the path as needed
 import Image from "next/image";
 
 export function ContactCard() {
@@ -12,7 +12,7 @@ export function ContactCard() {
           src={ContactUsImg}
           alt="Gauraj Valleyfood Pvt. Ltd."
           layout="fill"
-          objectFit="contain"
+          objectFit="cover"
           className="w-full h-full transition-transform duration-500 hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />

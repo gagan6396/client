@@ -3,11 +3,12 @@ import Image from "next/image";
 import { FC } from "react";
 
 // Placeholder images (replace with actual image paths)
-import communityEvent from "@/public/event.jpg";
-import impactImage from "@/public/l4.jpg"; // New placeholder for "Our Impact"
-import whyGauraajImage from "@/public/l6.jpg"; // New placeholder for "Why Gauraaj"
-import organicProducts from "@/public/organic-foof.jpg";
-import womenWorking from "@/public/women-working.jpg";
+
+import image4 from "@/public/about_us/4.png";
+import image5 from "@/public/about_us/5.png";
+import image6 from "@/public/about_us/6.png";
+import image7 from "@/public/about_us/7.png";
+import image8 from "@/public/about_us/8.png";
 import Link from "next/link";
 
 const ImpactSection: FC = () => {
@@ -25,7 +26,7 @@ const ImpactSection: FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src={impactImage}
+                src={image4}
                 alt="Our impact at Gauraaj"
                 layout="fill"
                 objectFit="cover"
@@ -59,7 +60,7 @@ const ImpactSection: FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src={womenWorking}
+                src={image5}
                 alt="Women working at Gauraaj"
                 layout="fill"
                 objectFit="cover" // Changed to cover for consistency
@@ -112,7 +113,7 @@ const ImpactSection: FC = () => {
             </div>
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src={communityEvent}
+                src={image6}
                 alt="Community initiatives at Gauraaj"
                 layout="fill"
                 objectFit="cover"
@@ -134,7 +135,7 @@ const ImpactSection: FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src={whyGauraajImage}
+                src={image7}
                 alt="Why choose Gauraaj"
                 layout="fill"
                 objectFit="cover"
@@ -196,7 +197,7 @@ const ImpactSection: FC = () => {
             </div>
             <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
               <Image
-                src={organicProducts}
+                src={image8}
                 alt="Gauraaj organic products"
                 layout="fill"
                 objectFit="cover"

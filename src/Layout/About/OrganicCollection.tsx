@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import organicImage from "@/public/l9.jpg";
+import organicImage from "@/public/about_us/9.png";
 import Image from "next/image";
 
 export function OrganicCollection() {

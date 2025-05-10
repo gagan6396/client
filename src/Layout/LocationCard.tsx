@@ -1,6 +1,6 @@
 // components/LocationCard.tsx
 "use client";
-import shopImage from "@/public/l10.jpg";
+import shopImage from "@/public/about_us/contact/3.png";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 

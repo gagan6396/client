@@ -1,7 +1,7 @@
 "use client";
 import handshakeImage from "@/public/About/handshake.png";
-import kidsGroup from "@/public/l10.jpg";
-import womenFarmers from "@/public/l9.jpg";
+import image4 from "@/public/about_us/4.png";
+import image5 from "@/public/about_us/5.png";
 import Image from "next/image";
 
 export function MissionVision() {
@@ -140,7 +140,7 @@ export function MissionVision() {
         <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-8 lg:gap-12 mb-12 sm:mb-16 md:mb-20">
           <div className="w-full lg:w-1/2 relative h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
             <Image
-              src={kidsGroup}
+              src={image4}
               alt="Group of kids"
               layout="fill"
               objectFit="cover"
@@ -164,7 +164,7 @@ export function MissionVision() {
           </div>
           <div className="w-full lg:w-1/2 relative h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
             <Image
-              src={womenFarmers}
+              src={image5}
               alt="Group of women farmers"
               layout="fill"
               objectFit="cover"
