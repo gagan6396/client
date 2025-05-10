@@ -1,7 +1,7 @@
 "use client";
 import handshakeImage from "@/public/About/handshake.png";
-import image4 from "@/public/about_us/4.png";
-import image5 from "@/public/about_us/5.png";
+import image4 from "@/public/about_us/3.png";
+import image5 from "@/public/about_us/4.png";
 import Image from "next/image";
 
 export function MissionVision() {

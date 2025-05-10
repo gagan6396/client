@@ -4,7 +4,7 @@ import { FC } from "react";
 
 // Images
 import storyImage1 from "@/public/about_us/1.png";
-import storyImage2 from "@/public/about_us/3.png";
+import storyImage2 from "@/public/about_us/9.png";
 
 const AboutHeroSection: FC = () => {
   return (

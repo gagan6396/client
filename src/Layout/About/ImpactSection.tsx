@@ -4,11 +4,11 @@ import { FC } from "react";
 
 // Placeholder images (replace with actual image paths)
 
-import image4 from "@/public/about_us/4.png";
-import image5 from "@/public/about_us/5.png";
-import image6 from "@/public/about_us/6.png";
-import image7 from "@/public/about_us/7.png";
-import image8 from "@/public/about_us/8.png";
+import image4 from "@/public/about_us/5.png";
+import image5 from "@/public/about_us/6.png";
+import image6 from "@/public/about_us/7.png";
+import image7 from "@/public/about_us/8.png";
+import image8 from "@/public/about_us/9.png";
 import Link from "next/link";
 
 const ImpactSection: FC = () => {
