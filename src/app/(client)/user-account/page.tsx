@@ -693,7 +693,7 @@ export default function UserAccount() {
                             >
                               <Image
                                 src={
-                                  product.productId.images.find(
+                                  product?.productId?.images?.find(
                                     (img) => img.sequence === 0
                                   )?.url || "/placeholder-image.jpg"
                                 }
