@@ -1,34 +1,34 @@
 "use client";
 
 import {
-    cancelOrderAPI,
-    exchangeOrderAPI,
-    getUserOrdersAPI,
-    returnOrderAPI,
-    trackOrderAPI,
+  cancelOrderAPI,
+  exchangeOrderAPI,
+  getUserOrdersAPI,
+  returnOrderAPI,
+  trackOrderAPI,
 } from "@/apis/orderAPIs";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton"; // Added shadcn skeleton
@@ -301,10 +301,14 @@ export default function OrderHistory({ userProfile }: OrderHistoryProps) {
         setTrackingData(response.data);
         setSelectedOrder(orders.find((o) => o._id === orderId) || null);
         toast.success("Tracking details retrieved!");
+      } else {
+        // Show toast if API response indicates failure
+        toast.info("Tracking data is not available.");
       }
     } catch (error) {
       console.error("Failed to track order:", error);
-      toast.error("Failed to track order");
+      // Show toast for any error during API call
+      toast.info("Tracking data is not available.");
     } finally {
       setIsActionLoading(false);
     }
