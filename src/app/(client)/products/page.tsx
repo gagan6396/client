@@ -1,18 +1,18 @@
 "use client";
 
 import {
-    getCategoriesAPI,
-    getProductByCategoryAPI,
+  getCategoriesAPI,
+  getProductByCategoryAPI,
 } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
@@ -362,7 +362,7 @@ const ProductPage = () => {
     // Filter by selected categories
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((product) =>
-        selectedCategories.includes(product.category_id.name)
+        selectedCategories.includes(product?.category_id?.name)
       );
     }
 

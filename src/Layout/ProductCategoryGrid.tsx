@@ -258,7 +258,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               }`}
               onClick={() => setSelectedVariant(variant)}
             >
-              {variant.weight}kg
+              {variant.name}
             </button>
           ))}
         </div>
