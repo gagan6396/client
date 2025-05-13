@@ -1,7 +1,6 @@
 import FAQs from "@/Layout/FAQs";
 import ProductCategories from "@/Layout/ProductCategories";
 import ProductCategoryGrid from "@/Layout/ProductCategoryGrid";
-import ReelsCarousel from "@/Layout/ReelsCarousel";
 import Testimonials from "@/Layout/Testimonials";
 import YouTubeShortsCarousel from "@/Layout/YouTubeShortsCarousel";
 export default function Home() {
@@ -10,7 +9,7 @@ export default function Home() {
       {/* <CarouselPlugin /> */}
       <ProductCategories />
       <ProductCategoryGrid />
-      <ReelsCarousel />
+      {/* <ReelsCarousel /> */}
       <YouTubeShortsCarousel />
       <Testimonials />
       <FAQs />
