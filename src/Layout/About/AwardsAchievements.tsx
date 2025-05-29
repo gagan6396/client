@@ -1,10 +1,10 @@
 "use client";
-import award1 from "@/public/About/award1.jpg";
-import award2 from "@/public/About/award2.png";
-import award3 from "@/public/About/award3.jpg";
-import award4 from "@/public/About/award4.png";
-import award5 from "@/public/About/award5.png";
-import award6 from "@/public/About/award6.png";
+import award1 from "@/public/awards/1.png";
+import award2 from "@/public/awards/2.png";
+import award3 from "@/public/awards/3.png";
+import award4 from "@/public/awards/4.png";
+import award5 from "@/public/awards/5.png";
+import award6 from "@/public/awards/6.png";
 import Image from "next/image";
 
 interface Award {
@@ -31,19 +31,20 @@ export default function AwardsAchievements() {
       </h2>
 
       {/* Awards Grid */}
-      <div className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-8">
+      <div className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
         {awards.map((award) => (
           <div
             key={award.id}
             className="group rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white border border-gray-100 overflow-hidden"
           >
-            <Image
-              src={award.image}
-              alt={award.alt}
-              width={300}
-              height={300}
-              className="w-full h-32 sm:h-40 md:h-48 object-contain transition-transform duration-500 group-hover:scale-105"
-            />
+            <div className="aspect-[16/9] w-full">
+              <Image
+                src={award.image}
+                alt={award.alt}
+                fill
+                className="object-contain transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
           </div>
         ))}
       </div>

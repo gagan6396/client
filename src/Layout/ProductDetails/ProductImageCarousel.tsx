@@ -55,7 +55,7 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
                 onClick={toggleZoom}
               />
             )}
-            {isZoomed && selectedMedia !== product.video && (
+            {/* {isZoomed && selectedMedia !== product.video && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <button
                   className="text-white text-sm md:text-lg bg-black bg-opacity-75 px-3 py-1 md:px-4 md:py-2 rounded-full hover:bg-opacity-90 transition-all"
@@ -64,7 +64,7 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
                   Zoom Out
                 </button>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Thumbnails */}
