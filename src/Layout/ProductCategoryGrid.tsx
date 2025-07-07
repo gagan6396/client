@@ -235,7 +235,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <svg
                 key={index}
                 className={`h-3 w-3 ${
-                  index < Math.round(rating) ? "text-yellow-500" : "text-gray-300"
+                  index < Math.round(rating)
+                    ? "text-yellow-500"
+                    : "text-gray-300"
                 }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -350,19 +352,22 @@ const ProductCategories: React.FC = () => {
               ? Array(6)
                   .fill(0)
                   .map((_, index) => <SkeletonCard key={index} />)
-              : products.slice(0, 12).map((product) => (
-                  <ProductCard
-                    key={product._id}
-                    images={product.images}
-                    title={product.name}
-                    variants={product.variants}
-                    rating={product.rating}
-                    isBestSeller={product.isBestSeller} // Set to true for popular products
-                    productId={product._id}
-                    inWishlist={product.inWishlist}
-                    inCart={product.inCart}
-                  />
-                ))}
+              : products
+                  .filter((item) => !item.isBestSeller)
+                  .slice(0, 12)
+                  .map((product) => (
+                    <ProductCard
+                      key={product._id}
+                      images={product.images}
+                      title={product.name}
+                      variants={product.variants}
+                      rating={product.rating}
+                      isBestSeller={product.isBestSeller} // Set to true for popular products
+                      productId={product._id}
+                      inWishlist={product.inWishlist}
+                      inCart={product.inCart}
+                    />
+                  ))}
           </div>
           <div className="mt-8 text-center">
             <Link href="/products">

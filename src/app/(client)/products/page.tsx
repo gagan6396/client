@@ -312,7 +312,7 @@ const ProductPage = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
   const [sortOption, setSortOption] = useState<string>("default");
@@ -462,7 +462,7 @@ const ProductPage = () => {
                       </label>
                       <Slider
                         min={0}
-                        max={1000}
+                        max={10000}
                         step={10}
                         value={priceRange}
                         onValueChange={(value) => setPriceRange([value[0], value[1]])}
