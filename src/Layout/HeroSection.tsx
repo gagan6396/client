@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import heroImage1 from "@/public/hero1.jpg"; // Rename or add more images
+import heroImage2 from "@/public/hero2.jpg"; // Example additional image
 // import heroImage2 from "@/public/hero2.jpg"; // Example additional image
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
@@ -8,10 +9,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-    AiOutlineHeart,
-    AiOutlineSearch,
-    AiOutlineShoppingCart,
-    AiOutlineUser,
+  AiOutlineHeart,
+  AiOutlineSearch,
+  AiOutlineShoppingCart,
+  AiOutlineUser,
 } from "react-icons/ai";
 
 const HeroSection = () => {
@@ -23,7 +24,7 @@ const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Array of hero images for the carousel
-  const heroImages = [heroImage1]; // Add your image paths here
+  const heroImages = [heroImage2, heroImage1]; // Add your image paths here
 
   let accessToken;
   if (typeof window !== "undefined") {

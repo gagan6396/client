@@ -54,11 +54,7 @@ export default function RootLayout({
               className="bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition-colors"
               aria-label="Toggle contact options"
             >
-              {isContactOpen ? (
-                <X size={24} />
-              ) : (
-                <MessageCircle size={24} />
-              )}
+              {isContactOpen ? <X size={24} /> : <MessageCircle size={24} />}
             </button>
             {/* Social Buttons */}
             {isContactOpen && (
