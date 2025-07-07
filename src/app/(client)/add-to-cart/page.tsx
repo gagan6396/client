@@ -139,6 +139,7 @@ const AddToCartPage: React.FC = () => {
   const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(
     null
   );
+  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
   const router = useRouter();
 
   const getAllCartProducts = async () => {
@@ -234,57 +235,73 @@ const AddToCartPage: React.FC = () => {
     ).toFixed(2);
   };
 
-  useEffect(() => {
-    const fetchShippingCharges = async () => {
-      if (!postalCode.match(/^\d{6}$/) || !cartItems.length) return;
+  const handleCalculateShipping = async () => {
+    if (!postalCode.match(/^\d{6}$/)) {
+      toast.error("Please enter a valid 6-digit postal code.");
+      return;
+    }
+    if (!cartItems.length) {
+      toast.error("Cart is empty. Add items to calculate shipping.");
+      return;
+    }
 
-      try {
-        const products = cartItems.map((item) => ({
-          productId: item.productId,
-          variantId: item.variantId,
-          quantity: item.quantity,
-        }));
-        const response = await calculateShippingChargesAPI(
-          postalCode,
-          products,
-          0
-        );
-        const { shippingOptions } = response.data;
+    setIsCalculatingShipping(true);
+    try {
+      const products = cartItems.map((item) => ({
+        productId: item.productId,
+        variantId: item.variantId,
+        quantity: item.quantity,
+      }));
+      const response = await calculateShippingChargesAPI(
+        postalCode,
+        products,
+        0
+      );
+      const { shippingOptions } = response.data;
 
-        const parsedOptions = shippingOptions.map((option: any) => ({
-          ...option,
-          estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
-        }));
+      const parsedOptions = shippingOptions.map((option: any) => ({
+        ...option,
+        estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
+      }));
 
-        const cheapestOption = parsedOptions.reduce(
-          (min: ShippingOption, option: ShippingOption) =>
-            option.rate < min.rate ? option : min,
-          parsedOptions[0]
-        );
-        setSelectedCourier(cheapestOption);
-      } catch (error) {
-        console.error("Error fetching shipping charges:", error);
-        toast.error("Failed to calculate shipping charges");
-      }
-    };
-
-    fetchShippingCharges();
-  }, [postalCode, cartItems]);
+      const cheapestOption = parsedOptions.reduce(
+        (min: ShippingOption, option: ShippingOption) =>
+          option.rate < min.rate ? option : min,
+        parsedOptions[0]
+      );
+      setSelectedCourier(cheapestOption);
+      toast.success("Shipping charges calculated successfully!");
+    } catch (error) {
+      console.error("Error fetching shipping charges:", error);
+      toast.error("Failed to calculate shipping charges.");
+    } finally {
+      setIsCalculatingShipping(false);
+    }
+  };
 
   return (
     <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
       <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 mb-10 md:mb-14 tracking-tight">
         Your Cart
       </h1>
-      <div className="mb-6">
-        <Label htmlFor="postalCode">Postal Code (for delivery check)</Label>
-        <Input
-          id="postalCode"
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-          placeholder="Enter 6-digit postal code"
-          className="max-w-xs"
-        />
+      <div className="mb-6 flex items-end gap-4">
+        <div className="flex-1 max-w-xs">
+          <Label htmlFor="postalCode">Postal Code (for delivery check)</Label>
+          <Input
+            id="postalCode"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            placeholder="Enter 6-digit postal code"
+            className="w-full"
+          />
+        </div>
+        <Button
+          onClick={handleCalculateShipping}
+          disabled={isCalculatingShipping || !postalCode}
+          className="bg-[#7A6E18] hover:bg-[#7A6E18]/90 text-white px-4 py-2 text-sm md:text-base font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isCalculatingShipping ? "Calculating..." : "Check Delivery"}
+        </Button>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         <div className="lg:col-span-2">
@@ -297,7 +314,7 @@ const AddToCartPage: React.FC = () => {
                 >
                   <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-200 rounded-lg" />
                   <div className="flex-1 space-y-3">
-                    <div className="h-6 bg-gray-200 rounded w-3/4" />
+                    <div className="h-6-6 bg-gray-200 rounded w-3/4" />
                     <div className="flex gap-2">
                       <div className="h-4 bg-gray-200 rounded w-1/4" />
                       <div className="h-8 bg-gray-200 rounded w-1/3" />
@@ -380,7 +397,7 @@ const AddToCartPage: React.FC = () => {
             )}
             <Button
               onClick={() => router.push("/checkout")}
-              className="w-full bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] hover:bg-[#7A6E18]/10600 hover:to-[#7A6E18] text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] hover:bg-[#7A6E18]/90 hover:to-[#7A6E18] text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Proceed to Checkout
             </Button>

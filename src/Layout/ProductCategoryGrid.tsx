@@ -188,7 +188,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className="group bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
+      className="group bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100 flex flex-col"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -221,49 +221,49 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      <div className="p-3 space-y-2">
-        <h3
-          className="text-gray-800 text-sm font-medium group-hover:text-[#7A6E18] transition-colors line-clamp-2 h-10" // Fixed height for 2 lines
-          title={title}
-        >
-          {title}
-        </h3>
+      <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
+        <div className="space-y-2">
+          <h3
+            className="text-gray-800 text-sm font-medium group-hover:text-[#7A6E18] transition-colors line-clamp-2"
+            title={title}
+          >
+            {title}
+          </h3>
 
-        <div className="flex items-center">
-          {[...Array(5)].map((_, index) => (
-            <svg
-              key={index}
-              className={`h-3 w-3 ${
-                index < Math.round(rating) ? "text-yellow-500" : "text-gray-300"
-              }`}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.908c.969 0 1.372 1.24.588 1.81l-3.974 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.974-2.89a1 1 0 00-1.176 0l-3.974 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.147 9.101c-.784-.57-.381-1.81.588-1.81h4.908a1 1 0 00.95-.69l1.518-4.674z" />
-            </svg>
-          ))}
-          <span className="ml-1 text-xs text-gray-500">
-            ({rating.toFixed(1)})
-          </span>
-        </div>
+          <div className="flex items-center">
+            {[...Array(5)].map((_, index) => (
+              <svg
+                key={index}
+                className={`h-3 w-3 ${
+                  index < Math.round(rating) ? "text-yellow-500" : "text-gray-300"
+                }`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.908c.969 0 1.372 1.24.588 1.81l-3.974 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.974-2.89a1 1 0 00-1.176 0l-3.974 2.89c-.785.57-1.84-.197-1.54-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.147 9.101c-.784-.57-.381-1.81.588-1.81h4.908a1 1 0 00.95-.69l1.518-4.674z" />
+              </svg>
+            ))}
+            <span className="ml-1 text-xs text-gray-500">
+              ({rating.toFixed(1)})
+            </span>
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          {variants.map((variant) => (
-            <button
-              key={variant._id}
-              className={`text-xs px-2 py-1 rounded-full border ${
-                selectedVariant._id === variant._id
-                  ? "bg-[#7A6E18]/10 border-[#7A6E18]"
-                  : "border-gray-300"
-              }`}
-              onClick={() => setSelectedVariant(variant)}
-            >
-              {variant.name}
-            </button>
-          ))}
-        </div>
+          <div className="flex flex-wrap gap-1 min-h-[28px]">
+            {variants.map((variant) => (
+              <button
+                key={variant._id}
+                className={`text-xs px-2 py-1 rounded-full border ${
+                  selectedVariant._id === variant._id
+                    ? "bg-[#7A6E18]/10 border-[#7A6E18]"
+                    : "border-gray-300"
+                }`}
+                onClick={() => setSelectedVariant(variant)}
+              >
+                {variant.name}
+              </button>
+            ))}
+          </div>
 
-        <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1">
             <span className="text-[#7A6E18] font-bold text-sm">
               ₹{finalPrice.toFixed(2)}
