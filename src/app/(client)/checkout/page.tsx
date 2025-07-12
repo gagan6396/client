@@ -95,11 +95,11 @@ const CheckoutPage = () => {
     }),
     onSubmit: async (values) => {
       if (!cartItems.length) {
-        toast.error("Cart is empty");
+        toast.info("Cart is empty");
         return;
       }
       if (!selectedCourier) {
-        toast.error("Please select a courier");
+        toast.info("Please select a courier");
         return;
       }
       await handlePlaceOrder(values);
@@ -146,7 +146,7 @@ const CheckoutPage = () => {
         setCartItems(mappedItems);
       } catch (error) {
         console.error("Error fetching initial data:", error);
-        toast.error("Failed to load checkout data");
+        // toast.error("Failed to load checkout data");
       } finally {
         setProfileLoading(false);
       }
@@ -188,7 +188,7 @@ const CheckoutPage = () => {
         setSelectedCourier(cheapestOption);
       } catch (error) {
         console.error("Error fetching shipping charges:", error);
-        toast.error("Failed to calculate shipping charges");
+        toast.info("Failed to calculate shipping charges");
       }
     };
 
@@ -257,7 +257,7 @@ const CheckoutPage = () => {
       }
     } catch (error: any) {
       console.error("Order placement error:", error);
-      toast.error(error.response?.data?.message || "Failed to place order");
+      toast.info(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
@@ -303,7 +303,7 @@ const CheckoutPage = () => {
               throw new Error("Payment verification failed");
             }
           } catch (error) {
-            toast.error("Payment verification failed");
+            toast.info("Payment verification failed");
             reject(error);
           }
         },
@@ -317,7 +317,7 @@ const CheckoutPage = () => {
 
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", () => {
-        toast.error("Payment failed. Please try again.");
+        toast.info("Payment failed. Please try again.");
         reject(new Error("Payment failed"));
       });
 
@@ -513,7 +513,8 @@ const CheckoutPage = () => {
             </div>
             <div className="flex justify-between mt-2">
               <span className="text-gray-600">
-                Shipping ({selectedCourier?.courierName || "Not selected"}):
+                Shipping:
+                {/* ({selectedCourier?.courierName || "Not selected"}): */}
               </span>
               <span className="text-gray-800 font-bold">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
@@ -533,7 +534,7 @@ const CheckoutPage = () => {
                 </span>
               </div>
             )}
-            <div className="mt-4">
+            <div className="mt-4 hidden">
               <h3 className="text-lg font-semibold mb-2">Select Courier</h3>
               <RadioGroup
                 value={selectedCourier?.courierName || ""}

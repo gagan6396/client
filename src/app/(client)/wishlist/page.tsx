@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
-    deleteProductFromWishlistAPI,
-    getWishListAPI,
+  deleteProductFromWishlistAPI,
+  getWishListAPI,
 } from "../../../apis/wishlistAPIs";
 
 // Updated WishlistItem interface based on new response
@@ -90,7 +90,7 @@ const WishlistPage = () => {
         setError("No items found in your wishlist.");
       }
     } catch (error) {
-      setError("Failed to fetch wishlist. Please try again later.");
+      // setError("Failed to fetch wishlist. Please try again later.");
       console.error("Error fetching wishlist:", error);
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ const WishlistPage = () => {
       toast.success("Item removed from wishlist!");
       getWishList(); // Refresh the wishlist
     } catch (error) {
-      toast.error("Failed to remove item. Please try again.");
+      // toast.error("Failed to remove item. Please try again.");
       console.error("Error removing product:", error);
     }
   };

@@ -162,7 +162,7 @@ const AddToCartPage: React.FC = () => {
       setCartItems(mappedItems);
     } catch (error) {
       console.error("Error fetching cart items:", error);
-      toast.error("Failed to fetch cart items. Please try again.");
+      // toast.error("Failed to fetch cart items. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -193,7 +193,7 @@ const AddToCartPage: React.FC = () => {
       toast.success("Quantity updated!");
     } catch (error) {
       console.error("Error updating quantity:", error);
-      toast.error("Failed to update quantity.");
+      // toast.error("Failed to update quantity.");
     } finally {
       setUpdatingItemId(null);
     }
@@ -210,7 +210,7 @@ const AddToCartPage: React.FC = () => {
       toast.success("Item removed from cart!");
     } catch (error) {
       console.error("Error removing item:", error);
-      toast.error("Failed to remove item.");
+      // toast.error("Failed to remove item.");
     } finally {
       setUpdatingItemId(null);
     }
@@ -237,11 +237,11 @@ const AddToCartPage: React.FC = () => {
 
   const handleCalculateShipping = async () => {
     if (!postalCode.match(/^\d{6}$/)) {
-      toast.error("Please enter a valid 6-digit postal code.");
+      toast.info("Please enter a valid 6-digit postal code.");
       return;
     }
     if (!cartItems.length) {
-      toast.error("Cart is empty. Add items to calculate shipping.");
+      toast.info("Cart is empty. Add items to calculate shipping.");
       return;
     }
 
@@ -273,7 +273,7 @@ const AddToCartPage: React.FC = () => {
       toast.success("Shipping charges calculated successfully!");
     } catch (error) {
       console.error("Error fetching shipping charges:", error);
-      toast.error("Failed to calculate shipping charges.");
+      // toast.error("Failed to calculate shipping charges.");
     } finally {
       setIsCalculatingShipping(false);
     }
