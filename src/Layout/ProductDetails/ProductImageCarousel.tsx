@@ -3,7 +3,8 @@
 
 import { Product } from "@/types";
 import { useState } from "react";
-
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 interface ProductImageCarouselProps {
   product: Product;
 }
@@ -44,16 +45,15 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
                 title={`${product.name} Video`}
               />
             ) : (
-              <img
-                src={selectedMedia || ""}
-                width={500}
-                height={500}
-                alt="Main Product Image"
-                className={`rounded-lg object-cover h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-auto cursor-zoom-in transition-transform duration-300 ${
-                  isZoomed ? "scale-150 transform origin-center" : ""
-                }`}
-                onClick={toggleZoom}
-              />
+              <Zoom>
+                <img
+                  src={selectedMedia || ""}
+                  width={500}
+                  height={500}
+                  alt="Main Product Image"
+                  className="rounded-lg object-cover h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-auto cursor-zoom-in"
+                />
+              </Zoom>
             )}
             {/* {isZoomed && selectedMedia !== product.video && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
