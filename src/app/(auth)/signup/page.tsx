@@ -3,19 +3,19 @@
 import { RegisterAPI } from "@/apis/AuthAPIs";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -36,27 +36,29 @@ const validationSchema = Yup.object({
     .min(1, "First name must be at least 1 character")
     .max(50, "First name must be less than 50 characters")
     .required("First name is required"),
+    
   last_name: Yup.string()
     .min(1, "Last name must be at least 1 character")
     .max(50, "Last name must be less than 50 characters")
     .required("Last name is required"),
+    
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
+    
   phone: Yup.string()
     .matches(/^\+\d{1,3}\d{9,14}$/, "Invalid phone number")
     .optional(),
+    
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    )
+    .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
+    
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm password is required"),
 });
+
 
 type FormData = {
   first_name: string;

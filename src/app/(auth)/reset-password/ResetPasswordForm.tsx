@@ -4,19 +4,19 @@
 import { resetPasswordAPI } from "@/apis/AuthAPIs";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,10 +31,10 @@ import * as z from "zod";
 // Define the schema for the form
 const schema = z
   .object({
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    newPassword: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z
       .string()
-      .min(8, "Password must be at least 8 characters"),
+      .min(6, "Password must be at least 6 characters"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords do not match",
