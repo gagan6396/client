@@ -211,7 +211,7 @@ const ProductCategories: React.FC = () => {
       {/* Best Product Categories Section */}
       <main className="px-4 sm:px-6 lg:px-8 py-8 bg-white">
         <div className="container mx-auto">
-          <h2 className="text-2xl md:text-3xl text-center font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl md:text-3xl text-center font-bold text-gray-900 mb-8">
             Best Product Categories
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -222,28 +222,31 @@ const ProductCategories: React.FC = () => {
               : (showAllCategories ? categories : categories.slice(0, 12)).map(
                   (category) => (
                     <div
+                      onClick={() =>
+                        navigate.push(`/products?category=${category._id}`)
+                      }
                       key={category?._id || `category-${Math.random()}`}
-                      className="group bg-white rounded-xl shadow-sm overflow-hidden flex flex-col items-center text-center p-3 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100"
+                      className="group bg-white rounded-xl shadow-sm overflow-hidden flex flex-col items-center text-center p-4 transition-all hover:shadow-lg hover:-translate-y-1 duration-300 border border-gray-100"
                     >
-                      <div className="relative w-16 h-16 mb-2">
-                        <img
+                      <div className="relative w-full h-40 mb-3">
+                        <Image
                           src={
                             category?.images?.[0] || "/placeholder-category.jpg"
                           }
                           alt={category?.name || "Unnamed Category"}
-                          className="w-full h-full object-cover rounded-full border border-green-100 group-hover:border-green-300 transition-colors"
+                          fill
+                          className="object-cover rounded-lg border border-green-100 group-hover:border-green-300 transition-colors"
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 16vw"
+                          priority={true}
                         />
-                        <div className="absolute inset-0 bg-[#7A6E18] opacity-0 group-hover:opacity-10 rounded-full transition-opacity" />
+                        <div className="absolute inset-0 bg-[#7A6E18] opacity-0 group-hover:opacity-10 rounded-lg transition-opacity" />
                       </div>
-                      <h3 className="text-sm font-medium text-gray-800">
+                      <h3 className="text-base font-semibold text-gray-800 mb-2">
                         {category?.name || "Unnamed Category"}
                       </h3>
-                      <p className="text-xs text-gray-500 line-clamp-2">
-                        {category?.description || "No description available"}
-                      </p>
                       <Link
                         href={`/products?category=${category?._id || ""}`}
-                        className="mt-2 inline-block text-[#7A6E18] font-medium  text-xs hover:text-[#7A6E18] transition-colors"
+                        className="inline-block text-[#7A6E18] font-medium text-sm hover:text-[#7A6E18]/80 transition-colors"
                       >
                         Explore Now →
                       </Link>
@@ -252,10 +255,10 @@ const ProductCategories: React.FC = () => {
                 )}
           </div>
           {categories.length > 12 && (
-            <div className="mt-8 text-center">
+            <div className="mt-10 text-center">
               <Button
                 onClick={() => setShowAllCategories(!showAllCategories)}
-                className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-6 py-2 rounded-full"
+                className="bg-[#7A6E18] text-white hover:bg-[#7A6E18]/90 px-8 py-2 rounded-full text-sm font-medium transition-colors"
               >
                 {showAllCategories ? "Show Less" : "See More"}
               </Button>

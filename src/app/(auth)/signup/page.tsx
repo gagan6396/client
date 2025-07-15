@@ -199,7 +199,7 @@ const RegisterPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm sm:text-base text-gray-700">
-                      Phone (Optional)
+                      Phone
                     </FormLabel>
                     <FormControl>
                       <PhoneInput

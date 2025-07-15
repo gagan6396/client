@@ -68,35 +68,45 @@ const ProductImageCarousel = ({ product }: ProductImageCarouselProps) => {
           </div>
 
           {/* Thumbnails */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-3">
-            {mediaItems.map((media: string, index: number) => (
-              <div
-                key={index}
-                className={`cursor-pointer border-2 rounded-lg overflow-hidden transition-all hover:border-green-600 ${
-                  selectedMedia === media
-                    ? "border-green-600"
-                    : "border-transparent"
-                }`}
-                onClick={() => handleThumbnailClick(media)}
-              >
-                {media === product.video ? (
-                  <video
-                    src={media}
-                    className="h-12 sm:h-16 md:h-20 lg:h-24 w-full object-cover hover:opacity-80 transition-opacity"
-                    muted
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={media}
-                    width={100}
-                    height={100}
-                    alt={`Product Thumbnail ${index + 1}`}
-                    className="h-12 sm:h-16 md:h-20 lg:h-24 w-full object-contain hover:opacity-80 transition-opacity"
-                  />
-                )}
-              </div>
-            ))}
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+            {mediaItems.map((media: string, index: number) => {
+              const isSelected = selectedMedia === media;
+
+              return (
+                <div
+                  key={index}
+                  className={`cursor-pointer p-1 rounded-xl transition-transform transform hover:scale-105 ${
+                    isSelected ? "bg-green-100 shadow-md" : ""
+                  }`}
+                  onClick={() => handleThumbnailClick(media)}
+                >
+                  {media === product.video ? (
+                    <video
+                      src={media}
+                      muted
+                      playsInline
+                      className={`h-12 sm:h-16 md:h-20 lg:h-24 w-full object-cover rounded-lg transition-all ${
+                        isSelected
+                          ? "ring-4 ring-green-500"
+                          : "ring-1 ring-gray-300"
+                      }`}
+                    />
+                  ) : (
+                    <img
+                      src={media}
+                      width={100}
+                      height={100}
+                      alt={`Product Thumbnail ${index + 1}`}
+                      className={`h-12 sm:h-16 md:h-20 lg:h-24 w-full object-cover rounded-lg transition-all ${
+                        isSelected
+                          ? "ring-4 ring-green-500"
+                          : "ring-1 ring-gray-300"
+                      }`}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </>
       ) : (

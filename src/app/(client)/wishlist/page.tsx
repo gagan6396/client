@@ -1,81 +1,143 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import {
+  addToCartAPI,
+  deleteToCartAPI,
+} from "@/apis/addToCartAPIs";
 import {
   deleteProductFromWishlistAPI,
   getWishListAPI,
-} from "../../../apis/wishlistAPIs";
+} from "@/apis/wishlistAPIs";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Heart, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Updated WishlistItem interface based on new response
+// Updated WishlistItem interface
 interface WishlistItemProps {
   imageSrc: string;
+  secondaryImageSrc: string;
   title: string;
   price: string; // Price as $numberDecimal string
   originalPrice?: number; // Calculated original price before discount
   discount?: number; // Discount percentage
+  productId: string;
+  variantId: string;
+  isInCart: boolean;
   onRemove: () => void;
 }
 
 const WishlistItem = ({
   imageSrc,
+  secondaryImageSrc,
   title,
   price,
   originalPrice,
   discount,
+  productId,
+  variantId,
+  isInCart,
   onRemove,
 }: WishlistItemProps) => {
+  const router = useRouter();
+  const [hovered, setHovered] = useState(false);
+  const [inCart, setInCart] = useState(isInCart);
+
+  const handleAddToCart = async () => {
+    try {
+      const response = await addToCartAPI({
+        productId,
+        variantId,
+        quantity: 1,
+      });
+      setInCart(true);
+      toast.success(response?.data?.message || "Added to cart!");
+    } catch (error: any) {
+      toast.info(error?.response?.data?.message || "Failed to add to cart.");
+    }
+  };
+
+  const handleRemoveFromCart = async () => {
+    try {
+      const response = await deleteToCartAPI({
+        productId,
+        variantId,
+      });
+      setInCart(false);
+      toast.success(response?.data?.message || "Removed from cart!");
+    } catch (error: any) {
+      toast.info(error?.response?.data?.message || "Failed to remove from cart.");
+    }
+  };
+
   return (
-    <div className="group flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+    <div
+      className="group bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-gray-100 flex flex-col"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {/* Image Section */}
-      <div className="w-20 h-20 md:w-24 md:h-24 relative flex-shrink-0 overflow-hidden rounded-lg">
+      <div className="relative overflow-hidden cursor-pointer">
         <img
-          src={imageSrc}
+          src={hovered ? secondaryImageSrc : imageSrc}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full aspect-square object-cover rounded-t-xl transition-all duration-300"
+          onClick={() => router.push(`/products/${productId}`)}
         />
-      </div>
-      {/* Content Section */}
-      <div className="flex-1 flex items-center justify-between">
-        <div>
-          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-[#7A6E18] transition-colors duration-300">
-            {title}
-          </h3>
-          <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-2">
-            <span className="text-[#7A6E18] font-bold text-sm md:text-base">
-              ₹{parseFloat(price).toFixed(2)}
-            </span>
-            {discount && originalPrice && (
-              <>
-                <span className="text-gray-400 line-through text-xs md:text-sm">
-                  ₹{originalPrice.toFixed(2)}
-                </span>
-                <span className="text-xs md:text-sm text-red-500">
-                  ({discount}% OFF)
-                </span>
-              </>
-            )}
+        {/* {discount && originalPrice && (
+          <div className="absolute top-2 left-2 bg-[#7A6E18]/90 text-white text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+            -{discount}% (₹{((originalPrice - parseFloat(price)).toFixed(2))})
           </div>
-        </div>
-        {/* Remove Button */}
+        )} */}
         <button
           onClick={onRemove}
-          className="text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"
+          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-sm text-red-500 hover:text-red-600 hover:scale-110 transition-all duration-300"
           aria-label="Remove from Wishlist"
         >
-          <Trash2 size={20} className="md:size-7" />
+          <Trash2 size={20} />
         </button>
+      </div>
+      {/* Content Section */}
+      <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
+        <div className="space-y-2">
+          <h3
+            className="text-gray-800 text-sm font-medium group-hover:text-[#7A6E18] transition-colors line-clamp-2 cursor-pointer"
+            title={title}
+            onClick={() => router.push(`/products/${productId}`)}
+          >
+            {title}
+          </h3>
+          <div className="flex items-baseline gap-1">
+            <span className="text-[#7A6E18] font-bold text-sm">
+              ₹{parseFloat(price).toFixed(2)}
+            </span>
+            {/* {discount && originalPrice && (
+              <span className="text-gray-400 line-through text-xs">
+                ₹{originalPrice.toFixed(2)}
+              </span>
+            )} */}
+          </div>
+        </div>
+        <Button
+          className={`w-full rounded-full text-xs font-medium transition-all ${
+            inCart
+              ? "bg-red-500 text-white hover:bg-red-600"
+              : "bg-[#7A6E18] text-white hover:bg-[#7A6E18]/90"
+          }`}
+          onClick={inCart ? handleRemoveFromCart : handleAddToCart}
+        >
+          {inCart ? "Remove from Cart" : "Add to Cart"}
+        </Button>
       </div>
     </div>
   );
 };
 
 const WishlistPage = () => {
-  const [wishlist, setWishlist] = useState<any[]>([]); // Using any[] temporarily for flexibility
+  const [wishlist, setWishlist] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,8 +152,8 @@ const WishlistPage = () => {
         setError("No items found in your wishlist.");
       }
     } catch (error) {
-      // setError("Failed to fetch wishlist. Please try again later.");
       console.error("Error fetching wishlist:", error);
+      setError("Failed to fetch wishlist. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -108,12 +170,12 @@ const WishlistPage = () => {
       toast.success("Item removed from wishlist!");
       getWishList(); // Refresh the wishlist
     } catch (error) {
-      // toast.error("Failed to remove item. Please try again.");
       console.error("Error removing product:", error);
+      toast.info("Failed to remove item. Please try again.");
     }
   };
 
-  // Function to get primary variant (first variant or one with active discount)
+  // Function to get primary variant
   const getPrimaryVariant = (variants: any[]) => {
     const activeDiscountVariant = variants.find(
       (v) => v.discount?.active && v.discount?.value
@@ -130,16 +192,17 @@ const WishlistPage = () => {
 
       {/* Loading State */}
       {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-8">
-          {[...Array(3)].map((_, index) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, index) => (
             <div
               key={index}
-              className="flex bg-white rounded-xl shadow-md p-4 md:p-6 gap-4 md:gap-6 items-center animate-pulse"
-            >
-              <Skeleton className="w-20 h-20 md:w-24 md:h-24 rounded-lg" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-6 w-3/4" />
+              className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse border border-gray-100"
+     >
+              <Skeleton className="w-full aspect-square rounded-t-xl" />
+              <div className="p-3 space-y-2">
+                <Skeleton className="h-3 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-8 w-full rounded-full" />
               </div>
             </div>
           ))}
@@ -160,7 +223,7 @@ const WishlistPage = () => {
       {/* Wishlist Items */}
       {!loading && !error && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {wishlist.length > 0 ? (
               wishlist.map((item) => {
                 const primaryVariant = getPrimaryVariant(item.variants);
@@ -181,10 +244,18 @@ const WishlistPage = () => {
                       item.images.find((img: any) => img.sequence === 0)?.url ||
                       "/placeholder-image.jpg"
                     }
+                    secondaryImageSrc={
+                      item.images.find((img: any) => img.sequence === 1)?.url ||
+                      item.images.find((img: any) => img.sequence === 0)?.url ||
+                      "/placeholder-image.jpg"
+                    }
                     title={`${item.name} - ${primaryVariant.name}`}
                     price={primaryVariant.price.$numberDecimal}
                     originalPrice={originalPrice}
                     discount={discount}
+                    productId={item._id}
+                    variantId={primaryVariant._id}
+                    isInCart={item.inCart || false}
                     onRemove={() => removeFromWishlist(item._id)}
                   />
                 );
@@ -209,7 +280,7 @@ const WishlistPage = () => {
           {!wishlist.length && (
             <div className="flex justify-center mt-10 md:mt-12">
               <Button
-                className="bg-[#7A6E18] hover:bg-[#7A6E18] text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="bg-[#7A6E18] hover:bg-[#7A6E18]/90 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
                 onClick={() => (window.location.href = "/products")}
               >
                 Explore Products
@@ -221,7 +292,7 @@ const WishlistPage = () => {
 
       {/* Toast Container */}
       <ToastContainer
-        position="bottom-right"
+        position="top-center"
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}

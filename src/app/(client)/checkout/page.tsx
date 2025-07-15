@@ -158,7 +158,10 @@ const CheckoutPage = () => {
   // Fetch shipping charges when postal code, cart items, or payment method change
   useEffect(() => {
     const fetchShippingCharges = async () => {
-      if (!formik.values.postalCode || !cartItems.length) return;
+      const postalCode = formik.values.postalCode.trim();
+
+      // Only proceed if postal code is exactly 6 digits and cart is not empty
+      if (!/^\d{6}$/.test(postalCode) || cartItems.length === 0) return;
 
       try {
         const products = cartItems.map((item) => ({
@@ -166,25 +169,28 @@ const CheckoutPage = () => {
           variantId: item.variantId,
           quantity: item.quantity,
         }));
+
         const response = await calculateShippingChargesAPI(
-          formik.values.postalCode,
+          postalCode,
           products,
           paymentMethod === "COD" ? 1 : 0
         );
+
         const { shippingOptions } = response.data;
-        // Parse estimatedDeliveryDays to number
+
         const parsedOptions = shippingOptions.map((option: any) => ({
           ...option,
           estimatedDeliveryDays: parseInt(option.estimatedDeliveryDays, 10),
         }));
+
         setShippingOptions(parsedOptions);
 
-        // Select the cheapest option by default
         const cheapestOption = parsedOptions.reduce(
           (min: ShippingOption, option: ShippingOption) =>
             option.rate < min.rate ? option : min,
           parsedOptions[0]
         );
+
         setSelectedCourier(cheapestOption);
       } catch (error) {
         console.error("Error fetching shipping charges:", error);
