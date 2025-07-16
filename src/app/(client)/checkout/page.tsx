@@ -114,13 +114,13 @@ const CheckoutPage = () => {
     },
   });
 
-  // Function to fetch city and state from PIN code
+  // Function to fetch city and state from PIN code via proxy API
   const fetchCityStateFromPincode = async (pincode: string) => {
     if (!/^\d{6}$/.test(pincode)) return;
 
     setPincodeLoading(true);
     try {
-      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`, {
+      const response = await fetch(`/api/pincode/${pincode}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -367,7 +367,7 @@ const CheckoutPage = () => {
         prefill: {
           name: formik.values.name,
           email: profile?.email || "",
-          contact: formik.values.phone,
+          contact: profile?.phone || "",
         },
         theme: { color: "#F37254" },
       };
@@ -502,7 +502,7 @@ const CheckoutPage = () => {
                 defaultCountry="IN"
                 value={formik.values.phone}
                 onChange={(value) => formik.setFieldValue("phone", value)}
-                on onBlur={formik.handleBlur}
+                onBlur={formik.handleBlur}
                 className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 w-full transition-all duration-300"
                 placeholder="Enter your phone number"
               />
@@ -573,9 +573,7 @@ const CheckoutPage = () => {
               </span>
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-gray-600">
-                Shipping:
-              </span>
+              <span className="text-gray-600">Shipping:</span>
               <span className="text-gray-800 font-bold">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
               </span>
@@ -589,8 +587,7 @@ const CheckoutPage = () => {
             {selectedCourier && (
               <div className="mt-2">
                 <span className="text-gray-600">
-                  Estimated Delivery: {selectedCourier.estimatedDeliveryDays}{" "}
-                  days
+                  Estimated Delivery: {selectedCourier.estimatedDeliveryDays} days
                 </span>
               </div>
             )}
