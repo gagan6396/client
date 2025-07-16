@@ -56,19 +56,27 @@ interface ShippingOption {
   estimatedDeliveryDays: number;
 }
 
+interface PincodeResponse {
+  Message: string;
+  Status: string;
+  PostOffice: Array<{
+    Name: string;
+    District: string;
+    State: string;
+    Pincode: string;
+  }>;
+}
+
 const CheckoutPage = () => {
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">(
-    "Razorpay"
-  );
+  const [paymentMethod, setPaymentMethod] = useState<"Razorpay" | "COD">("Razorpay");
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
-  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(
-    null
-  );
+  const [selectedCourier, setSelectedCourier] = useState<ShippingOption | null>(null);
+  const [pincodeLoading, setPincodeLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -90,7 +98,7 @@ const CheckoutPage = () => {
       phone: Yup.string()
         .required("Phone is required")
         .test("is-valid-phone", "Phone number is invalid", (value) => {
-          return value ? isValidPhoneNumber(value) : false; // Validates E.164 format
+          return value ? isValidPhoneNumber(value) : false;
         }),
     }),
     onSubmit: async (values) => {
@@ -106,6 +114,40 @@ const CheckoutPage = () => {
     },
   });
 
+  // Function to fetch city and state from PIN code
+  const fetchCityStateFromPincode = async (pincode: string) => {
+    if (!/^\d{6}$/.test(pincode)) return;
+
+    setPincodeLoading(true);
+    try {
+      const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data: PincodeResponse[] = await response.json();
+
+      if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+        const postOffice = data[0].PostOffice[0];
+        formik.setFieldValue("city", postOffice.District);
+        formik.setFieldValue("state", postOffice.State);
+      } else {
+        toast.info("Invalid PIN code or no data found");
+        formik.setFieldValue("city", "");
+        formik.setFieldValue("state", "");
+      }
+    } catch (error) {
+      console.error("Error fetching PIN code data:", error);
+      toast.info("Failed to fetch city and state");
+      formik.setFieldValue("city", "");
+      formik.setFieldValue("state", "");
+    } finally {
+      setPincodeLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -120,23 +162,26 @@ const CheckoutPage = () => {
 
         if (profileData) {
           formik.setValues({
-            name: `${profileData.first_name || ""} ${
-              profileData.last_name || ""
-            }`.trim(),
+            name: `${profileData.first_name || ""} ${profileData.last_name || ""}`.trim(),
             addressLine1: profileData?.shoppingAddress?.addressLine1 || "",
             city: profileData?.shoppingAddress?.city || "",
             state: profileData.shoppingAddress?.state || "",
             postalCode: profileData.shoppingAddress?.postalCode || "",
             phone: profileData.phone || "",
           });
+
+          // Fetch city and state if postalCode exists in profile
+          if (profileData.shoppingAddress?.postalCode) {
+            await fetchCityStateFromPincode(profileData.shoppingAddress.postalCode);
+          }
         }
 
         const mappedItems = cartRes.data.data.products.map((item: any) => ({
           id: item.productId,
           variantId: item.variantId,
           imageSrc:
-            item.productDetails.images.find((img: any) => img.sequence === 0)
-              ?.url || "/placeholder-image.jpg",
+            item.productDetails.images.find((img: any) => img.sequence === 0)?.url ||
+            "/placeholder-image.jpg",
           title: item.productDetails.name,
           variantName: item.productDetails.variant.name,
           price: item.productDetails.variant.price.$numberDecimal,
@@ -155,12 +200,19 @@ const CheckoutPage = () => {
     fetchData();
   }, []);
 
+  // Handle PIN code changes
+  useEffect(() => {
+    const pincode = formik.values.postalCode.trim();
+    if (pincode.length === 6) {
+      fetchCityStateFromPincode(pincode);
+    }
+  }, [formik.values.postalCode]);
+
   // Fetch shipping charges when postal code, cart items, or payment method change
   useEffect(() => {
     const fetchShippingCharges = async () => {
       const postalCode = formik.values.postalCode.trim();
 
-      // Only proceed if postal code is exactly 6 digits and cart is not empty
       if (!/^\d{6}$/.test(postalCode) || cartItems.length === 0) return;
 
       try {
@@ -227,13 +279,13 @@ const CheckoutPage = () => {
           tax: 0,
         })),
         shippingAddress: addressSnapshot,
-        paymentMethod: paymentMethod === "COD" ? (1 as 0 | 1) : (0 as 0 | 1), // Explicitly cast to 0 | 1
+        paymentMethod: paymentMethod === "COD" ? (1 as 0 | 1) : (0 as 0 | 1),
         userDetails: {
           name: values.name,
           phone: values.phone,
           email: profile?.email || "",
         },
-        courierName: selectedCourier?.courierName || "", // Use selected courier name
+        courierName: selectedCourier?.courierName || "",
       };
 
       const response = await createOrderAPI(orderData);
@@ -247,7 +299,6 @@ const CheckoutPage = () => {
           addressSnapshot,
         });
       } else {
-        // For COD, verify payment with courierName
         const verifyResponse = await verifyPaymentAPI({
           orderId,
           addressSnapshot,
@@ -329,7 +380,7 @@ const CheckoutPage = () => {
 
       rzp.on("modal.closed", () => {
         toast.info("Payment cancelled.");
-        setLoading(false); // Directly reset loading state
+        setLoading(false);
       });
       rzp.open();
     });
@@ -392,9 +443,26 @@ const CheckoutPage = () => {
                 onBlur={formik.handleBlur}
               />
               {formik.touched.addressLine1 && formik.errors.addressLine1 ? (
-                <p className="text-sm text-red-500">
-                  {formik.errors.addressLine1}
-                </p>
+                <p className="text-sm text-red-500">{formik.errors.addressLine1}</p>
+              ) : null}
+            </div>
+            <div>
+              <Label htmlFor="postalCode">Pincode</Label>
+              <div className="relative">
+                <Input
+                  id="postalCode"
+                  name="postalCode"
+                  value={formik.values.postalCode}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  disabled={pincodeLoading}
+                />
+                {pincodeLoading && (
+                  <Loader2 className="absolute right-3 top-2.5 h-5 w-5 animate-spin" />
+                )}
+              </div>
+              {formik.touched.postalCode && formik.errors.postalCode ? (
+                <p className="text-sm text-red-500">{formik.errors.postalCode}</p>
               ) : null}
             </div>
             <div>
@@ -405,6 +473,7 @@ const CheckoutPage = () => {
                 value={formik.values.city}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                disabled={pincodeLoading}
               />
               {formik.touched.city && formik.errors.city ? (
                 <p className="text-sm text-red-500">{formik.errors.city}</p>
@@ -418,24 +487,10 @@ const CheckoutPage = () => {
                 value={formik.values.state}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                disabled={pincodeLoading}
               />
               {formik.touched.state && formik.errors.state ? (
                 <p className="text-sm text-red-500">{formik.errors.state}</p>
-              ) : null}
-            </div>
-            <div>
-              <Label htmlFor="postalCode">Pincode</Label>
-              <Input
-                id="postalCode"
-                name="postalCode"
-                value={formik.values.postalCode}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.postalCode && formik.errors.postalCode ? (
-                <p className="text-sm text-red-500">
-                  {formik.errors.postalCode}
-                </p>
               ) : null}
             </div>
             <div>
@@ -446,8 +501,8 @@ const CheckoutPage = () => {
                 international
                 defaultCountry="IN"
                 value={formik.values.phone}
-                onChange={(value) => formik.setFieldValue("phone", value)} // Update Formik's value
-                onBlur={formik.handleBlur}
+                onChange={(value) => formik.setFieldValue("phone", value)}
+                on onBlur={formik.handleBlur}
                 className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 w-full transition-all duration-300"
                 placeholder="Enter your phone number"
               />
@@ -520,7 +575,6 @@ const CheckoutPage = () => {
             <div className="flex justify-between mt-2">
               <span className="text-gray-600">
                 Shipping:
-                {/* ({selectedCourier?.courierName || "Not selected"}): */}
               </span>
               <span className="text-gray-800 font-bold">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
