@@ -1,8 +1,27 @@
 // app/api/pincode/[pincode]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { pincode: string } }) {
-  const { pincode } = params;
+// Define the response type for the external API
+interface PincodeResponse {
+  Message: string;
+  Status: string;
+  PostOffice: Array<{
+    Name: string;
+    District: string;
+    State: string;
+    Pincode: string;
+  }>;
+}
+
+// Define the params type for the dynamic route
+interface RouteParams {
+  params: {
+    pincode: string;
+  };
+}
+
+export async function GET(request: NextRequest, context: any) {
+  const { pincode } = context.params;
 
   if (!/^\d{6}$/.test(pincode)) {
     return NextResponse.json({ error: "Invalid PIN code" }, { status: 400 });
@@ -20,7 +39,7 @@ export async function GET(request: Request, { params }: { params: { pincode: str
       throw new Error(`External API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: PincodeResponse[] = await response.json();
 
     // Set CORS headers
     const headers = {
@@ -36,7 +55,6 @@ export async function GET(request: Request, { params }: { params: { pincode: str
   }
 }
 
-// Handle OPTIONS request for CORS preflight
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
