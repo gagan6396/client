@@ -3,29 +3,41 @@
 import { getUserProfileAPI, updateUserProfileAPI } from "@/apis/userProfile";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import PhoneInput from "react-phone-number-input"; // Added react-phone-number-input
 import "react-phone-number-input/style.css"; // Import default styles
 import { toast } from "react-toastify";
 import * as yup from "yup";
+
+interface PincodeResponse {
+  Message: string;
+  Status: string;
+  PostOffice: Array<{
+    Name: string;
+    District: string;
+    State: string;
+    Pincode: string;
+  }>;
+}
 
 interface UserProfile {
   first_name: string;
@@ -88,6 +100,7 @@ const ProfileSkeleton = () => (
 );
 
 export default function ProfileManagement() {
+  const [pincodeLoading, setPincodeLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>({
     first_name: "",
     last_name: "",
@@ -133,6 +146,47 @@ export default function ProfileManagement() {
 
     fetchProfile();
   }, [profileForm]);
+
+  const fetchCityStateFromPincode = async (pincode: string) => {
+    if (!/^\d{6}$/.test(pincode)) return;
+
+    setPincodeLoading(true);
+    try {
+      const response = await fetch(`/api/pincode/${pincode}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data: PincodeResponse[] = await response.json();
+
+      if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+        const postOffice = data[0].PostOffice[0];
+        profileForm.setValue("shoppingAddress.city", postOffice.District);
+        profileForm.setValue("shoppingAddress.state", postOffice.State);
+        profileForm.setValue("shoppingAddress.country", "India");
+      } else {
+        toast.info("Invalid PIN code or no data found");
+        profileForm.setValue("shoppingAddress.city", "");
+        profileForm.setValue("shoppingAddress.state", "");
+      }
+    } catch (error) {
+      console.error("Error fetching PIN code data:", error);
+      toast.info("Failed to fetch city and state");
+      profileForm.setValue("shoppingAddress.city", "");
+      profileForm.setValue("shoppingAddress.state", "");
+    } finally {
+      setPincodeLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const postalCode = profileForm.watch("shoppingAddress.postalCode");
+    if (postalCode && postalCode.length === 6) {
+      fetchCityStateFromPincode(postalCode);
+    }
+  }, [profileForm.watch("shoppingAddress.postalCode")]);
 
   const handleUpdateProfile = async (data: UserProfile | any) => {
     try {
@@ -293,17 +347,15 @@ export default function ProfileManagement() {
               name="shoppingAddress.city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm sm:text-base text-gray-700">
-                    City
-                  </FormLabel>
+                  <FormLabel>City</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                      disabled={isActionLoading}
+                      disabled={pincodeLoading || isActionLoading}
+                      className="p-3"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -312,17 +364,15 @@ export default function ProfileManagement() {
               name="shoppingAddress.state"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm sm:text-base text-gray-700">
-                    State
-                  </FormLabel>
+                  <FormLabel>State</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                      disabled={isActionLoading}
+                      disabled={pincodeLoading || isActionLoading}
+                      className="p-3"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -350,17 +400,22 @@ export default function ProfileManagement() {
               name="shoppingAddress.postalCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm sm:text-base text-gray-700">
-                    Postal Code
-                  </FormLabel>
+                  <FormLabel>Postal Code</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3"
-                      disabled={isActionLoading}
-                    />
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        disabled={isActionLoading || pincodeLoading}
+                        className="p-3"
+                      />
+                      {pincodeLoading && (
+                        <span className="absolute right-3 top-2.5">
+                          <Loader2 className="animate-spin w-5 h-5 text-gray-400" />
+                        </span>
+                      )}
+                    </div>
                   </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
