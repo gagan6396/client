@@ -4,6 +4,7 @@ import Footer from "@/Layout/Footer";
 import Header from "@/Layout/Header";
 import HeroSection from "@/Layout/HeroSection";
 import MobileNavBar from "@/Layout/MobileHeader";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Instagram, MessageCircle, X, Youtube } from "lucide-react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { usePathname } from "next/navigation";
@@ -103,6 +104,7 @@ export default function RootLayout({
         id="razorpay-checkout-js"
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
+      <GoogleAnalytics gaId="G-7RQ5C4V58F" />
     </html>
   );
 }
