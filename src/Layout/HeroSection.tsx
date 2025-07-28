@@ -95,7 +95,7 @@ const HeroSection = () => {
   return (
       <div className="relative">
       {/* Hero Carousel Section */}
-      <div id="hero-section" className="relative h-screen bg-gray-900 overflow-hidden">
+      <div id="hero-section" className="relative h-screen overflow-hidden">
         {loading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-50">
             <ClipLoader color="#7A6E18" size={50} />
