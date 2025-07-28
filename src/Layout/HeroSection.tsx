@@ -1,8 +1,6 @@
 "use client";
+import { getAllSlidersAPI } from "@/apis/slider.service";
 import { Button } from "@/components/ui/button";
-import heroImage1 from "@/public/hero1.jpg"; // Rename or add more images
-import heroImage2 from "@/public/hero2.jpg"; // Example additional image
-// import heroImage2 from "@/public/hero2.jpg"; // Example additional image
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,7 +12,8 @@ import {
   AiOutlineShoppingCart,
   AiOutlineUser,
 } from "react-icons/ai";
-
+import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 const HeroSection = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -22,9 +21,8 @@ const HeroSection = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Array of hero images for the carousel
-  const heroImages = [heroImage2, heroImage1]; // Add your image paths here
+  const [sliders, setSliders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   let accessToken;
   if (typeof window !== "undefined") {
@@ -48,6 +46,27 @@ const HeroSection = () => {
     setShowSearchInput((prev) => !prev);
   };
 
+  // Fetch sliders from backend
+  useEffect(() => {
+    const fetchSliders = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllSlidersAPI();
+        // Filter out hidden sliders and sort by sequence
+        const visibleSliders = response.data.data
+          .filter((slider: any) => !slider.isHidden)
+          .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0));
+        setSliders(visibleSliders);
+      } catch (error) {
+        console.error("Failed to fetch sliders:", error);
+        toast.error("Failed to load sliders", { position: "top-center" });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSliders();
+  }, []);
+
   // Sticky header effect
   useEffect(() => {
     const handleScroll = () => {
@@ -60,11 +79,13 @@ const HeroSection = () => {
 
   // Carousel auto-slide effect
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 10000); // Change slide every 5 seconds
-    return () => clearInterval(interval);
-  }, [heroImages.length]);
+    if (sliders.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % sliders.length);
+      }, 10000); // Change slide every 10 seconds
+      return () => clearInterval(interval);
+    }
+  }, [sliders.length]);
 
   // Manual slide navigation
   const goToSlide = (index: number) => {
@@ -72,57 +93,79 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="relative">
+      <div className="relative">
       {/* Hero Carousel Section */}
-      <div id="hero-section" className="relative h-screen">
-        {/* Carousel Images */}
-        {heroImages.map((image, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              currentSlide === index ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <Image
-              src={image.src}
-              alt={`Hero Slide ${index + 1}`}
-              fill
-              className="object-cover brightness-75"
-            />
-          </div>
-        ))}
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" />
-        {/* Hero Text Section */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="text-center text-white px-4 sm:px-6">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 md:mb-6 tracking-tight animate-fade-in">
-              Discover Nature’s Finest
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl mb-8 md:mb-10 max-w-3xl mx-auto leading-relaxed">
-              Explore our curated collection of organic, sustainable products
-              designed for a healthier you and a greener planet.
+      <div id="hero-section" className="relative h-screen bg-gray-900 overflow-hidden">
+        {loading ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-50">
+            <ClipLoader color="#7A6E18" size={50} />
+            <p className="mt-4 text-gray-700 text-lg font-medium animate-pulse">
+              Loading sliders...
             </p>
-            <Button
-              onClick={() => router.push("/products")}
-              className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
-            >
-              Shop Now
-            </Button>
           </div>
-        </div>
-        {/* Carousel Dots */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full ${
-                currentSlide === index ? "bg-white" : "bg-white/50"
-              } hover:bg-white transition-all duration-300`}
-            />
-          ))}
-        </div>
+        ) : sliders.length === 0 ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <p className="text-muted">No sliders available</p>
+          </div>
+        ) : (
+          <>
+            {/* Carousel Images and Text */}
+            {sliders.map((slider: any, index: number) => (
+              <div
+                key={slider._id}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  currentSlide === index ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <Image
+                  src={
+                    slider.imageUrl || "https://via.placeholder.com/1200x600"
+                  }
+                  alt={slider.title}
+                  fill
+                  className="object-cover brightness-75"
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://via.placeholder.com/1200x600")
+                  }
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" />
+                {/* Hero Text Section */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="text-center text-white px-4 sm:px-6">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 md:mb-6 tracking-tight animate-fade-in">
+                      {slider.title}
+                    </h1>
+                    <p className="text-lg sm:text-xl md:text-2xl mb-8 md:mb-10 max-w-3xl mx-auto leading-relaxed">
+                      {slider.subtitle}
+                    </p>
+                    <Button
+                      asChild
+                      className="bg-[#7A6E18] text-white hover:bg-[#7A6E18] px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                      <Link href={slider.button.actionURL}>
+                        {slider.button.label}
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {/* Carousel Dots */}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+              {sliders.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full ${
+                    currentSlide === index ? "bg-white" : "bg-white/50"
+                  } hover:bg-white transition-all duration-300`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Sticky Header Section */}
