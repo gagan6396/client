@@ -93,19 +93,19 @@ const HeroSection = () => {
   };
 
   return (
-      <div className="relative">
+    <div className="relative">
       {/* Hero Carousel Section */}
       <div id="hero-section" className="relative h-screen overflow-hidden">
         {loading ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-50">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#fef9f1] via-[#f5f0dc] to-[#e7dbac] z-50">
             <ClipLoader color="#7A6E18" size={50} />
-            <p className="mt-4 text-gray-700 text-lg font-medium animate-pulse">
+            <p className="mt-4 text-[#7A6E18] text-lg font-medium animate-pulse">
               Loading sliders...
             </p>
           </div>
         ) : sliders.length === 0 ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <p className="text-muted">No sliders available</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#fef9f1] via-[#f5f0dc] to-[#e7dbac]">
+            <p className="text-gray-700 text-lg">No sliders available</p>
           </div>
         ) : (
           <>
