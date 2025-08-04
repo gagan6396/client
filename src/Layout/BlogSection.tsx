@@ -107,7 +107,7 @@ const BlogSection: FC = () => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white container mx-auto px-4">
+    <section className="py-16 container mx-auto px-4">
       <h2 className="text-4xl font-bold text-center text-[#7A6E18] mb-6">
         Our Blogs and Articles
       </h2>
