@@ -12,6 +12,7 @@ export function middleware(request) {
     return NextResponse.next();
 }
 
+
 // Apply middleware to specific routes
 export const config = {
     // matcher: ['/add-to-cart', '/user-account', '/checkout', '/order-confirmation', '/wishlist'], // Add the routes you want to protect
