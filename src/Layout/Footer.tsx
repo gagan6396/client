@@ -59,17 +59,17 @@ const Footer: React.FC = () => {
   return (
     <footer className="relative bg-[#2d5437] overflow-hidden">
       {/* Background Image with Overlay */}
-      {/* <div className="absolute inset-0 z-0 opacity-10">
+      <div className="absolute inset-0 z-0 opacity-10">
         <div
           className="w-full h-full"
           style={{
-            backgroundImage: `url(${bgImage.src})`,
+            backgroundImage: `url('/banner.png')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
           }}
         />
-      </div> */}
+      </div>
       
       {/* Top Gradient Line */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400" />
