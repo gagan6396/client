@@ -285,10 +285,11 @@ const ProductCategories: React.FC = () => {
             {/* Image Section */}
             <div className="relative lg:order-2 overflow-hidden h-full min-h-[400px] lg:min-h-[500px]">
               <Image
-                src={l2}
+                src='/ab.png'
                 alt="Nature Essence"
                 className="w-full h-full object-cover transition-all duration-700 hover:scale-105"
                 priority
+                fill
               />
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 via-transparent to-transparent" />
