@@ -79,7 +79,7 @@ const profileSchema = yup.object({
 // Skeleton Loader Component
 const ProfileSkeleton = () => (
   <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-    <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
+    <CardHeader className="bg-gradient-to-r from-[#556b2f] to-[#3d5316] text-white rounded-t-xl p-4 sm:p-6">
       <Skeleton className="h-8 w-3/4" />
       <Skeleton className="h-4 w-1/2 mt-2" />
     </CardHeader>
@@ -210,7 +210,7 @@ export default function ProfileManagement() {
     <ProfileSkeleton />
   ) : (
     <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
+      <CardHeader className="bg-gradient-to-r from-[#556b2f] to-[#394e13] text-white rounded-t-xl p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
           Profile Details
         </CardTitle>
@@ -423,7 +423,7 @@ export default function ProfileManagement() {
               <Button
                 type="submit"
                 disabled={isActionLoading}
-                className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                className="w-full bg-[#556b2f] hover:bg-[#3d5318] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
               >
                 {isActionLoading ? "Updating..." : "Update Profile"}
               </Button>

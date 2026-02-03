@@ -125,13 +125,13 @@ const ProductGrid = ({
           {title}
         </h2>
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {[...Array(8)].map((_, index) => (
               <SkeletonProductCard key={index} />
             ))}
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {products.map((product) => {
               if (!product?.images || product.images.length === 0) {
                 console.warn(`Product ${product._id} has no images`, product);
@@ -164,7 +164,7 @@ const ProductGrid = ({
                 No Products Found
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                We couldn’t find any products matching your criteria. Check back soon for updates!
+                We couldn't find any products matching your criteria. Check back soon for updates!
               </p>
             </div>
           </div>
@@ -201,7 +201,7 @@ const FilterSidebar = ({
   resetFilters: () => void;
 }) => {
   return (
-    <div className="w-[280px] h-[1000px] bg-white p-6 rounded-lg shadow-md border border-gray-100 sticky -top-20">
+    <div className="w-[280px] max-h-[calc(100vh-100px)] bg-white p-6 rounded-lg shadow-md border border-gray-100 sticky top-6 overflow-y-auto">
       <h3 className="text-base font-semibold mb-4">Filter Products</h3>
       <div className="space-y-6">
         {/* Price Range Filter */}
@@ -292,7 +292,7 @@ const FilterSidebar = ({
         <div className="flex gap-3">
           <Button
             onClick={applyFilters}
-            className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-xs py-2"
+            className="w-full bg-[#3c4e1b] hover:bg-[#384e0f] text-xs py-2"
           >
             Apply
           </Button>

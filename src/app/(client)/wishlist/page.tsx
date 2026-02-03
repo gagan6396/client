@@ -111,7 +111,7 @@ const WishlistItem = ({
             {title}
           </h3>
           <div className="flex items-baseline gap-1">
-            <span className="text-[#7A6E18] font-bold text-sm">
+            <span className="text-[#556b2f] font-bold text-sm">
               ₹{parseFloat(price).toFixed(2)}
             </span>
             {/* {discount && originalPrice && (
@@ -125,7 +125,7 @@ const WishlistItem = ({
           className={`w-full rounded-full text-xs font-medium transition-all ${
             inCart
               ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-[#7A6E18] text-white hover:bg-[#7A6E18]/90"
+              : "bg-[#556b2f] text-white hover:bg-[#3c5216]"
           }`}
           onClick={inCart ? handleRemoveFromCart : handleAddToCart}
         >
@@ -280,7 +280,7 @@ const WishlistPage = () => {
           {!wishlist.length && (
             <div className="flex justify-center mt-10 md:mt-12">
               <Button
-                className="bg-[#7A6E18] hover:bg-[#7A6E18]/90 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="bg-[#556b2f] hover:bg-[#405816]/90 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
                 onClick={() => (window.location.href = "/products")}
               >
                 Explore Products

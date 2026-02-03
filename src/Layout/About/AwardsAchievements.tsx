@@ -24,29 +24,44 @@ const awards: Award[] = [
 
 export default function AwardsAchievements() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50">
-      {/* Title */}
-      <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#7A6E18] mb-10 sm:mb-12 md:mb-16 tracking-tight">
-        Our Awards & Achievements
-      </h2>
-
-      {/* Awards Grid */}
-      <div className="container mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-        {awards.map((award) => (
-          <div
-            key={award.id}
-            className="group rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white border border-gray-100 overflow-hidden"
-          >
-            <div className="aspect-[16/9] w-full">
-              <Image
-                src={award.image}
-                alt={award.alt}
-                fill
-                className="object-contain transition-transform duration-500 group-hover:scale-105"
-              />
+    <section className="py-16 md:py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white via-amber-50/20 to-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Title */}
+        <div className="text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#556b2f] mb-4">
+            Our Awards & Achievements
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#ab5a08] to-transparent mx-auto mb-6"></div>
+          <p className="text-xl text-gray-700 font-light max-w-2xl mx-auto">
+            Recognition for our commitment to quality, sustainability, and social impact
+          </p>
+        </div>
+        {/* Awards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {awards.map((award) => (
+            <div
+              key={award.id}
+              className="group relative"
+            >
+              <div className="relative rounded-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-2">
+                <div className="aspect-[4/3] w-full relative">
+                  <Image
+                    src={award.image}
+                    alt={award.alt}
+                    fill
+                    className="object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        {/* Bottom Message */}
+        {/* <div className="mt-16 text-center">
+          <p className="text-gray-700 text-lg leading-relaxed max-w-3xl mx-auto">
+            Each recognition reflects our unwavering dedication to bringing authentic Himalayan products to your table while uplifting rural communities.
+          </p>
+        </div> */}
       </div>
     </section>
   );

@@ -30,9 +30,16 @@ import * as Yup from "yup";
 
 // Validation schema with Yup
 const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
+  emailOrPhone: Yup.string()
+    .required("Email or phone number is required")
+    .test("email-or-phone", "Invalid email or phone number", function (value) {
+      if (!value) return false;
+      // Check if it's a valid email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // Check if it's a valid phone number (10 digits)
+      const phoneRegex = /^[0-9]{10}$/;
+      return emailRegex.test(value) || phoneRegex.test(value);
+    }),
     
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
@@ -40,7 +47,7 @@ const validationSchema = Yup.object({
 });
 
 type FormData = {
-  email: string;
+  emailOrPhone: string;
   password: string;
 };
 
@@ -52,7 +59,7 @@ const LoginPage = () => {
   const form = useForm<FormData>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      email: "",
+      emailOrPhone: "",
       password: "",
     },
   });
@@ -60,10 +67,22 @@ const LoginPage = () => {
   const handleSubmit = async (values: FormData) => {
     setLoading(true);
     try {
-      const response = await LoginAPI({
-        email: values.email,
+      // Determine if input is email or phone
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const isEmail = emailRegex.test(values.emailOrPhone);
+      
+      const payload: any = {
         password: values.password,
-      });
+      };
+
+      if (isEmail) {
+        payload.email = values.emailOrPhone;
+      } else {
+        payload.phone = values.emailOrPhone;
+      }
+
+      console.log(payload);
+      const response = await LoginAPI(payload);
       if (response.data.success) {
         if (typeof window !== "undefined") {
           localStorage.setItem("accessToken", response.data.data.user.token);
@@ -103,17 +122,17 @@ const LoginPage = () => {
             >
               <FormField
                 control={form.control}
-                name="email"
+                name="emailOrPhone"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-sm sm:text-base text-gray-700">
-                      Email
+                      Email or Phone Number
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        type="email"
-                        placeholder="Enter your email"
+                        type="text"
+                        placeholder="Enter your email or phone number"
                         className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                       />
                     </FormControl>
@@ -178,7 +197,7 @@ const LoginPage = () => {
             </Link>
           </div>
           <div className="mt-3 sm:mt-4 text-center text-sm sm:text-base text-gray-600">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link
               href="/signup"
               className="text-[#7A6E18] font-semibold hover:text-[#7A6E18] hover:underline transition-colors duration-200"

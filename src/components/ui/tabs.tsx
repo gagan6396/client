@@ -3,7 +3,10 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-import { cn } from "@/lib/utils"
+// Utility (typed)
+function cn(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(" ")
+}
 
 const Tabs = TabsPrimitive.Root
 
@@ -14,7 +17,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+      "inline-flex items-center gap-1 rounded-xl bg-slate-100 p-1.5 text-slate-600",
       className
     )}
     {...props}
@@ -29,7 +32,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ae5708] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 data-[state=active]:bg-[#fef3e8] data-[state=active]:text-[#ae5708] data-[state=active]:shadow-sm hover:text-[#ae5708]",
       className
     )}
     {...props}
@@ -44,12 +47,54 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ae5708] focus-visible:ring-offset-2",
       className
     )}
     {...props}
   />
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
+
+// Demo Component (optional – can delete if not needed)
+export default function TabsDemo() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50 p-8">
+      <div className="w-full max-w-2xl">
+        <Tabs defaultValue="account" className="w-full">
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="password">Password</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="account">
+            <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
+              Account Settings
+            </div>
+          </TabsContent>
+
+          <TabsContent value="password">
+            <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
+              Password Settings
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
+              General Settings
+            </div>
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <div className="rounded-xl bg-white p-6 shadow-sm border border-slate-200">
+              Notifications
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  )
+}
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }

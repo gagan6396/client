@@ -318,7 +318,7 @@ export default function OrderHistory({ userProfile }: OrderHistoryProps) {
 
   return (
     <Card className="shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
+      <CardHeader className="bg-gradient-to-r from-[#556b2f] to-[#2f420d] text-white rounded-t-xl p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl md:text-3xl font-semibold">
           Order History
         </CardTitle>

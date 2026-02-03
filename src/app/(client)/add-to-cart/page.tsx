@@ -72,7 +72,8 @@ const CartItem: React.FC<CartItemProps> = ({
       </div>
       <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h3 className="text-base md:text-lg font-semibold text-gray-800 group-hover:text-[#7A6E18] transition-colors duration-300">
+          {/* CHANGED: text-[#8B4513] for brown matching green */}
+          <h3 className="text-base md:text-lg font-semibold text-[#8B4513] group-hover:text-[#A0522D] transition-colors duration-300">
             {title}
           </h3>
           <p className="text-sm text-gray-600">{variantName}</p>
@@ -80,7 +81,8 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="flex items-center gap-2 mt-1">
             {discount?.active && discount?.value ? (
               <>
-                <p className="text-[#7A6E18] font-bold text-sm md:text-base">
+                {/* CHANGED: #556b2f for price */}
+                <p className="text-[#556b2f] font-bold text-sm md:text-base">
                   ₹{discountedPrice.toFixed(2)}
                 </p>
                 <p className="text-gray-500 line-through text-xs md:text-sm">
@@ -91,7 +93,8 @@ const CartItem: React.FC<CartItemProps> = ({
                 </span>
               </>
             ) : (
-              <p className="text-[#7A6E18] font-bold text-sm md:text-base">
+              /* CHANGED: #556b2f for price */
+              <p className="text-[#556b2f] font-bold text-sm md:text-base">
                 ₹{numericPrice.toFixed(2)}
               </p>
             )}
@@ -281,12 +284,14 @@ const AddToCartPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
-      <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 mb-10 md:mb-14 tracking-tight">
+      {/* CHANGED: text-[#8B4513] for brown matching green */}
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-[#2d5437] mb-10 md:mb-14 tracking-tight">
         Your Cart
       </h1>
-      <div className="mb-6 flex items-end gap-4">
-        <div className="flex-1 max-w-xs">
-          <Label htmlFor="postalCode">Postal Code (for delivery check)</Label>
+      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-end gap-4">
+        <div className="w-full">
+          <Label htmlFor="postalCode" className="text-[#2d5437]">Postal Code (for delivery check)</Label>
+          {/* CHANGED: Removed max-w-xs, added w-full for full width */}
           <Input
             id="postalCode"
             value={postalCode}
@@ -295,10 +300,11 @@ const AddToCartPage: React.FC = () => {
             className="w-full"
           />
         </div>
+        {/* CHANGED: Button with #556b2f and white text */}
         <Button
           onClick={handleCalculateShipping}
           disabled={isCalculatingShipping || !postalCode}
-          className="bg-[#7A6E18] hover:bg-[#7A6E18]/90 text-white px-4 py-2 text-sm md:text-base font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[#556b2f] hover:bg-[#556b2f]/90 text-white px-4 py-2 text-sm md:text-base font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
         >
           {isCalculatingShipping ? "Calculating..." : "Check Delivery"}
         </Button>
@@ -314,7 +320,7 @@ const AddToCartPage: React.FC = () => {
                 >
                   <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-200 rounded-lg" />
                   <div className="flex-1 space-y-3">
-                    <div className="h-6-6 bg-gray-200 rounded w-3/4" />
+                    <div className="h-6 bg-gray-200 rounded w-3/4" />
                     <div className="flex gap-2">
                       <div className="h-4 bg-gray-200 rounded w-1/4" />
                       <div className="h-8 bg-gray-200 rounded w-1/3" />
@@ -345,14 +351,16 @@ const AddToCartPage: React.FC = () => {
                 size={80}
                 className="text-gray-200 mx-auto mb-6 animate-bounce"
               />
-              <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2">
+              {/* CHANGED: text-[#8B4513] for brown matching green */}
+              <h3 className="text-xl md:text-2xl font-semibold text-[#2d5437] mb-2">
                 Your Cart is Empty
               </h3>
               <p className="text-base md:text-lg text-gray-500 leading-relaxed mb-6">
-                Looks like you haven’t added anything yet. Start shopping now!
+                Looks like you haven't added anything yet. Start shopping now!
               </p>
+              {/* CHANGED: Button with #556b2f and white text */}
               <Button
-                className="bg-[#7A6E18] hover:bg-[#7A6E18] text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="bg-[#556b2f] hover:bg-[#556b2f]/90 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
                 onClick={() => router.push("/products")}
               >
                 Browse Products
@@ -362,28 +370,32 @@ const AddToCartPage: React.FC = () => {
         </div>
         {cartItems.length > 0 && !loading && (
           <div className="mt-8 lg:mt-0 p-6 md:p-8 bg-white rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-6 tracking-tight">
+            {/* CHANGED: text-[#8B4513] for brown matching green */}
+            <h2 className="text-xl md:text-2xl font-semibold text-[#8B4513] mb-6 tracking-tight">
               Cart Summary
             </h2>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600 text-base md:text-lg">
                 Subtotal:
               </span>
-              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
+              {/* CHANGED: #556b2f for price */}
+              <span className="text-[#556b2f] font-bold text-lg md:text-xl">
                 ₹{calculateSubtotal()}
               </span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600 text-base md:text-lg">
-                Shipping ({selectedCourier?.courierName || "Not selected"}):
+                Shipping ({"Not selected"}):
               </span>
-              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
+              {/* CHANGED: #556b2f for price */}
+              <span className="text-[#556b2f] font-bold text-lg md:text-xl">
                 ₹{(selectedCourier?.rate || 0).toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600 text-base md:text-lg">Total:</span>
-              <span className="text-[#7A6E18] font-bold text-lg md:text-xl">
+              {/* CHANGED: #556b2f for price */}
+              <span className="text-[#556b2f] font-bold text-lg md:text-xl">
                 ₹{calculateTotal()}
               </span>
             </div>
@@ -395,9 +407,10 @@ const AddToCartPage: React.FC = () => {
                 </span>
               </div>
             )}
+            {/* CHANGED: Button with #556b2f and white text */}
             <Button
               onClick={() => router.push("/checkout")}
-              className="w-full bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] hover:bg-[#7A6E18]/90 hover:to-[#7A6E18] text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-[#556b2f] hover:bg-[#556b2f]/90 text-white px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-semibold rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Proceed to Checkout
             </Button>

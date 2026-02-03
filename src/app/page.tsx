@@ -1,4 +1,6 @@
+import CategoriesHome  from "@/Layout/CategoriesHome";
 import FAQs from "@/Layout/FAQs";
+import InfiniteMarquee from "@/Layout/InfiniteMarquee";
 import ProductCategories from "@/Layout/ProductCategories";
 import ProductCategoryGrid from "@/Layout/ProductCategoryGrid";
 import Testimonials from "@/Layout/Testimonials";
@@ -35,8 +37,10 @@ export default function Home() {
   return (
     <div>
       {/* <CarouselPlugin /> */}
+      <CategoriesHome/>
+      <InfiniteMarquee/>
       <ProductCategories />
-      <ProductCategoryGrid />
+      {/* <ProductCategoryGrid /> */}
       {/* <ReelsCarousel /> */}
       <YouTubeShortsCarousel />
       <Testimonials />

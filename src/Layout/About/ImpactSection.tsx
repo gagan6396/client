@@ -1,209 +1,285 @@
 "use client";
 import Image from "next/image";
 import { FC } from "react";
+import Link from "next/link";
+import { Trophy } from "lucide-react";
 
 // Placeholder images (replace with actual image paths)
-
 import image4 from "@/public/about_us/5.png";
 import image5 from "@/public/about_us/6.png";
 import image6 from "@/public/about_us/7.png";
 import image7 from "@/public/about_us/8.png";
 import image8 from "@/public/about_us/9.png";
-import Link from "next/link";
 
 const ImpactSection: FC = () => {
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50 py-12 sm:py-16 md:py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-b from-white via-[#f5e8d8]/20 to-white py-16 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Our Impact Section */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
-            Our Impact
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
-            Creating Real Change Where It Matters Most
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
-            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src={image4}
-                alt="Our impact at Gauraaj"
-                layout="fill"
-                objectFit="cover"
-                className="w-full h-full transition-transform duration-500 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+        <section className="mb-24">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#3c4e1b] mb-4">
+              Our Impact
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
+            <h3 className="text-xl md:text-2xl text-gray-700 font-light">
+              Creating Meaningful Transformation Where It Matters Most
+            </h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#3c4e1b] to-[#5a7530] rounded-2xl opacity-20 group-hover:opacity-30 transition duration-300 blur"></div>
+              <div className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={image4}
+                  alt="Our impact at Gauraaj"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             </div>
-            <div className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed space-y-4">
-              <ul className="list-disc list-inside space-y-2">
-                <li>40+ women employed, directly and indirectly</li>
-                <li>2000+ happy customers across India</li>
-                <li>10+ villages uplifted through sourcing, employment & awareness</li>
-                <li>Promoting traditional, organic, Himalayan agriculture</li>
-                <li>Working to stop migration by building income at home</li>
-              </ul>
-              <p className="font-semibold">
-                When you support Gauraaj, you’re buying local and building lives.
-              </p>
+            
+            <div className="">
+            
+
+
+<div className="grid">
+  {[
+    "40+ women employed through direct and indirect opportunities",
+    "2000+ satisfied customers served across the nation",
+    "10+ villages uplifted through ethical sourcing, employment generation, and awareness initiatives",
+    "Preservation of traditional, organic Himalayan agricultural practices",
+    "Reducing migration by creating sustainable local income sources"
+  ].map((item, idx) => (
+    <div key={idx} className="flex items-start gap-4 p-2 rounded-xl  transition-all duration-300 ">
+      <div className="w-6 h-6 rounded-full bg-[#556b2f] flex items-center justify-center flex-shrink-0 mt-1">
+        <Trophy className="w-3 h-3 text-white" />
+      </div>
+      <span className="text-gray-700 leading-relaxed">{item}</span>
+    </div>
+  ))}
+</div>
+              
+              <div className="mt-8 p-6 bg-gradient-to-r from-[#3c4e1b]/5 to-[#f8f0e8] rounded-xl border-l-4 border-[#3c4e1b]">
+                <p className="text-gray-800 text-lg font-medium italic">
+                  When you choose Gauraaj, you're supporting local communities and building sustainable futures.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Hands Behind Gauraaj Section */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
-            Hands Behind Gauraaj
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
-            The Women Who Grow, Create, and Lead
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
-            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src={image5}
-                alt="Women working at Gauraaj"
-                layout="fill"
-                objectFit="cover" // Changed to cover for consistency
-                className="w-full h-full transition-transform duration-500 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+        {/* Women Empowerment at Gauraaj Section */}
+        <section className="mb-24">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#3c4e1b] mb-4">
+              Women Empowerment at Gauraaj
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
+            <h3 className="text-xl md:text-2xl text-gray-700 font-light">
+              Skilled Artisans Cultivating Change Through Traditional Expertise
+            </h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="md:order-2 relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#5a7530] to-[#3c4e1b] rounded-2xl opacity-20 group-hover:opacity-30 transition duration-300 blur"></div>
+              <div className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={image5}
+                  alt="Women working at Gauraaj"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             </div>
-            <div className="text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                Behind every pack of flour, spice, hand-ground salt, and other products lies the effort of dedicated rural women who hand-process each item with care and ancestral wisdom.
+            
+            <div className="md:order-1">
+              <p className="text-gray-700 text-lg leading-relaxed">
+                Every package of flour, spice, hand-ground salt, and product embodies the dedication of rural women who meticulously process each item with traditional expertise and ancestral wisdom.
               </p>
-              <ul className="list-disc list-inside text-sm sm:text-base md:text-lg leading-relaxed space-y-2">
-                <li>Are returnees from urban migration, now earning in their hometowns</li>
-                <li>Handle everything from harvesting to packaging</li>
-                <li>Are not just workers, but leaders of change in their communities</li>
-              </ul>
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                Their strength, skill, and soul shine through in every product you hold.
+              
+              <div className="my-4">
+                {[
+                  "Returned from urban migration to build livelihoods in their hometowns",
+                  "Manage the entire process from harvesting to careful packaging",
+                  "Serve as community leaders and catalysts for positive change"
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-4  rounded-xl transition-all duration-300 hover:shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-[#3c4e1b] mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-700 leading-relaxed">{item}</span>
+                  </div>
+                ))}
+              </div>
+              
+              <p className="text-gray-700 text-lg leading-relaxed pt-4">
+                Their resilience, craftsmanship, and spirit resonate in every product you experience.
               </p>
             </div>
           </div>
         </section>
 
         {/* Community Initiatives Section */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
-            Community Initiatives
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
-            Social Work is Our Backbone, Not a Side Project
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
-            <div className="text-gray-700 space-y-4 sm:space-y-5 md:space-y-6 order-1 md:order-none">
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                Gauraaj runs ongoing community-building programs to strengthen the social fabric of rural Uttarakhand:
-              </p>
-              <ul className="list-disc list-inside text-sm sm:text-base md:text-lg leading-relaxed space-y-2">
-                <li>300 km Millet Awareness Cycle Rally – Dehradun to Chamoli</li>
-                <li>Hunar Haat – Promoting women artisans and food producers</li>
-                <li>Skill development programs – Plumbing, painting, and trades</li>
-                <li>Health awareness drives – Mental, menstrual & physical well-being</li>
-                <li>Shelter material donations to families in need</li>
-                <li>
-                  <strong>The Experimental Model Village Initiative</strong> – At Gauraaj, we’ve developed village Chauki as a model village that reflects our vision of sustainable living in the Himalayas. Through hands-on workshops, we engage students, locals, and visitors in topics like organic farming, sustainable architecture, Himalayan livelihoods, and the value of naturally grown food.
-                </li>
-              </ul>
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                This initiative supports reverse migration, promotes eco-conscious learning, and builds a replicable model for vibrant rural development. Each initiative empowers rural lives, builds pride, and sustains traditions.
-              </p>
+        <section className="mb-24 ">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#3c4e1b] mb-4">
+              Community Initiatives
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
+            <h3 className="text-xl md:text-xl text-gray-700 font-light">
+              Social Responsibility is Our Foundation, Not an Add-on
+            </h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#3c4e1b] to-[#5a7530] rounded-2xl opacity-20 group-hover:opacity-30 transition duration-300 blur"></div>
+              <div className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={image6}
+                  alt="Community initiatives at Gauraaj"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             </div>
-            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src={image6}
-                alt="Community initiatives at Gauraaj"
-                layout="fill"
-                objectFit="cover"
-                className="w-full h-full transition-transform duration-500 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            
+            <div className="">
+              <p className="text-gray-700 text-lg leading-relaxed">
+                Gauraaj operates continuous community development programs to strengthen the social fabric of rural Uttarakhand:
+              </p>
+              
+              <div className="grid">
+                {[
+                  "300 km Millet Awareness Cycling Expedition – Dehradun to Chamoli",
+                  "Hunar Haat – Showcasing and supporting women artisans and food producers",
+                  "Vocational training programs – Plumbing, painting, and sustainable trades",
+                  "Health awareness campaigns – Mental, menstrual & physical wellness",
+                  "Essential resource distributions to families requiring assistance"
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-4 p-2 rounded-xl  transition-all duration-300 hover:shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-[#3c4e1b] mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-700 leading-relaxed">{item}</span>
+                  </div>
+                ))}
+              </div>
+              
+              {/* <div className="mt-8 p-6 bg-gradient-to-br from-[#3c4e1b]/5 to-[#f8f0e8] rounded-2xl border border-[#3c4e1b]/20">
+                <h4 className="font-semibold text-[#3c4e1b] text-lg mb-3">
+                  The Model Village Initiative
+                </h4>
+                <p className="text-gray-700 leading-relaxed text-md">
+                  At Gauraaj, we've transformed Chauki village into a living model that embodies our vision for sustainable Himalayan living. Through immersive workshops, we engage students, residents, and visitors in exploring organic farming, eco-friendly architecture, Himalayan livelihoods, and the intrinsic value of naturally cultivated food.
+                </p>
+              </div> */}
             </div>
           </div>
         </section>
 
         {/* Why Gauraaj Section */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
-            Why Gauraaj?
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
-            Because It’s More Than Organic — It’s Soulful, Sustainable, and Social
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
-            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src={image7}
-                alt="Why choose Gauraaj"
-                layout="fill"
-                objectFit="cover"
-                className="w-full h-full transition-transform duration-500 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
+        <section className="mb-20">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#3c4e1b] mb-4">
+              Why Choose Gauraaj?
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
+            <h3 className="text-xl md:text-xl text-gray-700 font-light">
+              Beyond Organic — Soulful, Sustainable, and Socially Conscious
+            </h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="md:order-2 relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#5a7530] to-[#3c4e1b] rounded-2xl opacity-20 group-hover:opacity-30 transition duration-300 blur"></div>
+              <div className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={image7}
+                  alt="Why choose Gauraaj"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
             </div>
-            <div className="text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
-              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
-                  Himalayan Born & Nature Nurtured
-                </h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
-                  Grown in pristine Himalayan soil, nurtured by pure air and water, our products are beyond organic in both nutrition and purity.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
-                  Powered by Purpose
-                </h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
-                  From day one, Gauraaj has worked to reverse migration, create women’s employment, and revive forgotten traditional farming.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#7A6E18] mb-2">
-                  Naturally Honest
-                </h3>
-                <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
-                  We use no chemicals, preservatives, or shortcuts. Our cold-pressed flours, stone-ground spices, Buransh teas, and all products are handmade with love and legacy.
-                </p>
+            
+            <div className="md:order-1 space-y-2">
+              <div className="space-y-2">
+                <div className="p-3 bg-gradient-to-br from-white to-[#f8f0e8] rounded-2xl border border-[#3c4e1b]/20 hover:border-[#3c4e1b]/40 transition-all duration-300 hover:shadow-lg">
+                  <h4 className="font-semibold text-[#3c4e1b] text-lg mb-3">
+                    Himalayan Origins & Natural Nurturing
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    Cultivated in pristine Himalayan terrain, nourished by pure air and water, our offerings transcend conventional organic standards in both nutritional value and purity.
+                  </p>
+                </div>
+                
+                <div className="p-3 bg-gradient-to-br from-white to-[#f8f0e8] rounded-2xl border border-[#3c4e1b]/20 hover:border-[#3c4e1b]/40 transition-all duration-300 hover:shadow-lg">
+                  <h4 className="font-semibold text-[#3c4e1b] text-lg mb-3">
+                    Driven by Purpose
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    Since inception, Gauraaj has focused on reversing migration patterns, generating women's employment opportunities, and revitalizing traditional agricultural heritage.
+                  </p>
+                </div>
+                
+                <div className="p-3 bg-gradient-to-br from-white to-[#f8f0e8] rounded-2xl border border-[#3c4e1b]/20 hover:border-[#3c4e1b]/40 transition-all duration-300 hover:shadow-lg">
+                  <h4 className="font-semibold text-[#3c4e1b] text-lg mb-3">
+                    Authentically Natural
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    We employ no synthetic chemicals, artificial preservatives, or shortcuts. Our cold-pressed flours, stone-ground spices, Buransh teas, and all products are handcrafted with care and legacy.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Discover Our Organic Collection Section */}
-        <section className="mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-[#7A6E18] mb-4 tracking-tight">
-            Discover Our Organic Collection
-          </h2>
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8 sm:mb-10 md:mb-12">
-            Pure, Nourishing Essence of the Himalayas
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
-            <div className="text-gray-700 space-y-4 sm:space-y-5 md:space-y-6">
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                Experience the pure, nourishing essence of the Himalayas with Gauraaj’s handpicked selection of cold-pressed flours, stone-ground spices, buransh tea, hand-ground salts, and all other products. Grown in rich mountain soil and processed with traditional methods, every product is a step toward healthier living and conscious choices.
+        <section>
+          <div className="text-center mb-10">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#3c4e1b] mb-4">
+              Explore Our Organic Selection
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
+            <h3 className="text-xl md:text-xl text-gray-700 font-light">
+              Pure, Nourishing Himalayan Essence
+            </h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#3c4e1b] to-[#5a7530] rounded-2xl opacity-20 group-hover:opacity-30 transition duration-300 blur"></div>
+              <div className="relative w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src='/inside.png'
+                  alt="Gauraaj organic products"
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <p className="text-gray-700 text-md leading-relaxed">
+                Experience the authentic, nourishing essence of the Himalayas with Gauraaj's carefully curated selection of cold-pressed flours, stone-ground spices, buransh tea, hand-ground salts, and other traditional products. Cultivated in rich mountain soil and processed using time-honored methods, each product represents a step toward healthier living and conscious consumption.
               </p>
-              <p className="text-sm sm:text-base md:text-lg leading-relaxed">
-                Bring home authenticity, wellness, and the soul of Uttarakhand — all in one basket.
+              
+              <p className="text-gray-700 text-md leading-relaxed">
+                Bring home genuine quality, holistic wellness, and the authentic spirit of Uttarakhand — all thoughtfully combined.
               </p>
+              
               <Link
                 href="/products"
-                className="inline-block bg-[#7A6E18] text-white font-semibold py-3 px-6 sm:px-8 rounded-full hover:bg-[#7A6E18] transition-colors duration-300"
+                className="inline-block bg-gradient-to-r from-[#3c4e1b] to-[#5a7530] text-white font-semibold py-4 px-8 rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Shop now and bring home the purity of the Himalayas
+                Shop Now and Bring Home Himalayan Purity
               </Link>
-            </div>
-            <div className="relative w-full h-64 sm:h-80 md:h-96 rounded-xl md:rounded-2xl overflow-hidden shadow-lg">
-              <Image
-                src={image8}
-                alt="Gauraaj organic products"
-                layout="fill"
-                objectFit="cover"
-                className="w-full h-full transition-transform duration-500 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
             </div>
           </div>
         </section>

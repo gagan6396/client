@@ -8,6 +8,7 @@ import { FC } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
+import { Handshake, User, Mail, Building, Users, MessageSquare, Send } from "lucide-react";
 
 // Validation schema using Yup
 const collaborationSchema = Yup.object().shape({
@@ -87,7 +88,7 @@ const CollaborateSection: FC = () => {
   });
 
   return (
-    <section className="mt-10 sm:mt-12 md:mt-16 px-4 sm:px-6 lg:px-8 py-10 md:py-12 bg-gradient-to-br bg-[#7A6E18]/10 via-white to-yellow-50 overflow-hidden">
+    <section className="relative px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-gradient-to-br from-[#ae5809]/5 via-white to-[#ae5809]/10 overflow-hidden">
       {/* Toast Container */}
       <ToastContainer
         position="bottom-right"
@@ -102,234 +103,270 @@ const CollaborateSection: FC = () => {
         theme="light"
       />
 
-      {/* Title */}
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#7A6E18] mb-8 md:mb-10 text-center tracking-wide animate-fade-in-down">
-        Collaborate With Us
-      </h2>
+      {/* Header Section */}
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-10 md:mb-12">
+          {/* <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#ae5809]/10 mb-6">
+            <Handshake className="w-10 h-10 text-[#ae5809]" />
+          </div> */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+           Collaborate with <span className="text-[#3c4e1b]">Us</span>
+          </h2>
+          <p className="text-gray-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+            Partner with us to create meaningful change. Whether you're an NGO, corporate, 
+            volunteer, or student, let's work together to make a difference.
+          </p>
+        </div>
 
-      {/* Collaboration Form */}
-      <div className="relative max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-[#7A6E18]/50 shadow-lg hover:shadow-2xl transition-all duration-500 ease-out animate-slide-up">
-        {/* Decorative Elements */}
-        <div className="absolute -top-4 -left-4 w-8 h-8 bg-[#7A6E18] rounded-full opacity-20 animate-pulse" />
-        <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-yellow-300 rounded-full opacity-20 animate-pulse" />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
+          {/* Left Column - Benefits */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Why Collaborate With Us?</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-[#ae5809]/5 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#ae5809]/10 flex items-center justify-center flex-shrink-0">
+                    <Users className="w-5 h-5 text-[#ae5809]" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Community Impact</h4>
+                    <p className="text-sm text-gray-600">Make a tangible difference in local communities</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-[#ae5809]/5 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#ae5809]/10 flex items-center justify-center flex-shrink-0">
+                    <Building className="w-5 h-5 text-[#ae5809]" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Sustainable Partnerships</h4>
+                    <p className="text-sm text-gray-600">Long-term collaboration for lasting change</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-[#ae5809]/5 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#ae5809]/10 flex items-center justify-center flex-shrink-0">
+                    <Handshake className="w-5 h-5 text-[#ae5809]" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Mutual Growth</h4>
+                    <p className="text-sm text-gray-600">Shared learning and development opportunities</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        {/* Form Content */}
-        <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-6 text-center">
-          Join hands with Gauraaj! Whether you’re an NGO, corporate (CSR),
-          volunteer, student, or other collaborator, we’d love to work together
-          to make a difference.
-        </p>
-        <form onSubmit={formik.handleSubmit} className="space-y-4 sm:space-y-5">
-          {/* Name */}
-          <div>
-            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-              Your Name
-            </label>
-            <Input
-              name="name"
-              placeholder="Enter your name"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
-                formik.touched.name && formik.errors.name ? 'border-red-500' : ''
-              }`}
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.name && formik.errors.name && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {formik.errors.name}
+            <div className="bg-[#3c4e1b] rounded-2xl p-6 text-white">
+              <h3 className="text-xl font-bold mb-3">Ready to Start?</h3>
+              <p className="text-white/90 text-sm mb-4">
+                Fill out the form and our partnership team will contact you within 48 hours.
               </p>
-            )}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-white/80" />
+                  <span className="text-sm">Direct team contact</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-white/80" />
+                  <span className="text-sm">Customized collaboration plans</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-white/80" />
+                  <span className="text-sm">Regular progress updates</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-              Your Email
-            </label>
-            <Input
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
-                formik.touched.email && formik.errors.email ? 'border-red-500' : ''
-              }`}
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.email && formik.errors.email && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {formik.errors.email}
-              </p>
-            )}
-          </div>
+          {/* Right Column - Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-200">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Collaboration Inquiry</h3>
+                <p className="text-gray-600">Tell us about your collaboration ideas and we'll get back to you soon.</p>
+              </div>
 
-          {/* Organization/Role */}
-          <div>
-            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-              Organization/Role
-            </label>
-            <Input
-              name="organization"
-              placeholder="E.g., NGO name, company, or individual role"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
-                formik.touched.organization && formik.errors.organization ? 'border-red-500' : ''
-              }`}
-              value={formik.values.organization}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            {formik.touched.organization && formik.errors.organization && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {formik.errors.organization}
-              </p>
-            )}
-          </div>
+              <form onSubmit={formik.handleSubmit} className="space-y-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Full Name *
+                  </label>
+                  <Input
+                    name="name"
+                    placeholder="Enter your name"
+                    className={`w-full h-12 rounded-xl border-gray-300 bg-gray-50/50 text-base focus:ring-2 focus:ring-[#ae5809]/50 focus:border-[#ae5809] transition-all px-4 ${
+                      formik.touched.name && formik.errors.name ? 'border-red-500' : ''
+                    }`}
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <p className="text-red-500 text-sm mt-2 px-1">
+                      {formik.errors.name}
+                    </p>
+                  )}
+                </div>
 
-          {/* Collaboration Type */}
-          <div>
-            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-              Collaboration Type
-            </label>
-            <select
-              name="collaborationType"
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
-                formik.touched.collaborationType && formik.errors.collaborationType ? 'border-red-500' : ''
-              }`}
-              value={formik.values.collaborationType}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            >
-              <option value="NGO">NGO</option>
-              <option value="Corporate CSR">Corporate CSR</option>
-              <option value="Volunteer">Volunteer</option>
-              <option value="Student">Student</option>
-              <option value="Other">Other</option>
-            </select>
-            {formik.touched.collaborationType &&
-              formik.errors.collaborationType && (
-                <p className="text-red-500 text-xs sm:text-sm mt-1">
-                  {formik.errors.collaborationType}
-                </p>
-              )}
-          </div>
+                {/* Email & Organization Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      Email Address *
+                    </label>
+                    <Input
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      className={`w-full h-12 rounded-xl border-gray-300 bg-gray-50/50 text-base focus:ring-2 focus:ring-[#ae5809]/50 focus:border-[#ae5809] transition-all px-4 ${
+                        formik.touched.email && formik.errors.email ? 'border-red-500' : ''
+                      }`}
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.email && formik.errors.email && (
+                      <p className="text-red-500 text-sm mt-2 px-1">
+                        {formik.errors.email}
+                      </p>
+                    )}
+                  </div>
 
-          {/* Message */}
-          <div>
-            <label className="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-              Your Message
-            </label>
-            <Textarea
-              name="message"
-              placeholder="Tell us about your collaboration ideas..."
-              className={`w-full rounded-lg border-gray-200 bg-gray-50 text-sm sm:text-base focus:ring-[#7A6E18] focus:border-[#7A6E18] p-3 sm:p-3.5 shadow-sm ${
-                formik.touched.message && formik.errors.message ? 'border-red-500' : ''
-              }`}
-              value={formik.values.message}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              rows={4}
-            />
-            {formik.touched.message && formik.errors.message && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {formik.errors.message}
-              </p>
-            )}
-          </div>
+                  {/* Organization */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                      <Building className="w-4 h-4" />
+                      Organization/Role *
+                    </label>
+                    <Input
+                      name="organization"
+                      placeholder="E.g., NGO name, company, or role"
+                      className={`w-full h-12 rounded-xl border-gray-300 bg-gray-50/50 text-base focus:ring-2 focus:ring-[#ae5809]/50 focus:border-[#ae5809] transition-all px-4 ${
+                        formik.touched.organization && formik.errors.organization ? 'border-red-500' : ''
+                      }`}
+                      value={formik.values.organization}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.organization && formik.errors.organization && (
+                      <p className="text-red-500 text-sm mt-2 px-1">
+                        {formik.errors.organization}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-[#7A6E18] hover:bg-[#7A6E18] text-white text-sm sm:text-base md:text-lg font-semibold py-2.5 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={formik.isSubmitting}
-          >
-            {formik.isSubmitting ? (
-              <span className="flex items-center justify-center">
-                <svg
-                  className="animate-spin h-5 w-5 mr-2 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
+                {/* Collaboration Type */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Collaboration Type *
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {["NGO", "Corporate CSR", "Volunteer", "Student", "Other"].map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => formik.setFieldValue("collaborationType", type)}
+                        className={`h-12 rounded-xl border-2 flex items-center justify-center gap-2 transition-all ${
+                          formik.values.collaborationType === type
+                            ? "border-[#ae5809] bg-[#ae5809]/10 text-[#ae5809] font-semibold"
+                            : "border-gray-300 bg-gray-50 hover:border-[#ae5809]/50 hover:bg-[#ae5809]/5 text-gray-700"
+                        }`}
+                      >
+                        <span className="text-sm">{type}</span>
+                      </button>
+                    ))}
+                  </div>
+                  {formik.touched.collaborationType && formik.errors.collaborationType && (
+                    <p className="text-red-500 text-sm mt-2 px-1">
+                      {formik.errors.collaborationType}
+                    </p>
+                  )}
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4" />
+                    Your Message *
+                  </label>
+                  <Textarea
+                    name="message"
+                    placeholder="Tell us about your collaboration ideas, goals, and how you'd like to work together..."
+                    className={`w-full rounded-xl border-gray-300 bg-gray-50/50 text-base focus:ring-2 focus:ring-[#ae5809]/50 focus:border-[#ae5809] min-h-[140px] p-4 transition-all ${
+                      formik.touched.message && formik.errors.message ? 'border-red-500' : ''
+                    }`}
+                    value={formik.values.message}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    rows={5}
+                  />
+                  {formik.touched.message && formik.errors.message && (
+                    <p className="text-red-500 text-sm mt-2 px-1">
+                      {formik.errors.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="w-full h-14 bg-[#3c4e1b] hover:to-[#587429] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  disabled={formik.isSubmitting}
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
-                  />
-                </svg>
-                Sending...
-              </span>
-            ) : (
-              "Submit Inquiry"
-            )}
-          </Button>
-        </form>
+                  {formik.isSubmitting ? (
+                    <span className="flex items-center justify-center gap-3">
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                        />
+                      </svg>
+                      Sending Inquiry...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-3">
+                      <Send className="w-5 h-5" />
+                      Submit Collaboration Request
+                    </span>
+                  )}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {/* Additional Info */}
+        <div className="mt-10 text-center">
+          <p className="text-gray-600 text-sm">
+            By submitting this form, you agree to our Privacy Policy and consent to being contacted 
+            regarding collaboration opportunities.
+          </p>
+        </div>
       </div>
 
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-24 h-24 bg-[#7A6E18] rounded-full opacity-10 animate-float" />
-      <div className="absolute bottom-0 right-0 w-32 h-32 bg-yellow-200 rounded-full opacity-10 animate-float delay-1000" />
+      {/* Decorative Background Elements */}
+      <div className="absolute top-10 left-10 w-40 h-40 bg-[#ae5809]/5 rounded-full -z-10" />
+      <div className="absolute bottom-10 right-10 w-60 h-60 bg-[#ae5809]/5 rounded-full -z-10" />
     </section>
   );
 };
-
-// Add these custom animations to your CSS (e.g., in a global stylesheet or Tailwind config)
-const styles = `
-  @keyframes fade-in-down {
-    0% {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slide-up {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  .animate-fade-in-down {
-    animation: fade-in-down 0.8s ease-out forwards;
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.8s ease-out forwards;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .delay-1000 {
-    animation-delay: 1s;
-  }
-`;
 
 export default CollaborateSection;

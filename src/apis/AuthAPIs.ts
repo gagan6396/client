@@ -20,11 +20,22 @@ export const RegisterAPI = ({ first_name, last_name, email, phone, password }: {
 };
 
 // Login an existing user
-export const LoginAPI = ({ email, password }: { email: string; password: string }) => {
-    const response = axiosInstance.post("/user/auth/login", {
-        email,
-        password,
-    });
+export const LoginAPI = ({ email, phone, password }: { 
+    email?: string; 
+    phone?: string; 
+    password: string 
+}) => {
+    const payload: any = { password };
+    
+    if (email) {
+        payload.email = email;
+    }
+    
+    if (phone) {
+        payload.phone = phone;
+    }
+    
+    const response = axiosInstance.post("/user/auth/login", payload);
     return response;
 };
 

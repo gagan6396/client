@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,9 +7,8 @@
 /* @import "~slick-carousel/slick/slick.css"; */
 /* @import "~slick-carousel/slick/slick-theme.css"; */
 
-
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', Helvetica, sans-serif;
 }
 
 @layer base {
@@ -126,4 +127,11 @@ body {
 .slick-prev,
 .slick-next {
   color: #facc15;
+}
+
+.hei{
+  height:120% !important;
+}
+.padd{
+  padding-top: 0px !important;
 }

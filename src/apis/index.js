@@ -3,7 +3,7 @@ import axios from 'axios';
 // Create an Axios instance
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://server.gauraaj.com/api/v1', // API base URL
-    timeout: 10000, // Request timeout (in milliseconds)
+    // timeout: 10000, // Request timeout (in milliseconds)
 });
 
 // Add a request interceptor
