@@ -50,7 +50,7 @@ export default function RootLayout({
         <Provider store={store}>
           {!isHome && <Header />}
           {isHome && <HeroSection />}
-          <div className="pt-8 md:padd">{children}</div>
+          <div className="pt-0 md:padd">{children}</div>
           <MobileNavBar />
           <Footer />
           {/* Contact Button and Social Buttons */}
