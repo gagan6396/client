@@ -9,17 +9,27 @@ import storyImage2 from "@/public/about_us/9.png";
 const AboutHeroSection: FC = () => {
   return (
     <div
-      className="relative padd overflow-hidden bg-gradient-to-b from-white via-amber-50/20 to-white min-h-screen"
+      className="relative padd bg-gradient-to-b from-white via-amber-50/20 to-white min-h-screen"
       style={{ marginTop: "53px" }}
     >
       {/* Banner Image Section - Clean version without gradients */}
-      <div className="relative w-full h-full min-h-[400px] max-h-[500px] overflow-hidden">
+      <div className="relative pt-0 w-full h-full min-h-[400px] max-h-[500px]">
+        {/* Mobile Banner */}
         <Image
-          src="/ABOUT US (2).webp" // Direct path from public folder
+          src="/abt mob.png" // Mobile banner path from public folder
           alt="About Us Banner - Gauraaj Journey"
           fill
-
-          className="object-contain md:object-cover"
+          className="object-cover md:hidden"
+          sizes="100vw"
+          priority
+          quality={85}
+        />
+        {/* Desktop Banner */}
+        <Image
+          src="/ABOUT US (2).webp" // Desktop banner path from public folder
+          alt="About Us Banner - Gauraaj Journey"
+          fill
+          className="object-contain md:object-cover hidden md:block"
           sizes="100vw"
           priority
           quality={85}
