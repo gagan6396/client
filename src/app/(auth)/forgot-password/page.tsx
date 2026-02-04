@@ -68,7 +68,7 @@ const RequestPasswordResetPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b bg-[#7A6E18]/20 to-gray-100 px-4 sm:px-6 lg:px-8">
+    <div className="flex mar items-center justify-center min-h-screen bg-gradient-to-b bg-[#7A6E18]/20 to-gray-100 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md sm:max-w-lg shadow-lg rounded-xl border border-gray-100 overflow-hidden mx-2 sm:mx-0">
         <CardHeader className="bg-gradient-to-r from-[#7A6E18] to-[#7A6E18] text-white rounded-t-xl p-4 sm:p-6">
           <CardTitle className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-center">
