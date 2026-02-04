@@ -118,7 +118,7 @@ const BlogSection: FC = () => {
 
   return (
     <section className="py-16 md:py-20 bg-gradient-to-b from-[#f5f7f0] to-white">
-      <div className="container mx-auto px-4">
+      <div className="container mar mx-auto px-4">
         {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3c4e1b] to-[#5a7530] mb-4">
