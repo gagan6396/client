@@ -113,8 +113,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const [selectedVariant, setSelectedVariant] = useState(variants[0]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigation = useRouter();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRefDesktop = useRef<HTMLDivElement>(null);
+  const buttonRefDesktop = useRef<HTMLButtonElement>(null);
+  const dropdownRefMobile = useRef<HTMLDivElement>(null);
+  const buttonRefMobile = useRef<HTMLButtonElement>(null);
 
   const primaryImage =
     images?.find((img) => img.sequence === 0)?.url || "/placeholder-image.jpg";
@@ -215,12 +217,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
+      const isClickOutsideDesktop = dropdownRefDesktop.current &&
+        !dropdownRefDesktop.current.contains(event.target as Node) &&
+        buttonRefDesktop.current &&
+        !buttonRefDesktop.current.contains(event.target as Node);
+      
+      const isClickOutsideMobile = dropdownRefMobile.current &&
+        !dropdownRefMobile.current.contains(event.target as Node) &&
+        buttonRefMobile.current &&
+        !buttonRefMobile.current.contains(event.target as Node);
+
+      if (isClickOutsideDesktop && isClickOutsideMobile) {
         setShowDropdown(false);
       }
     };
@@ -245,12 +252,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className="group bg-white rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 duration-300 border border-gray-100 flex flex-col h-full cursor-pointer"
+      className="group bg-white rounded-2xl shadow-sm overflow-visible transition-all hover:shadow-2xl hover:-translate-y-1 duration-300 border border-gray-100 flex flex-col h-full cursor-pointer"
       onClick={handleProductClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="relative overflow-hidden bg-gray-50">
+      <div className="relative overflow-hidden bg-gray-50 rounded-t-2xl">
         <img
           src={hovered ? secondaryImage : primaryImage}
           alt={title}
@@ -324,11 +331,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Variant Dropdown Button - Hidden on mobile, shown on desktop */}
-            <div className="relative flex-shrink-0 hidden md:block z-10">
+            <div className="relative flex-shrink-0 hidden md:block">
               <button
-                ref={buttonRef}
+                ref={buttonRefDesktop}
                 onClick={handleVariantButtonClick}
-                className="flex items-center gap-1 text-xs font-medium text-gray-700 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-2 hover:border-gray-300 hover:shadow-sm bg-white transition-all min-w-[80px] max-w-[120px]"
+                className="flex items-center gap-1 text-xs font-medium text-gray-700 hover:text-gray-900 border border-gray-200 rounded-lg px-3 py-2 hover:border-gray-300 hover:shadow-sm bg-white transition-all min-w-[80px] max-w-[120px] relative z-20"
                 title={selectedVariant.name}
               >
                 <span className="truncate text-left flex-1">
@@ -344,8 +351,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {/* Dropdown Menu - Desktop only */}
               {showDropdown && (
                 <div
-                  ref={dropdownRef}
-                  className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto"
+                  ref={dropdownRefDesktop}
+                  className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-[9999] max-h-48 overflow-y-auto"
                   onClick={(e) => e.stopPropagation()} // Prevent product card click
                 >
                   {variants.map((variant) => (
@@ -371,7 +378,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <div className="md:hidden">
             <div className="relative z-10">
               <button
-                ref={buttonRef}
+                ref={buttonRefMobile}
                 onClick={handleVariantButtonClick}
                 className="flex items-center justify-between w-full text-sm font-medium text-gray-700 border border-gray-200 rounded-lg px-4 py-3 hover:border-gray-300 hover:shadow-sm bg-white transition-all"
                 title={selectedVariant.name}
@@ -397,7 +404,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   />
                   
                   <div
-                    ref={dropdownRef}
+                    ref={dropdownRefMobile}
                     className="fixed inset-x-4 bottom-4 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto"
                     onClick={(e) => e.stopPropagation()} // Prevent product card click
                   >

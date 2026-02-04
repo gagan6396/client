@@ -184,7 +184,7 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
+    <div className="container mar mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
       {/* Page Title */}
       <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-10 md:mb-14 tracking-tight">
         Your Wishlist

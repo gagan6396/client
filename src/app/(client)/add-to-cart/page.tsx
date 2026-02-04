@@ -283,7 +283,7 @@ const AddToCartPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
+    <div className="container mx-auto mar py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
       {/* CHANGED: text-[#8B4513] for brown matching green */}
       <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-[#2d5437] mb-10 md:mb-14 tracking-tight">
         Your Cart
