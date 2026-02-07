@@ -15,13 +15,21 @@ import {
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 
+// Local banner images - these are static
+const LOCAL_BANNER_IMAGES = [
+  "/banner1.png",
+  "/banner2.png", 
+  "/banner3.jpg",
+  // Add more as needed: "/banner4.jpg", "/banner5.jpg", etc.
+];
+
 const HeroSection = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [sliders, setSliders] = useState([]);
+  const [sliders, setSliders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   let accessToken;
@@ -46,7 +54,7 @@ const HeroSection = () => {
     setShowSearchInput((prev) => !prev);
   };
 
-  // Fetch sliders from backend
+  // Fetch sliders from backend for dynamic text
   useEffect(() => {
     const fetchSliders = async () => {
       try {
@@ -56,10 +64,32 @@ const HeroSection = () => {
         const visibleSliders = response.data.data
           .filter((slider: any) => !slider.isHidden)
           .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0));
-        setSliders(visibleSliders);
+        
+        // Combine local images with API text data
+        const bannersWithLocalImages = visibleSliders.map((slider: any, index: number) => ({
+          ...slider,
+          // Use local image if available, otherwise use API image
+          localImage: LOCAL_BANNER_IMAGES[index] || LOCAL_BANNER_IMAGES[0]
+        }));
+        
+        setSliders(bannersWithLocalImages);
       } catch (error) {
         console.error("Failed to fetch sliders:", error);
-        toast.error("Failed to load sliders", { position: "top-center" });
+        toast.error("Failed to load banner content", { position: "top-center" });
+        
+        // Create fallback banners with local images
+        const fallbackBanners = LOCAL_BANNER_IMAGES.map((image, index) => ({
+          _id: `fallback-${index + 1}`,
+          title: `Banner ${index + 1}`,
+          subtitle: "Dynamic content will appear here",
+          button: {
+            label: "Explore",
+            actionURL: "/products"
+          },
+          localImage: image
+        }));
+        
+        setSliders(fallbackBanners);
       } finally {
         setLoading(false);
       }
@@ -88,8 +118,8 @@ const HeroSection = () => {
       <div className="fixed top-0 left-0 right-0 z-50">
         {/* Green Banner */}
         <div className=" bg-[#2d5437] text-white text-center py-2 px-4">
-  <p className="text-sm md:text-base ">Himalayan A2 Cow Ghee is Available Now</p>
-</div>
+          <p className="text-sm md:text-base ">Himalayan A2 Cow Ghee is Available Now</p>
+        </div>
         
         {/* Main Header - Always white and sticky */}
         <header className="bg-white shadow-md">
@@ -193,7 +223,7 @@ const HeroSection = () => {
                   >
                     <AiOutlineShoppingCart
                       size={26}
-                      className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
+                      className="text-gray700 hover:text-[#7A6E18] transition-colors duration-300"
                     />
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
                   </div>
@@ -241,58 +271,57 @@ const HeroSection = () => {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#fef9f1] via-[#f5f0dc] to-[#e7dbac] z-50">
             <ClipLoader color="#7A6E18" size={50} />
             <p className=" text-[#7A6E18] text-lg font-medium animate-pulse">
-              Loading sliders...
+              Loading banners...
             </p>
           </div>
         ) : sliders.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#fef9f1] via-[#f5f0dc] to-[#e7dbac]">
-            <p className="text-gray-700 text-lg">No sliders available</p>
+            <p className="text-gray-700 text-lg">No banners available</p>
           </div>
         ) : (
           <>
             {/* Carousel Images and Text */}
-            {sliders.map((slider: any, index: number) => (
+            {sliders.map((slider, index) => (
               <div
                 key={slider._id}
                 className={`absolute inset-0 transition-opacity duration-1000 ${
                   currentSlide === index ? "opacity-100" : "opacity-0"
                 }`}
               >
+                {/* Use local image */}
                 <Image
-                  src={
-                    slider.imageUrl || "https://via.placeholder.com/1200x600"
-                  }
+                  src={slider.localImage || "/banner1.jpg"}
                   alt={slider.title}
                   fill
                   className="object-cover brightness-75"
-                  onError={(e) =>
-                    (e.currentTarget.src =
-                      "https://via.placeholder.com/1200x600")
-                  }
+                  priority={index === 0}
                 />
+                
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" />
-                {/* Hero Text Section */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="text-center text-white px-4 sm:px-6">
+                {/* <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" /> */}
+                
+                {/* Hero Text Section - Dynamic from API */}
+                <div className="absolute inset-0 flex items-center z-10">
+                  <div className="text-left text-white px-4 sm:px-6">
                     <h1 className="text-4xl sm:text-5xl md:text-4xl lg:text-7xl font-extrabold mb-4 md:mb-6 tracking-tight animate-fade-in">
                       {slider.title}
                     </h1>
-                    <p className="text-lg sm:text-xl md:text-xl mb-8 md:mb-10 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-lg sm:text-xl md:text-xl mb-8 md:mb-10 max-w-3xl leading-relaxed">
                       {slider.subtitle}
                     </p>
                     <Button
                       asChild
                       className="bg-[#2d5437] text-white hover:bg-[#234d2d] px-8 md:px-10 py-3 md:py-4 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-all duration-300 transform hover:scale-105"
                     >
-                      <Link href={slider.button.actionURL}>
-                        {slider.button.label}
+                      <Link href={slider.button?.actionURL || "/products"}>
+                        {slider.button?.label || "Explore"}
                       </Link>
                     </Button>
                   </div>
                 </div>
               </div>
             ))}
+            
             {/* Carousel Dots */}
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
               {sliders.map((_, index) => (
