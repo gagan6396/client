@@ -25,7 +25,7 @@ const CategoriesPage = () => {
   }, []);
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
+    <section className="container mar mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
       {/* Page Title */}
       <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-center text-gray-900 mb-10 md:mb-14 tracking-tight animate-fade-in">
         Explore Our Categories

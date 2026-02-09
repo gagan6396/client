@@ -39,7 +39,7 @@ export default function UserAccount() {
   });
 
   return (
-    <div className="container mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
+    <div className="container mar mx-auto py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
       <div className="mb-10 sm:mb-12 md:mb-16 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
           My Account
