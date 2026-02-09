@@ -86,6 +86,9 @@ interface Category {
   images?: string[];
 }
 
+// Type for product filter
+type ProductFilterType = 'bestSeller' | 'newLaunch';
+
 // Skeleton Product Card
 const SkeletonCard = () => (
   <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse border border-gray-100">
@@ -122,6 +125,7 @@ const ProductCategories: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [productFilter, setProductFilter] = useState<ProductFilterType>('bestSeller');
 
   const fetchData = async () => {
     try {
@@ -153,6 +157,32 @@ const ProductCategories: React.FC = () => {
     navigate.push(`/products/${productId}`);
   };
 
+  // Filter products based on selected filter
+  const getFilteredProducts = () => {
+    if (productFilter === 'bestSeller') {
+      return products.filter((item) => item.isBestSeller);
+    } else if (productFilter === 'newLaunch') {
+      // Get products from the last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      return products.filter((item) => {
+        const createdAt = new Date(item.createdAt);
+        return createdAt >= thirtyDaysAgo;
+      });
+    }
+    return [];
+  };
+
+  // Sort new arrivals by creation date (newest first)
+  const sortedNewLaunches = getFilteredProducts().sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const filteredProducts = productFilter === 'newLaunch' 
+    ? sortedNewLaunches 
+    : getFilteredProducts();
+
   if (error) {
     return (
       <section className="bg-gray-50 min-h-screen flex items-center justify-center">
@@ -177,43 +207,106 @@ const ProductCategories: React.FC = () => {
       {/* Top Products Section */}
       <main className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="container mx-auto">
-          <h1 className="text-2xl md:text-3xl text-center font-bold text-[#2d5437] mb-6">
-            Best Seller
-          </h1>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-4 gap-4">
-            {loading
-              ? Array(12)
-                  .fill(0)
-                  .map((_, index) => <SkeletonCard key={index} />)
-              : products
-                  .filter((item) => item.isBestSeller)
-                  .slice(0, 12)
-                  .map((product) => (
-                    <div
-                      key={product._id}
-                      onClick={() => handleProductClick(product._id)}
-                      className="cursor-pointer"
-                    >
-                      <ProductCard
-                        images={product.images}
-                        title={product.name}
-                        variants={product.variants}
-                        rating={product.rating}
-                        isBestSeller={product.isBestSeller}
-                        productId={product._id}
-                        inWishlist={product.inWishlist}
-                        inCart={product.inCart}
-                      />
-                    </div>
-                  ))}
+          {/* Simple Navigation Bar - Like your image */}
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-0 border-b border-gray-200">
+              <button
+                onClick={() => setProductFilter('bestSeller')}
+                className={`px-8 py-3 text-lg font-medium transition-all duration-300 ${
+                  productFilter === 'bestSeller'
+                    ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
+                    : 'text-gray-500 hover:text-[#2d5437]'
+                }`}
+              >
+                Best Seller
+              </button>
+              <button
+                onClick={() => setProductFilter('newLaunch')}
+                className={`px-8 py-3 text-lg font-medium transition-all duration-300 ${
+                  productFilter === 'newLaunch'
+                    ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
+                    : 'text-gray-500 hover:text-[#2d5437]'
+                }`}
+              >
+                New Launch
+              </button>
+            </div>
           </div>
-          <div className="mt-8 text-center">
-            <Link href="/products">
-            <Button className="bg-amber-50 text-[#7A6E18] hover:bg-amber-100 px-6 py-2 rounded-full border border-amber-200">
-  View All Products
-</Button>
-            </Link>
-          </div>
+
+          {/* Products Grid with Empty State */}
+          {loading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-4 gap-4">
+              {Array(12)
+                .fill(0)
+                .map((_, index) => <SkeletonCard key={index} />)}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-4 gap-4">
+              {filteredProducts
+                .slice(0, 12)
+                .map((product) => (
+                  <div
+                    key={product._id}
+                    onClick={() => handleProductClick(product._id)}
+                    className="cursor-pointer"
+                  >
+                    <ProductCard
+                      images={product.images}
+                      title={product.name}
+                      variants={product.variants}
+                      rating={product.rating}
+                      isBestSeller={product.isBestSeller}
+                      productId={product._id}
+                      inWishlist={product.inWishlist}
+                      inCart={product.inCart}
+                    />
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="mb-4">
+                <svg
+                  className="w-16 h-16 mx-auto text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                No Products Available
+              </h3>
+              <p className="text-gray-500 mb-6">
+                {productFilter === 'bestSeller'
+                  ? 'There are no best seller products available at the moment.'
+                  : 'There are no new launch products available at the moment.'}
+              </p>
+              <Button
+                onClick={() => navigate.push('/products')}
+                className="bg-amber-50 text-[#7A6E18] hover:bg-amber-100 px-6 py-2 rounded-full border border-amber-200"
+              >
+                Browse All Products
+              </Button>
+            </div>
+          )}
+
+          {/* View All Button - Only show when there are products */}
+          {!loading && filteredProducts.length > 0 && (
+            <div className="mt-8 text-center">
+              <Link href="/products">
+                <Button className="bg-amber-50 text-[#7A6E18] hover:bg-amber-100 px-6 py-2 rounded-full border border-amber-200">
+                  View All Products
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </main>
 
@@ -315,7 +408,7 @@ const ProductCategories: React.FC = () => {
               {/* Description */}
               <div className="space-y-4">
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
-                At Gauraaj, we are dedicated to providing pure, organic products straight from nature’s source.
+                At Gauraaj, we are dedicated to providing pure, organic products straight from nature's source.
                 </p>
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
                 Embrace sustainable living with us and become part of a movement that protects nature, supports responsible farming, and nurtures a healthier, greener planet for generations to come. Together, we can create a future where conscious choices today lead to a thriving world tomorrow.
