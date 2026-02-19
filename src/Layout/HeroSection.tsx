@@ -1,7 +1,7 @@
 "use client";
 import { getAllSlidersAPI } from "@/apis/slider.service";
 import { Button } from "@/components/ui/button";
-import logoImage from "@/public/logo3.png";
+import logoImage from "@/public/gauraj-01.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
