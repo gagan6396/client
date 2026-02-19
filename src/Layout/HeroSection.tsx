@@ -123,7 +123,7 @@ const HeroSection = () => {
         
         {/* Main Header - Always white and sticky */}
         <header className="bg-white shadow-md">
-          <div className="container mx-auto flex items-center justify-between py-4 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto flex items-center justify-between py-1 px-4 sm:px-6 lg:px-8">
             {/* Logo Section */}
             <div
               className="flex items-center cursor-pointer"
