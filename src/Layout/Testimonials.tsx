@@ -264,7 +264,7 @@ const Testimonials: React.FC = () => {
           
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-4">
             
-            <span className="block font-serif italic text-[#2d5437] mt-2">
+            <span className="block font-serif italic text-[#40572c] mt-2">
               Testimonials
             </span>
           </h2>

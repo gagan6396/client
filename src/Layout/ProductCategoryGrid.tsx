@@ -435,7 +435,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   className={`w-full rounded-lg py-3 text-sm font transition-all transform active:scale-95 shadow-sm ${
     isInCart
       ? "bg-red-500 text-white hover:bg-red-600 hover:shadow-md"
-      : "bg-[#2d5437] text-white hover:bg-[#204429] hover:shadow-md"
+      : "bg-[#40572c] text-white hover:bg-[#204429] hover:shadow-md"
   } ${
     selectedVariant.stock === 0
       ? "opacity-60 cursor-not-allowed"

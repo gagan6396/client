@@ -95,7 +95,7 @@ export function InstagramReelsCarousel() {
 
   return (
     <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <h2 className="text-2xl md:text-3xl font-bold text-[#2d5437] text-center mb-6">
+      <h2 className="text-2xl md:text-3xl font-bold text-[#40572c] text-center mb-6">
         Instagram Reels Spotlight
       </h2>
       <main className="container mx-auto">

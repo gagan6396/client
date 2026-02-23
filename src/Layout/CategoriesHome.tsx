@@ -80,10 +80,10 @@ const CategoryRoundedImages = () => {
   // Don't chunk categories - show them all in a scrollable row
   return (
     <>
-      <section className="bg-amber-100 py-8 md:py-12 relative overflow-hidden">
+      <section className="bg-[#e9ddb9] py-8 md:py-12 relative overflow-hidden">
         <div className="w-full relative z-10">
           <div className="mb-8 md:mb-10 px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2d5437] text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#40572c] text-center">
               Shop By Category
             </h2>
             {/* <p className="text-gray-600 text-center mt-2 md:text-lg max-w-2xl mx-auto">
@@ -106,10 +106,10 @@ const CategoryRoundedImages = () => {
 
                 <button
                   onClick={() => scroll('right')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 bg-white hover:bg-[#2d5437]/10 rounded-full shadow-xl border-2 border-gray-200 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-2xl active:scale-95 group"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 bg-white hover:bg-[#96854F]/10 rounded-full shadow-xl border-2 border-gray-200 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-2xl active:scale-95 group"
                   aria-label="Scroll right"
                 >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-[#2d5437] transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-[#96854F] transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>

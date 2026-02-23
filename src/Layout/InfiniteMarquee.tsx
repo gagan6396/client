@@ -46,10 +46,10 @@ const InfiniteMarquee = () => {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden bg-gradient-to-r from-[#2d5437] via-[#3a6b47] to-[#2d5437] py-10">
+    <div className="relative w-full overflow-hidden bg-gradient-to-r from-[#40572c] via-[#40572c] to-[#40572c] py-10">
       {/* Gradient edges */}
-      <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-[#2d5437] to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-[#2d5437] to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-[#40572c] to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-[#40572c] to-transparent z-10 pointer-events-none" />
 
       {/* Marquee Container */}
       <div className="flex">

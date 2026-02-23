@@ -68,7 +68,7 @@ const Header: React.FC = () => {
   </div> */}
 
   {/* Main Header Content */}
-  <div className="container mx-auto flex items-center justify-between py-2 px-4 sm:px-6 lg:px-8">
+  <div className="container mx-auto flex items-center justify-between py-1 px-4 sm:px-6 lg:px-8">
     {/* Logo */}
     <div
       className="flex items-center cursor-pointer"
@@ -79,7 +79,7 @@ const Header: React.FC = () => {
         alt="Logo"
         width={120}
         height={120}
-        className="w-20 sm:w-24 md:w-28 h-auto hover:opacity-90 transition-opacity duration-300"
+        className="w-20 sm:w-24 md:w-28 h-auto hover:opacity-90 transition-opacity duration-300 object-contain"
       />
     </div>
 

@@ -57,7 +57,7 @@ const Footer: React.FC = () => {
     : categories.slice(0, 4);
 
   return (
-    <footer className="relative bg-[#2d5437] overflow-hidden">
+    <footer className="relative bg-[#40572c] overflow-hidden">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0 opacity-10">
         <div

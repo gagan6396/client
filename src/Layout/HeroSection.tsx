@@ -117,7 +117,7 @@ const HeroSection = () => {
       {/* Fixed Header Container */}
       <div className="fixed top-0 left-0 right-0 z-50">
         {/* Green Banner */}
-        <div className=" bg-[#2d5437] text-white text-center py-2 px-4">
+        <div className=" bg-[#40572c] text-white text-center py-2 px-4">
           <p className="text-sm md:text-base ">Himalayan A2 Cow Ghee is Available Now</p>
         </div>
         

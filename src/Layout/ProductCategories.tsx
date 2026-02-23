@@ -314,7 +314,7 @@ const ProductCategories: React.FC = () => {
       <main className="px-4 sm:px-6 lg:px-8 py-6 bg-white">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2d5437] mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#40572c] mb-3">
               Our Collection
             </h2>
             {/* <p className="text-gray-600 max-w-2xl mx-auto">
@@ -397,7 +397,7 @@ const ProductCategories: React.FC = () => {
               {/* Title */}
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 leading-tight">
                 Discover the
-                <span className="block font-serif italic text-[#2d5437] mt-2">
+                <span className="block font-serif italic text-[#40572c] mt-2">
                   Essence of Nature
                 </span>
               </h2>
