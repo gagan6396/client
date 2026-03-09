@@ -55,9 +55,8 @@ export function MissionVision() {
 
                 {/* Mission Statement */}
                 <p className="text-gray-700 text-md leading-relaxed mb-10 text-center md:text-left">
-                  To unite Himalayan farmers under an empowering platform that safeguards 
-                  traditional agricultural practices, elevates women's roles, and delivers 
-                  wholesome, natural produce for healthier communities and a sustainable future.
+                Catalysing welfare and wellbeing of rural Himalayan communities through responsible and rewarding business and enterprise, while preserving communities and their heritage.
+This also means that we aspire to unite and empower Himalayan farmers towards preserving traditional agricultural practices, elevating role of womenin rural development, delivering pure, wholesome and natural produce and shaping  healthier and responsible communities and ecosystems
                 </p>
 
                 {/* Mission Points */}
@@ -130,9 +129,7 @@ export function MissionVision() {
 
                 {/* Vision Statement */}
                 <p className="text-gray-700 text-md leading-relaxed mb-10 text-center md:text-left">
-                  To cultivate thriving Himalayan communities where empowered women lead sustainable 
-                  agriculture, traditional wisdom flourishes, and nature's harmony creates prosperity 
-                  for all living beings.
+                To shape thriving Himalayan ecosystems and communities where empowered farmers lead sustainable agriculture, traditional wisdom flourishes, and nature's heritage drives  wellbeing and welfare for all living beings.
                 </p>
 
                 {/* Vision Points */}
@@ -146,8 +143,7 @@ export function MissionVision() {
                         Holistic Development
                       </h3>
                       <p className="text-gray-600 ">
-                        Integrated socio-economic advancement in mountainous regions through sustainable practices.
-                      </p>
+                      Integrated socio-economic advancement in mountainous regions through sustainable practices.                      </p>
                     </div>
                   </div>
 
@@ -157,11 +153,10 @@ export function MissionVision() {
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Wellness Advocacy
+                      Resilience Advocacy
                       </h3>
                       <p className="text-gray-600 ">
-                        Championing holistic well-being through organic nutrition and balanced lifestyle choices.
-                      </p>
+                      Championing holistic well-being through organic nutrition and balanced lifestyle choices among urban population.                      </p>
                     </div>
                   </div>
 
@@ -174,8 +169,7 @@ export function MissionVision() {
                         Community Resilience
                       </h3>
                       <p className="text-gray-600 ">
-                        Fostering self-sufficient villages with robust social, economic, and environmental foundations.
-                      </p>
+                      Fostering self-sufficient villages with robust social, economic, and environmental foundations.                      </p>
                     </div>
                   </div>
                 </div>
@@ -218,14 +212,10 @@ export function MissionVision() {
                 
                 <div className="space-y-5">
                   <p className="text-gray-700 text-md leading-relaxed">
-                    Gauraaj establishes a supportive network connecting small-scale farmers across 
-                    Uttarakhand's hills, safeguarding ancestral farming techniques while creating 
-                    sustainable economic pathways.
+                  Gauraaj establishes a supportive rural network connecting small-scale farmers across the hills of Uttarakhand, preserving and bringing to life ancestral farming techniques while creating socio-economic opportunities.
                   </p>
                   <p className="text-gray-700 text-md leading-relaxed">
-                    By linking these agricultural communities to wider markets, we address migration 
-                    challenges, reinforce community bonds, and elevate women's participation—ensuring 
-                    the Himalayan agricultural legacy endures for generations ahead.
+                  By linking these agricultural communities to wider markets, we address migration challenges, reinforce community bonds, and elevate women's participation in rural development —ensuring the Himalayan agricultural legacy endures for generations ahead.
                   </p>
                 </div>
 
@@ -261,13 +251,10 @@ export function MissionVision() {
                     active engagement in organic agriculture and community-building efforts.
                   </p>
                   <p className="text-gray-700 text-md leading-relaxed">
-                    We champion the cultivation and distribution of pure, nutritious produce, 
-                    encouraging lifestyles that align with natural rhythms while enhancing the 
-                    socio-economic fabric of hill communities.
+                    Supporting Gauraaj means participating in a movement dedicated to ecological balance, gender equity, and the vibrant celebration of Uttarakhand's cultural heritage.
                   </p>
                   <p className="text-gray-700 text-md leading-relaxed">
-                    Supporting Gauraaj means participating in a movement dedicated to ecological 
-                    balance, gender equity, and the vibrant celebration of Uttarakhand's cultural heritage.
+                  Supporting Gauraaj means participating in a movement dedicated to ecological balance, gender equity, and the vibrant celebration of Uttarakhand's cultural heritage.
                   </p>
                 </div>
 
@@ -275,15 +262,15 @@ export function MissionVision() {
                 <div className="">
                   <div className="flex items-center gap-3 group/item cursor-pointer">
                     <div className="w-2 h-2 rounded-full bg-[#3c4e1b] group-hover/item:scale-150 transition-transform duration-300" />
-                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">Leadership in organic agricultural practices</span>
+                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">•	Women’s leadership in organic agricultural practices</span>
                   </div>
                   <div className="flex items-center gap-3 group/item cursor-pointer">
                     <div className="w-2 h-2 rounded-full bg-[#3c4e1b] group-hover/item:scale-150 transition-transform duration-300" />
-                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">Capacity-building and skill enhancement programs</span>
+                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">•	Capacity-building and skill enhancement programmes for Women</span>
                   </div>
                   <div className="flex items-center gap-3 group/item cursor-pointer">
                     <div className="w-2 h-2 rounded-full bg-[#3c4e1b] group-hover/item:scale-150 transition-transform duration-300" />
-                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">Creation of sustainable income opportunities</span>
+                    <span className="text-gray-700 group-hover/item:text-[#3c4e1b] transition-colors duration-300">Creation of sustainable income opportunities for Women</span>
                   </div>
                 </div>
               </div>

@@ -79,7 +79,7 @@ const ImpactSection: FC = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
             <h3 className="text-xl md:text-2xl text-gray-700 font-light">
-              Skilled Artisans Cultivating Change Through Traditional Expertise
+            Skilled Farmers Cultivating Change Through Traditional Expertise
             </h3>
           </div>
           
@@ -130,7 +130,7 @@ const ImpactSection: FC = () => {
             </h2>
             <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
             <h3 className="text-xl md:text-xl text-gray-700 font-light">
-              Social Responsibility is Our Foundation, Not an Add-on
+              Social Responsibility and Positive Impact are the core foundational principles and not just outcomes
             </h3>
           </div>
           
@@ -155,7 +155,7 @@ const ImpactSection: FC = () => {
               
               <div className="grid">
                 {[
-                  "300 km Millet Awareness Cycling Expedition – Dehradun to Chamoli",
+                  "•	Gauraaj drives continuous community development programmes to strengthen the social fabric  through the 300 km Millet Awareness Cycling Expedition – Dehradun to Chamoli",
                   "Hunar Haat – Showcasing and supporting women artisans and food producers",
                   "Vocational training programs – Plumbing, painting, and sustainable trades",
                   "Health awareness campaigns – Mental, menstrual & physical wellness",
@@ -222,7 +222,7 @@ const ImpactSection: FC = () => {
                     Driven by Purpose
                   </h4>
                   <p className="text-gray-700 leading-relaxed">
-                    Since inception, Gauraaj has focused on reversing migration patterns, generating women's employment opportunities, and revitalizing traditional agricultural heritage.
+                  Since inception, Gauraaj has focused on reversing migration patterns, generating women's employment opportunities, and revitalizing traditional agricultural heritage.
                   </p>
                 </div>
                 

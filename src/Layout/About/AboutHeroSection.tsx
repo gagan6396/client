@@ -50,11 +50,11 @@ const AboutHeroSection: FC = () => {
         {/* Header */}
         <div className="text-center mb-16 pt-8">
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-            Our <span className="text-[#556b2f]">Journey</span>
+          OUR <span className="text-[#556b2f]">STORY</span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-transparent via-[#3c4e1b] to-transparent mx-auto mb-6"></div>
           <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto font-light">
-            From Adversity to Innovation: Empowering Communities Through Sustainable Living
+          From Adversity to Innovation: Empowering Communities Through Sustainable Rural Enterprise
           </p>
         </div>
 
@@ -83,14 +83,16 @@ const AboutHeroSection: FC = () => {
             </h3>
 
             <p className="text-gray-700 leading-relaxed text-md">
-              Born amidst the global uncertainty of the COVID-19 pandemic, Gauraaj emerged as a visionary initiative by Mrs. Suman Nainwal. It started as a lifeline for families facing unemployment in the secluded Himalayan communities of Uttarakhand. Drawing on local resources and traditional knowledge, the initiative created sustainable livelihoods while preserving the region's cultural heritage. What began as crisis-driven support soon evolved into a long-term mission of empowerment and self-reliance.
-            </p>
+            Born amidst the global uncertainty of the COVID-19 pandemic, Gauraaj emerged as a visionary initiative by Mrs. Suman Nainwal. It started as a lifeline for families facing unemployment in the secluded Himalayan communities of Uttarakhand. Drawing on local human and agri resources and traditional knowledge, the initiative created sustainable livelihoods while preserving the region's cultural heritage. What began as a crisis-driven support system, soon evolved into a long-term mission of empowerment and self-reliance. Over the years, Gauraaj:
+
+</p>
 
             <div className="">
               {[
                 "Organized digital self-help circles to champion organic cultivation methods",
                 "Forged partnerships with indigenous farmers for authentic Himalayan harvests",
-                "Launched educational initiatives advocating natural lifestyles and ecological balance"
+                "Launched educational initiatives advocating natural lifestyles and ecological balance",
+                "Implemented digital and trade skills for mountain region agri-collection businesses"
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4 rounded-xl bg-white/80 transition-all duration-300 hover:bg-white/90">
                   <div className="w-2 h-2 rounded-full bg-[#3c4e1b] mt-3 flex-shrink-0"></div>
@@ -110,12 +112,10 @@ const AboutHeroSection: FC = () => {
             </h3>
 
             <p className="text-gray-700 leading-relaxed text-md">
-              On May 3, 2023, Gauraaj reached a pivotal moment by evolving into Gauraaj Valleyfood Pvt. Ltd. This strategic transformation marked our expanding vision while staying rooted in our foundational principles.
-            </p>
+            On May 3, 2023, Gauraaj reached a pivotal stage in its growth and was incorporated  as a legal entity, Gauraaj Valleyfood Pvt. Ltd. This strategic move – from being a rural empowerment initiative to an impact-driven business enterprise marked a critical milestone towards our bigger vision of catalysing welfare and wellbeing of rural Himalayan communities through responsible and rewarding business and enterprise, while preserving communities and their heritage.              </p>
 
             <p className="text-gray-700 leading-relaxed text-md">
-              As a registered entity, we've deepened our dedication to producing environmentally conscious, traditionally inspired, and wellness-oriented offerings. Gauraaj Valleyfood seamlessly merges ancestral knowledge with thoughtful innovation, ensuring each product contributes to sustainable ecosystems, comprehensive well-being, and lasting environmental stewardship.
-            </p>
+            As a registered entity, we are even more committed to  producing environmentally conscious, traditionally inspired, and wellness-oriented offerings. Gauraaj Valleyfood seamlessly merges ancestral knowledge with thoughtful innovation, ensuring each product contributes to responsible ecosystems, community welfare and well-being, and lasting environmental stewardship. We are also continuously working  to identify sustainable alternative food sources, where Gauraaj's handcrafted and nutritious  products speak of our of our strong rural network of farmers, their knowledge and expertise, and above all, the Himalayan heritage.            </p>
 
             <div className="mt-8 p-6 bg-gradient-to-r from-[#3c4e1b]/5 to-transparent rounded-xl border-l-4 border-[#3c4e1b]">
               <p className="text-gray-700 font-medium">

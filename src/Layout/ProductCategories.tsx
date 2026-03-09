@@ -408,22 +408,20 @@ const ProductCategories: React.FC = () => {
               {/* Description */}
               <div className="space-y-4">
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
-                At Gauraaj, we are dedicated to providing pure, organic products straight from nature's source.
-                </p>
+                At Gauraaj, we are dedicated to providing pure, wholesome and natural products straight from source.                </p>
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
-                Embrace sustainable living with us and become part of a movement that protects nature, supports responsible farming, and nurtures a healthier, greener planet for generations to come. Together, we can create a future where conscious choices today lead to a thriving world tomorrow.
-                </p>
+                We are all about  a movement that connects nature's rich unadulterated offerings, indigenous farmers, and you consumers – catalysing health, welfare and wellbeing for all. With our mission to promote positive social impact through Gauraaj products and programmes, we believe in shaping healthier and responsible communities for generations to come. With the support of our consumers, together, we can create a future where conscious and responsible choices lead to thriving rural and natural ecosystems.                </p>
               </div>
 
               {/* Stats or Features */}
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="space-y-1">
                   <div className="text-2xl font-light text-[#2d5437]">100%</div>
-                  <div className="text-sm text-gray-500">Organic Sourced</div>
+                  <div className="text-sm text-gray-500">Naturally Sourced</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-2xl font-light text-[#2d5437]">Eco</div>
-                  <div className="text-sm text-gray-500">Sustainable Packaging</div>
+                  <div className="text-2xl font-light text-[#2d5437]">Framer's</div>
+                  <div className="text-sm text-gray-500">Welfare and Wellbeing</div>
                 </div>
               </div>
 
