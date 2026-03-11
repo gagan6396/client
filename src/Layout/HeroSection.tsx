@@ -1,7 +1,7 @@
 "use client";
 import { getAllSlidersAPI } from "@/apis/slider.service";
 import { Button } from "@/components/ui/button";
-import logoImage from "@/public/logo.png";
+import logoImage from "@/public/logo (2).png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,12 +15,21 @@ import {
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 
-// Local banner images - these are static
 const LOCAL_BANNER_IMAGES = [
   "/banner1.png",
-  "/banner2.png", 
+  "/banner2.png",
   "/banner3.jpg",
-  // Add more as needed: "/banner4.jpg", "/banner5.jpg", etc.
+];
+
+const marqueeItems = [
+  "ALL NATURAL",
+  "SUSTAINABLY SOURCED",
+  "TRUE HEIRLOOM",
+  "SINGLE ORIGIN",
+  "PESTICIDE FREE",
+  "NUTRIENT RICH",
+  "WHOLESOME",
+  "UPLIFTING WOMEN",
 ];
 
 const HeroSection = () => {
@@ -54,41 +63,33 @@ const HeroSection = () => {
     setShowSearchInput((prev) => !prev);
   };
 
-  // Fetch sliders from backend for dynamic text
   useEffect(() => {
     const fetchSliders = async () => {
       try {
         setLoading(true);
         const response = await getAllSlidersAPI();
-        // Filter out hidden sliders and sort by sequence
         const visibleSliders = response.data.data
           .filter((slider: any) => !slider.isHidden)
           .sort((a: any, b: any) => (a.sequence || 0) - (b.sequence || 0));
-        
-        // Combine local images with API text data
+
         const bannersWithLocalImages = visibleSliders.map((slider: any, index: number) => ({
           ...slider,
-          // Use local image if available, otherwise use API image
-          localImage: LOCAL_BANNER_IMAGES[index] || LOCAL_BANNER_IMAGES[0]
+          localImage: LOCAL_BANNER_IMAGES[index] || LOCAL_BANNER_IMAGES[0],
         }));
-        
+
         setSliders(bannersWithLocalImages);
       } catch (error) {
         console.error("Failed to fetch sliders:", error);
         toast.error("Failed to load banner content", { position: "top-center" });
-        
-        // Create fallback banners with local images
+
         const fallbackBanners = LOCAL_BANNER_IMAGES.map((image, index) => ({
           _id: `fallback-${index + 1}`,
           title: `Banner ${index + 1}`,
           subtitle: "Dynamic content will appear here",
-          button: {
-            label: "Explore",
-            actionURL: "/products"
-          },
-          localImage: image
+          button: { label: "Explore", actionURL: "/products" },
+          localImage: image,
         }));
-        
+
         setSliders(fallbackBanners);
       } finally {
         setLoading(false);
@@ -97,17 +98,15 @@ const HeroSection = () => {
     fetchSliders();
   }, []);
 
-  // Carousel auto-slide effect
   useEffect(() => {
     if (sliders.length > 0) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % sliders.length);
-      }, 10000); // Change slide every 10 seconds
+      }, 10000);
       return () => clearInterval(interval);
     }
   }, [sliders.length]);
 
-  // Manual slide navigation
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };
@@ -116,15 +115,44 @@ const HeroSection = () => {
     <div className="relative">
       {/* Fixed Header Container */}
       <div className="fixed top-0 left-0 right-0 z-50">
-        {/* Green Banner */}
-        <div className=" bg-[#40572c] text-white text-center py-2 px-4">
-          <p className="text-sm md:text-base ">Himalayan A2 Cow Ghee is Available Now</p>
+
+        {/* ── INFINITE MARQUEE ── */}
+        <div className="relative w-full overflow-hidden bg-[#40572c] py-2">
+          {/* Gradient fade edges */}
+          <div className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-[#40572c] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-[#40572c] to-transparent z-10 pointer-events-none" />
+
+          {/* Scrolling track */}
+          <div className="marquee-track flex w-max items-center">
+            {[...marqueeItems, ...marqueeItems, ...marqueeItems, ...marqueeItems].map((text, index) => (
+              <div key={index} className="inline-flex items-center">
+                <span className="text-white text-xs tracking-[0.2em] font-semibold whitespace-nowrap uppercase px-10">
+                  {text}
+                </span>
+                <span className="text-white/40 text-xs select-none">✦</span>
+              </div>
+            ))}
+          </div>
+
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes marquee {
+              0%   { transform: translateX(0); }
+              100% { transform: translateX(-25%); }
+            }
+            .marquee-track {
+              animation: marquee 80s linear infinite;
+              will-change: transform;
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .marquee-track { animation-play-state: paused; }
+            }
+          `}} />
         </div>
-        
-        {/* Main Header - Always white and sticky */}
+
+        {/* Main Header */}
         <header className="bg-white shadow-md">
-          <div className="container mx-auto flex items-center justify-between py-1 px-4 sm:px-6 lg:px-8">
-            {/* Logo Section */}
+          <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8">
+            {/* Logo */}
             <div
               className="flex items-center cursor-pointer"
               onClick={() => router.push("/")}
@@ -138,43 +166,27 @@ const HeroSection = () => {
               />
             </div>
 
-            {/* Navigation Section */}
+            {/* Nav */}
             <nav className="hidden md:flex items-center space-x-8 lg:space-x-10">
-              <Link
-                href="/"
-                className={`${getLinkClass("/")} text-gray-700 text-base lg:text-lg font-medium`}
-              >
+              <Link href="/" className={`${getLinkClass("/")} text-gray-700 text-base lg:text-lg font-medium`}>
                 Home
               </Link>
-              <Link
-                href="/about"
-                className={`${getLinkClass("/about")} text-gray-700 text-base lg:text-lg font-medium`}
-              >
+              <Link href="/about" className={`${getLinkClass("/about")} text-gray-700 text-base lg:text-lg font-medium`}>
                 About Us
               </Link>
-              <Link
-                href="/products"
-                className={`${getLinkClass("/products")} text-gray-700 text-base lg:text-lg font-medium`}
-              >
+              <Link href="/products" className={`${getLinkClass("/products")} text-gray-700 text-base lg:text-lg font-medium`}>
                 Shop
               </Link>
-              <Link
-                href="/blogs"
-                className={`${getLinkClass("/blogs")} text-gray-700 text-base lg:text-lg font-medium`}
-              >
+              <Link href="/blogs" className={`${getLinkClass("/blogs")} text-gray-700 text-base lg:text-lg font-medium`}>
                 Voice of the Valley
               </Link>
-              <Link
-                href="/contact"
-                className={`${getLinkClass("/contact")} text-gray-700 text-base lg:text-lg font-medium`}
-              >
+              <Link href="/contact" className={`${getLinkClass("/contact")} text-gray-700 text-base lg:text-lg font-medium`}>
                 Contact Us
               </Link>
             </nav>
 
-            {/* Search and Icons Section */}
+            {/* Icons */}
             <div className="flex items-center space-x-4 sm:space-x-6">
-              {/* Search Icon and Input */}
               <div className="relative flex items-center">
                 {showSearchInput ? (
                   <form onSubmit={handleSearch} className="relative">
@@ -199,7 +211,6 @@ const HeroSection = () => {
                 )}
               </div>
 
-              {/* Icons Section */}
               {accessToken ? (
                 <>
                   <AiOutlineUser
@@ -207,24 +218,12 @@ const HeroSection = () => {
                     size={26}
                     className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
                   />
-                  <div
-                    className="relative cursor-pointer group"
-                    onClick={() => router.push("/wishlist")}
-                  >
-                    <AiOutlineHeart
-                      size={26}
-                      className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
-                    />
+                  <div className="relative cursor-pointer group" onClick={() => router.push("/wishlist")}>
+                    <AiOutlineHeart size={26} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
                   </div>
-                  <div
-                    className="relative cursor-pointer group"
-                    onClick={() => router.push("/add-to-cart")}
-                  >
-                    <AiOutlineShoppingCart
-                      size={26}
-                      className="text-gray700 hover:text-[#7A6E18] transition-colors duration-300"
-                    />
+                  <div className="relative cursor-pointer group" onClick={() => router.push("/add-to-cart")}>
+                    <AiOutlineShoppingCart size={26} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
                   </div>
                 </>
@@ -235,24 +234,12 @@ const HeroSection = () => {
                     size={26}
                     className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
                   />
-                  <div
-                    className="relative cursor-pointer group"
-                    onClick={() => router.push("/wishlist")}
-                  >
-                    <AiOutlineHeart
-                      size={26}
-                      className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
-                    />
+                  <div className="relative cursor-pointer group" onClick={() => router.push("/wishlist")}>
+                    <AiOutlineHeart size={26} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
                   </div>
-                  <div
-                    className="relative cursor-pointer group"
-                    onClick={() => router.push("/add-to-cart")}
-                  >
-                    <AiOutlineShoppingCart
-                      size={26}
-                      className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300"
-                    />
+                  <div className="relative cursor-pointer group" onClick={() => router.push("/add-to-cart")}>
+                    <AiOutlineShoppingCart size={26} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse group-hover:animate-none" />
                   </div>
                 </>
@@ -261,16 +248,16 @@ const HeroSection = () => {
           </div>
         </header>
       </div>
-      
-      {/* Spacer to prevent content from hiding behind fixed header */}
-      <div className="pt-[100px] md:pt-[120px]"></div>
 
-      {/* Hero Carousel Section */}
+      {/* Spacer */}
+      <div className="pt-[120px] md:pt-[120px]"></div>
+
+      {/* Hero Carousel */}
       <div id="hero-section" className="relative h-screen overflow-hidden">
         {loading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#fef9f1] via-[#f5f0dc] to-[#e7dbac] z-50">
             <ClipLoader color="#7A6E18" size={50} />
-            <p className=" text-[#7A6E18] text-lg font-medium animate-pulse">
+            <p className="text-[#7A6E18] text-lg font-medium animate-pulse">
               Loading banners...
             </p>
           </div>
@@ -280,7 +267,6 @@ const HeroSection = () => {
           </div>
         ) : (
           <>
-            {/* Carousel Images and Text */}
             {sliders.map((slider, index) => (
               <div
                 key={slider._id}
@@ -288,7 +274,6 @@ const HeroSection = () => {
                   currentSlide === index ? "opacity-100" : "opacity-0"
                 }`}
               >
-                {/* Use local image */}
                 <Image
                   src={slider.localImage || "/banner1.jpg"}
                   alt={slider.title}
@@ -296,11 +281,6 @@ const HeroSection = () => {
                   className="object-cover brightness-75"
                   priority={index === 0}
                 />
-                
-                {/* Overlay */}
-                {/* <div className="absolute inset-0 bg-gradient-to-b from-gray-900/20 to-gray-900/60" /> */}
-                
-                {/* Hero Text Section - Dynamic from API */}
                 <div className="absolute inset-0 flex items-center z-10">
                   <div className="text-left text-white px-4 sm:px-6">
                     <h1 className="text-4xl sm:text-5xl md:text-4xl lg:text-7xl font-extrabold mb-4 md:mb-6 tracking-tight animate-fade-in">
@@ -321,8 +301,8 @@ const HeroSection = () => {
                 </div>
               </div>
             ))}
-            
-            {/* Carousel Dots */}
+
+            {/* Dots */}
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
               {sliders.map((_, index) => (
                 <button

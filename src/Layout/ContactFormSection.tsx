@@ -274,14 +274,14 @@ export default function ContactFormSection() {
                   </div>
 
                   {/* Email */}
-                  <a href="mailto:info@gauraaj.org" className="flex items-center gap-4 group p-4 rounded-xl hover:bg-white/10 transition-all ">
+                  <a href="mailto:ghccustomercare@gmail.com" className="flex items-center gap-4 group p-4 rounded-xl hover:bg-white/10 transition-all ">
                     <div className="w-12 h-12 rounded-lg bg-[#ae5809]/30 flex items-center justify-center group-hover:bg-[#ae5809]/40 transition-colors">
                       <Mail className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold mb-1 text-white">Email Us</h4>
                       <p className="text-gray-200 text-sm  transition-colors">
-                        info@gauraaj.org
+                      ghccustomercare@gmail.com
                       </p>
                     </div>
                   </a>

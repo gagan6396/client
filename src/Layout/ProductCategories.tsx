@@ -72,6 +72,7 @@ interface Product {
   rating: number;
   brand: string;
   isBestSeller: boolean;
+  isSeasonalFavorite?: boolean;
   createdAt: string;
   inWishlist: boolean;
   inCart: boolean;
@@ -87,7 +88,7 @@ interface Category {
 }
 
 // Type for product filter
-type ProductFilterType = 'bestSeller' | 'newLaunch';
+type ProductFilterType = 'bestSeller' | 'newLaunch' | 'seasonalFavorites';
 
 // Skeleton Product Card
 const SkeletonCard = () => (
@@ -157,31 +158,44 @@ const ProductCategories: React.FC = () => {
     navigate.push(`/products/${productId}`);
   };
 
+  // Get current season
+  const getCurrentSeason = (): string => {
+    const month = new Date().getMonth() + 1; // 1-12
+    if (month >= 3 && month <= 5) return 'spring';
+    if (month >= 6 && month <= 8) return 'summer';
+    if (month >= 9 && month <= 11) return 'autumn';
+    return 'winter';
+  };
+
   // Filter products based on selected filter
   const getFilteredProducts = () => {
     if (productFilter === 'bestSeller') {
       return products.filter((item) => item.isBestSeller);
     } else if (productFilter === 'newLaunch') {
-      // Get products from the last 30 days
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      return products.filter((item) => {
-        const createdAt = new Date(item.createdAt);
-        return createdAt >= thirtyDaysAgo;
-      });
+      return products
+        .filter((item) => new Date(item.createdAt) >= thirtyDaysAgo)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } else if (productFilter === 'seasonalFavorites') {
+      // Use isSeasonalFavorite flag if available, otherwise fall back to top-rated products
+      const seasonal = products.filter((item) => item.isSeasonalFavorite);
+      if (seasonal.length > 0) return seasonal;
+      // Fallback: top-rated products (rating >= 4)
+      return products
+        .filter((item) => item.rating >= 4)
+        .sort((a, b) => b.rating - a.rating);
     }
     return [];
   };
 
-  // Sort new arrivals by creation date (newest first)
-  const sortedNewLaunches = getFilteredProducts().sort((a, b) => {
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  const filteredProducts = getFilteredProducts();
 
-  const filteredProducts = productFilter === 'newLaunch' 
-    ? sortedNewLaunches 
-    : getFilteredProducts();
+  const emptyStateMessages: Record<ProductFilterType, string> = {
+    bestSeller: 'There are no best seller products available at the moment.',
+    newLaunch: 'There are no new launch products available at the moment.',
+    seasonalFavorites: 'There are no seasonal favorites available at the moment.',
+  };
 
   if (error) {
     return (
@@ -207,12 +221,13 @@ const ProductCategories: React.FC = () => {
       {/* Top Products Section */}
       <main className="px-4 sm:px-6 lg:px-8 py-8">
         <div className="container mx-auto">
-          {/* Simple Navigation Bar - Like your image */}
+
+          {/* Tab Navigation */}
           <div className="flex justify-center mb-8">
             <div className="flex space-x-0 border-b border-gray-200">
               <button
                 onClick={() => setProductFilter('bestSeller')}
-                className={`px-8 py-3 text-lg font-medium transition-all duration-300 ${
+                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
                   productFilter === 'bestSeller'
                     ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
                     : 'text-gray-500 hover:text-[#2d5437]'
@@ -222,7 +237,7 @@ const ProductCategories: React.FC = () => {
               </button>
               <button
                 onClick={() => setProductFilter('newLaunch')}
-                className={`px-8 py-3 text-lg font-medium transition-all duration-300 ${
+                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
                   productFilter === 'newLaunch'
                     ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
                     : 'text-gray-500 hover:text-[#2d5437]'
@@ -230,38 +245,44 @@ const ProductCategories: React.FC = () => {
               >
                 New Launch
               </button>
+              <button
+                onClick={() => setProductFilter('seasonalFavorites')}
+                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
+                  productFilter === 'seasonalFavorites'
+                    ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
+                    : 'text-gray-500 hover:text-[#2d5437]'
+                }`}
+              >
+                Seasonal Favorites
+              </button>
             </div>
           </div>
 
           {/* Products Grid with Empty State */}
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-4 gap-4">
-              {Array(12)
-                .fill(0)
-                .map((_, index) => <SkeletonCard key={index} />)}
+              {Array(12).fill(0).map((_, index) => <SkeletonCard key={index} />)}
             </div>
           ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-4 gap-4">
-              {filteredProducts
-                .slice(0, 12)
-                .map((product) => (
-                  <div
-                    key={product._id}
-                    onClick={() => handleProductClick(product._id)}
-                    className="cursor-pointer"
-                  >
-                    <ProductCard
-                      images={product.images}
-                      title={product.name}
-                      variants={product.variants}
-                      rating={product.rating}
-                      isBestSeller={product.isBestSeller}
-                      productId={product._id}
-                      inWishlist={product.inWishlist}
-                      inCart={product.inCart}
-                    />
-                  </div>
-                ))}
+              {filteredProducts.slice(0, 12).map((product) => (
+                <div
+                  key={product._id}
+                  onClick={() => handleProductClick(product._id)}
+                  className="cursor-pointer"
+                >
+                  <ProductCard
+                    images={product.images}
+                    title={product.name}
+                    variants={product.variants}
+                    rating={product.rating}
+                    isBestSeller={product.isBestSeller}
+                    productId={product._id}
+                    inWishlist={product.inWishlist}
+                    inCart={product.inCart}
+                  />
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-12">
@@ -284,9 +305,7 @@ const ProductCategories: React.FC = () => {
                 No Products Available
               </h3>
               <p className="text-gray-500 mb-6">
-                {productFilter === 'bestSeller'
-                  ? 'There are no best seller products available at the moment.'
-                  : 'There are no new launch products available at the moment.'}
+                {emptyStateMessages[productFilter]}
               </p>
               <Button
                 onClick={() => navigate.push('/products')}
@@ -297,7 +316,7 @@ const ProductCategories: React.FC = () => {
             </div>
           )}
 
-          {/* View All Button - Only show when there are products */}
+          {/* View All Button */}
           {!loading && filteredProducts.length > 0 && (
             <div className="mt-8 text-center">
               <Link href="/products">
@@ -317,9 +336,6 @@ const ProductCategories: React.FC = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-[#40572c] mb-3">
               Our Collection
             </h2>
-            {/* <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse through our carefully curated collection of organic and sustainable products
-            </p> */}
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -327,7 +343,7 @@ const ProductCategories: React.FC = () => {
               ? Array(8).fill(0).map((_, i) => <SkeletonCategoryCard key={i} />)
               : (showAllCategories ? categories : categories.slice(0, 12)).map(
                   (category) => (
-                    <div 
+                    <div
                       onClick={() => navigate.push(`/products?category=${category._id}`)}
                       key={category?._id || `category-${Math.random()}`}
                       className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 border-gray-100 hover:border-[#7A6E18]"
@@ -342,8 +358,6 @@ const ProductCategories: React.FC = () => {
                           priority={true}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                        
-                        {/* Category Name with Arrow */}
                         <div className="absolute bottom-0 left-0 right-0 p-6">
                           <h3 className="font-bold text-white text-xl mb-3 drop-shadow-lg text-center flex items-center justify-center gap-2">
                             {category?.name || "Unnamed Category"}
@@ -360,12 +374,12 @@ const ProductCategories: React.FC = () => {
 
           {categories.length > 12 && (
             <div className="mt-10 text-center">
-             <Button
-  onClick={() => setShowAllCategories(!showAllCategories)}
-  className="bg-amber-50 text-[#7A6E18] hover:bg-amber-100 px-8 py-3 rounded-full font-semibold transition-all hover:shadow-lg hover:scale-105 border border-amber-200"
->
-  {showAllCategories ? "Show Less" : "See More Categories"}
-</Button>
+              <Button
+                onClick={() => setShowAllCategories(!showAllCategories)}
+                className="bg-amber-50 text-[#7A6E18] hover:bg-amber-100 px-8 py-3 rounded-full font-semibold transition-all hover:shadow-lg hover:scale-105 border border-amber-200"
+              >
+                {showAllCategories ? "Show Less" : "See More Categories"}
+              </Button>
             </div>
           )}
         </div>
@@ -377,7 +391,6 @@ const ProductCategories: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center bg-white rounded-2xl shadow-xl shadow-amber-900/5 overflow-hidden p-0 lg:p-0">
             {/* Image Section */}
             <div className="relative lg:order-2 overflow-hidden h-full min-h-[400px] lg:min-h-[500px]">
-              
               <Image
                 src='/ab.png'
                 alt="Nature Essence"
@@ -385,35 +398,28 @@ const ProductCategories: React.FC = () => {
                 priority
                 fill
               />
-              {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 via-transparent to-transparent" />
-              {/* Decorative Elements */}
               <div className="absolute top-6 left-6 w-24 h-1 bg-gradient-to-r from-amber-500 to-amber-300 rounded-full"></div>
               <div className="absolute bottom-6 right-6 w-16 h-16 border-2 border-amber-300/30 rounded-full"></div>
             </div>
 
             {/* Content Section */}
             <div className="p-8 md:p-12 lg:p-14 space-y-6 md:space-y-8">
-              {/* Title */}
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 leading-tight">
                 Discover the
                 <span className="block font-serif italic text-[#40572c] mt-2">
                   Essence of Nature
                 </span>
               </h2>
-
-              {/* Divider */}
               <div className="w-16 h-0.5 bg-gradient-to-r from-amber-400 to-amber-200"></div>
-
-              {/* Description */}
               <div className="space-y-4">
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
-                At Gauraaj, we are dedicated to providing pure, wholesome and natural products straight from source.                </p>
+                  At Gauraaj, we are dedicated to providing pure, wholesome and natural products straight from source.
+                </p>
                 <p className="text-gray-600 text-base md:text-lg leading-relaxed font-light">
-                We are all about  a movement that connects nature's rich unadulterated offerings, indigenous farmers, and you consumers – catalysing health, welfare and wellbeing for all. With our mission to promote positive social impact through Gauraaj products and programmes, we believe in shaping healthier and responsible communities for generations to come. With the support of our consumers, together, we can create a future where conscious and responsible choices lead to thriving rural and natural ecosystems.                </p>
+                  We are all about a movement that connects nature's rich unadulterated offerings, indigenous farmers, and you consumers – catalysing health, welfare and wellbeing for all. With our mission to promote positive social impact through Gauraaj products and programmes, we believe in shaping healthier and responsible communities for generations to come. With the support of our consumers, together, we can create a future where conscious and responsible choices lead to thriving rural and natural ecosystems.
+                </p>
               </div>
-
-              {/* Stats or Features */}
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <div className="space-y-1">
                   <div className="text-2xl font-light text-[#2d5437]">100%</div>
@@ -424,8 +430,6 @@ const ProductCategories: React.FC = () => {
                   <div className="text-sm text-gray-500">Welfare and Wellbeing</div>
                 </div>
               </div>
-
-              {/* Button */}
               <div className="pt-6">
                 <Button
                   onClick={() => navigate.push("/about")}
