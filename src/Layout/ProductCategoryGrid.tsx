@@ -266,7 +266,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {isBestSeller && (
-         <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-100 to-amber-200 text-amber-900 text-xs px-3 py-1 rounded-full shadow-lg backdrop-blur-sm border border-amber-300">
+         <div className="absolute top-2 left-2 
+         bg-[#2F4F2F] 
+         text-[#FFD700] text-xs px-3 py-1 
+         rounded-full shadow-sm 
+         border border-[#3E5C3E]">
          Best Seller
        </div>
         )}

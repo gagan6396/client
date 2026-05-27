@@ -1,50 +1,71 @@
-import axios from 'axios';
+import axios from "axios";
 
-// Create an Axios instance
-const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://server.gauraaj.com/api/v1', // API base URL
-    // timeout: 10000, // Request timeout (in milliseconds)
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://server.gauraaj.com/api/v1",
 });
 
-// Add a request interceptor
-axiosInstance.interceptors.request.use(
-    (config) => {
-        // Add Authorization token if available
-        if (typeof window !== 'undefined') { // Ensure this runs only on the client side
-            const token = localStorage.getItem('accessToken'); // Adjust this according to your token storage method
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
-        return config;
-    },
-    (error) => {
-        // Handle request error
-        return Promise.reject(error);
+// ── REQUEST interceptor: attach access token to every request ─────────────────
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor
-axiosInstance.interceptors.response.use(
-    (response) => {
-        // Handle successful response
-        return response;
-    },
-    (error) => {
-        // Handle errors (e.g., 401, 403, etc.)
-        if (error.response) {
-            if (error.response.status === 401) {
-                if (typeof window !== 'undefined') { // Ensure this runs only on the client side
-                    // Clear all local storage items
-                    localStorage.clear(); // Clear all local storage items
+// ── RESPONSE interceptor: handle 401 + token refresh ─────────────────────────
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const original = error.config;
 
-                    // Redirect to login page
-                    window.location.href = '/login'; // Use window.location for redirection
-                }
-            }
-        }
-        return Promise.reject(error);
+    if (original.url?.includes("/user/auth/refresh")) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.href = "/login?reason=session_expired";
+      return Promise.reject(error);
     }
+
+    if (error.response?.status === 401 && !original._retry) {
+      original._retry = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login?reason=session_expired";
+        return Promise.reject(error);
+      }
+
+      try {
+        const { data } = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://server.gauraaj.com/api/v1"}/user/auth/refresh`,
+          { refreshToken }
+        );
+
+        const newAccessToken = data.data.accessToken;
+        const newRefreshToken = data.data.refreshToken;
+
+        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
+
+        api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+        original.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        return api(original);
+      } catch (err) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login?reason=session_expired";
+        return Promise.reject(err);
+      }
+    }
+
+    return Promise.reject(error);
+  }
 );
 
-export default axiosInstance;
+export default api;

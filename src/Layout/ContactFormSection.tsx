@@ -71,7 +71,7 @@ export default function ContactFormSection() {
       {/* Banner Image Section */}
       <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px]">
         <Image
-          src='/abt.png' // Replace with your actual banner image path
+          src='/gauraaj banner (1).png' // Replace with your actual banner image path
           alt="Contact Us Banner"
           fill
           className="object-contain"

@@ -59,7 +59,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-   <header className="bg-white mb-3 shadow-md fixed top-0 left-0 right-0 z-50">
+   <header className="bg-white  shadow-md ">
   {/* Green Banner - Fixed at the very top */}
   {/* <div className="bg-[#556b2f] text-white text-center py-2 px-4">
     <p className="text-sm md:text-base font-medium">
@@ -79,7 +79,7 @@ const Header: React.FC = () => {
         alt="Logo"
         width={120}
         height={120}
-        className="w-20 sm:w-24 md:w-28 h-auto hover:opacity-90 transition-opacity duration-300 object-contain"
+        className="w-20 sm:w-24 md:w-24 h-auto hover:opacity-90 transition-opacity duration-300 object-contain"
       />
     </div>
 

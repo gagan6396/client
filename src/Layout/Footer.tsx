@@ -2,7 +2,7 @@
 
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import bgImage from "@/public/l5.jpg";
-import logo from "@/public/logo (1).png";
+import logo from "@/public/logo (2).png";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,13 +57,13 @@ const Footer: React.FC = () => {
     : categories.slice(0, 4);
 
   return (
-    <footer className="relative bg-[#40572c] overflow-hidden">
+    <footer className="relative bg-white overflow-hidden">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0 opacity-10">
+      <div className="absolute inset-0 z-0 opacity-100 ">
         <div
           className="w-full h-full"
           style={{
-            backgroundImage: `url('/banner.png')`,
+            backgroundImage: `url('/GAURAJbanner-01-01.jpg.jpeg')`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
@@ -89,7 +89,7 @@ const Footer: React.FC = () => {
                   className="relative"
                 />
               </div>
-              <p className="text-sm leading-relaxed text-white mt-3">
+              <p className="text-sm leading-relaxed text-black mt-3">
                 🌿 Pure. Natural. Sustainable. Embrace nature's essence with 
                 Gauraaj's premium organic products for a healthier lifestyle.
               </p>
@@ -146,7 +146,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Home
                 </Link>
@@ -154,7 +154,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/products"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Products
                 </Link>
@@ -162,7 +162,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   About Us
                 </Link>
@@ -170,7 +170,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Contact Us
                 </Link>
@@ -186,7 +186,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                    className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                   >
                     B2B Enquiry
                   </Link>
@@ -220,7 +220,7 @@ const Footer: React.FC = () => {
                     <li key={category._id} className="py-1">
                       <Link
                         href={`/products?category=${category._id}`}
-                        className="text-sm text-white hover:text-amber-700 transition-colors duration-300 flex items-center"
+                        className="text-sm text-black hover:text-amber-700 transition-colors duration-300 flex items-center"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-2 flex-shrink-0"></span>
                         <span className="truncate">{category.name}</span>
@@ -253,7 +253,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/terms-and-conditions"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Terms & Conditions
                 </Link>
@@ -261,7 +261,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Privacy Policy
                 </Link>
@@ -269,7 +269,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/cancellation-and-refund"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Cancellation & Refund
                 </Link>
@@ -277,7 +277,7 @@ const Footer: React.FC = () => {
               <li>
                 <Link
                   href="/shipping-and-delivery"
-                  className="text-sm text-white hover:text-amber-700 transition-colors duration-300 block py-1"
+                  className="text-sm text-black hover:text-amber-700 transition-colors duration-300 block py-1"
                 >
                   Shipping & Delivery
                 </Link>
@@ -300,7 +300,7 @@ const Footer: React.FC = () => {
               />
               <button
                 type="submit"
-                className="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg hover:from-amber-700 hover:to-amber-800 transition-all duration-300 shadow-sm hover:shadow text-sm font-medium whitespace-nowrap"
+                className="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-black rounded-lg hover:from-amber-700 hover:to-amber-800 transition-all duration-300 shadow-sm hover:shadow text-sm font-medium whitespace-nowrap"
               >
                 Subscribe
               </button>
@@ -312,7 +312,7 @@ const Footer: React.FC = () => {
         <div className="mt-6 pt-6 border-t border-amber-100">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="text-center md:text-left">
-              <p className="text-sm text-white">
+              <p className="text-sm text-black">
                 Copyright © {moment().year()} Gauraaj Valleyfood Private Limited.
                 All Rights Reserved
               </p>
@@ -320,11 +320,11 @@ const Footer: React.FC = () => {
             {/* <div className="flex items-center gap-4">
               <Link
                 href="/sitemap"
-                className="text-sm text-white hover:text-amber-700 transition-colors"
+                className="text-sm text-black hover:text-amber-700 transition-colors"
               >
                 Sitemap
               </Link>
-              <div className="text-sm text-white flex items-center gap-1">
+              <div className="text-sm text-black flex items-center gap-1">
                 <span>Made with</span>
                 <span className="text-amber-600">♥</span>
                 <span>for nature</span>

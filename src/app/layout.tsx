@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
+// import "@/lib/axiosSetup"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

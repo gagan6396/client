@@ -10,7 +10,6 @@ const AboutHeroSection: FC = () => {
   return (
     <div
       className="relative padd bg-gradient-to-b from-white via-amber-50/20 to-white min-h-screen"
-      style={{ marginTop: "53px" }}
     >
       {/* Banner Image Section - Clean version without gradients */}
       <div className="relative pt-0 w-full h-full min-h-[400px] max-h-[500px]">
