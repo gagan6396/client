@@ -22,6 +22,7 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
+    
     if (original.url?.includes("/user/auth/refresh")) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
