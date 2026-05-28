@@ -12,6 +12,7 @@ import {
   AiOutlineShoppingCart,
   AiOutlineUser,
 } from "react-icons/ai";
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 
@@ -40,6 +41,7 @@ const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [sliders, setSliders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   let accessToken;
   if (typeof window !== "undefined") {
@@ -111,13 +113,22 @@ const HeroSection = () => {
     setCurrentSlide(index);
   };
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About Us" },
+    { href: "/products", label: "Shop" },
+    { href: "/blogs", label: "Voice of the Valley" },
+    { href: "/contact", label: "Contact Us" },
+  ];
+
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden w-full">
+      <style dangerouslySetInnerHTML={{ __html: `body { overflow-x: hidden; }` }} />
       {/* Fixed Header Container */}
-      <div className="fixed top-0 left-0 right-0 z-50">
+      <div className="fixed top-0 left-0 right-0 z-50 max-w-[100vw] overflow-hidden">
 
         {/* ── INFINITE MARQUEE ── */}
-        <div className="relative w-full overflow-hidden bg-[#40572c] py-2">
+        <div className="relative w-full overflow-hidden bg-[#40572c] py-2" style={{ maxWidth: "100vw" }}>
           {/* Gradient fade edges */}
           <div className="absolute left-0 top-0 h-full w-20 bg-gradient-to-r from-[#40572c] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-[#40572c] to-transparent z-10 pointer-events-none" />
@@ -151,10 +162,10 @@ const HeroSection = () => {
 
         {/* Main Header */}
         <header className="bg-white shadow-md">
-          <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 md:h-20">
             {/* Logo */}
             <div
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer flex-shrink-0"
               onClick={() => router.push("/")}
             >
               <Image
@@ -162,31 +173,25 @@ const HeroSection = () => {
                 alt="Logo"
                 width={120}
                 height={120}
-                className="w-16 sm:w-20 md:w-24 h-auto hover:opacity-90 transition-opacity duration-300"
+                className="w-14 sm:w-16 md:w-20 h-auto hover:opacity-90 transition-opacity duration-300"
               />
             </div>
 
-            {/* Nav */}
-            <nav className="hidden md:flex items-center space-x-8 lg:space-x-10">
-              <Link href="/" className={`${getLinkClass("/")} text-gray-700 text-base lg:text-lg font-medium`}>
-                Home
-              </Link>
-              <Link href="/about" className={`${getLinkClass("/about")} text-gray-700 text-base lg:text-lg font-medium`}>
-                About Us
-              </Link>
-              <Link href="/products" className={`${getLinkClass("/products")} text-gray-700 text-base lg:text-lg font-medium`}>
-                Shop
-              </Link>
-              <Link href="/blogs" className={`${getLinkClass("/blogs")} text-gray-700 text-base lg:text-lg font-medium`}>
-                Voice of the Valley
-              </Link>
-              <Link href="/contact" className={`${getLinkClass("/contact")} text-gray-700 text-base lg:text-lg font-medium`}>
-                Contact Us
-              </Link>
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`${getLinkClass(link.href)} text-gray-700 text-base lg:text-lg font-medium whitespace-nowrap`}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
 
-            {/* Icons */}
-            <div className="flex items-center space-x-4 sm:space-x-6">
+            {/* Icons — desktop */}
+            <div className="hidden md:flex items-center space-x-4 sm:space-x-6 flex-shrink-0">
               <div className="relative flex items-center">
                 {showSearchInput ? (
                   <form onSubmit={handleSearch} className="relative">
@@ -245,12 +250,88 @@ const HeroSection = () => {
                 </>
               )}
             </div>
+
+            {/* Mobile right side: icons + hamburger */}
+            <div className="flex md:hidden items-center space-x-3 flex-shrink-0">
+              <AiOutlineSearch
+                onClick={toggleSearchInput}
+                size={22}
+                className="text-gray-700 hover:text-[#7A6E18] cursor-pointer transition-colors duration-300"
+              />
+              <div className="relative cursor-pointer" onClick={() => router.push("/wishlist")}>
+                <AiOutlineHeart size={22} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white" />
+              </div>
+              <div className="relative cursor-pointer" onClick={() => router.push("/add-to-cart")}>
+                <AiOutlineShoppingCart size={22} className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300" />
+                <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white" />
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                className="text-gray-700 hover:text-[#7A6E18] transition-colors duration-300 p-1"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <AiOutlineClose size={24} /> : <AiOutlineMenu size={24} />}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile search bar */}
+          {showSearchInput && (
+            <div className="md:hidden px-4 pb-3">
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-200 bg-white text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7A6E18] transition-all duration-300"
+                />
+                <AiOutlineSearch
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={20}
+                />
+              </form>
+            </div>
+          )}
+
+          {/* Mobile Nav Drawer */}
+          {mobileMenuOpen && (
+            <nav className="md:hidden bg-white border-t border-gray-100 px-4 py-3 flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`${getLinkClass(link.href)} text-gray-700 text-base font-medium py-2 border-b border-gray-50`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-2">
+                {accessToken ? (
+                  <button
+                    onClick={() => { router.push("/user-account"); setMobileMenuOpen(false); }}
+                    className="flex items-center gap-2 text-gray-700 hover:text-[#7A6E18] text-base font-medium py-2"
+                  >
+                    <AiOutlineUser size={20} /> My Account
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { router.push("/login"); setMobileMenuOpen(false); }}
+                    className="flex items-center gap-2 text-gray-700 hover:text-[#7A6E18] text-base font-medium py-2"
+                  >
+                    <AiOutlineUser size={20} /> Login
+                  </button>
+                )}
+              </div>
+            </nav>
+          )}
         </header>
       </div>
 
-      {/* Spacer */}
-      <div className="pt-[120px] md:pt-[120px]"></div>
+      {/* Spacer — taller on mobile to account for potential search bar */}
+      <div className="pt-[110px] md:pt-[120px]"></div>
 
       {/* Hero Carousel */}
       <div id="hero-section" className="relative h-screen overflow-hidden">

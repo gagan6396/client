@@ -181,11 +181,9 @@ const ProductCategories: React.FC = () => {
       console.log(`Best Seller filter: ${filtered.length} products found`);
       return filtered;
     } else if (productFilter === 'newLaunch') {
-      // First try: Use isNewLaunch flag
       let filtered = products.filter((item) => item.isNewLaunch === true);
       console.log(`New Launch filter (by flag): ${filtered.length} products found`);
       
-      // Second try: If no products with flag, use date-based filtering (last 30 days)
       if (filtered.length === 0) {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -197,11 +195,9 @@ const ProductCategories: React.FC = () => {
       
       return filtered;
     } else if (productFilter === 'seasonalFavorites') {
-      // First try: Use isSeasonalFavorite flag
       let filtered = products.filter((item) => item.isSeasonalFavorite === true);
       console.log(`Seasonal Favorites filter (by flag): ${filtered.length} products found`);
       
-      // Second try: If no products with flag, use rating-based filtering
       if (filtered.length === 0) {
         filtered = products
           .filter((item) => item.rating >= 4)
@@ -242,17 +238,17 @@ const ProductCategories: React.FC = () => {
   }
 
   return (
-    <section className="bg-gray-50">
+    <section className="bg-gray-50 overflow-x-hidden w-full">
       {/* Top Products Section */}
-      <main className="px-4 sm:px-6 lg:px-8 py-8">
-        <div className="container mx-auto">
+      <main className="px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="container mx-auto w-full">
 
-          {/* Tab Navigation */}
-          <div className="flex justify-center mb-8">
-            <div className="flex space-x-0 border-b border-gray-200">
+          {/* Tab Navigation — scrollable on mobile */}
+          <div className="w-full overflow-x-auto mb-8" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div className="flex min-w-max mx-auto border-b border-gray-200 w-fit" style={{ margin: "0 auto" }}>
               <button
                 onClick={() => setProductFilter('bestSeller')}
-                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
+                className={`px-4 sm:px-6 py-3 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
                   productFilter === 'bestSeller'
                     ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
                     : 'text-gray-500 hover:text-[#2d5437]'
@@ -262,7 +258,7 @@ const ProductCategories: React.FC = () => {
               </button>
               <button
                 onClick={() => setProductFilter('newLaunch')}
-                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
+                className={`px-4 sm:px-6 py-3 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
                   productFilter === 'newLaunch'
                     ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
                     : 'text-gray-500 hover:text-[#2d5437]'
@@ -272,7 +268,7 @@ const ProductCategories: React.FC = () => {
               </button>
               <button
                 onClick={() => setProductFilter('seasonalFavorites')}
-                className={`px-6 py-3 text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
+                className={`px-4 sm:px-6 py-3 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 whitespace-nowrap ${
                   productFilter === 'seasonalFavorites'
                     ? 'text-[#2d5437] border-b-2 border-[#7A6E18]'
                     : 'text-gray-500 hover:text-[#2d5437]'
@@ -355,7 +351,7 @@ const ProductCategories: React.FC = () => {
       </main>
 
       {/* Best Product Categories Section */}
-      <main className="px-4 sm:px-6 lg:px-8 py-6 bg-white">
+      <main className="px-4 sm:px-6 lg:px-8 py-6 bg-white w-full">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#40572c] mb-3">
@@ -411,7 +407,7 @@ const ProductCategories: React.FC = () => {
       </main>
 
       {/* Video and Description Section */}
-      <main className="px-4 sm:px-6 lg:px-8 py-16 md:py-16 bg-green-100 to-white">
+      <main className="px-4 sm:px-6 lg:px-8 py-16 md:py-16 bg-green-100 to-white w-full">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center bg-white rounded-2xl shadow-xl shadow-amber-900/5 overflow-hidden p-0 lg:p-0">
             {/* Image Section */}
