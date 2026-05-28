@@ -3,7 +3,6 @@
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import { getProductsAPI } from "@/apis/productsAPIs";
 import { Button } from "@/components/ui/button";
-import l2 from "@/public/l2.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -73,6 +72,7 @@ interface Product {
   brand: string;
   isBestSeller: boolean;
   isSeasonalFavorite?: boolean;
+  isNewLaunch?: boolean;
   createdAt: string;
   inWishlist: boolean;
   inCart: boolean;
@@ -137,7 +137,23 @@ const ProductCategories: React.FC = () => {
       setCategories(categoryResponse?.data?.data || []);
 
       const productsResponse = await getProductsAPI();
-      setProducts(productsResponse?.data?.data?.products || []);
+      const productsData = productsResponse?.data?.data?.products || [];
+      
+      // Debug logs - remove these in production
+      console.log("=== Product Categories Debug ===");
+      console.log("Total products:", productsData.length);
+      console.log("Products with isBestSeller=true:", productsData.filter((p: Product) => p.isBestSeller === true).length);
+      console.log("Products with isSeasonalFavorite=true:", productsData.filter((p: Product) => p.isSeasonalFavorite === true).length);
+      console.log("Products with isNewLaunch=true:", productsData.filter((p: Product) => p.isNewLaunch === true).length);
+      console.log("Sample product fields:", productsData.slice(0, 2).map((p: Product) => ({
+        name: p.name,
+        isBestSeller: p.isBestSeller,
+        isSeasonalFavorite: p.isSeasonalFavorite,
+        isNewLaunch: p.isNewLaunch
+      })));
+      console.log("================================");
+      
+      setProducts(productsData);
     } catch (error: any) {
       console.error("Error fetching data:", error);
       const errorMessage =
@@ -158,33 +174,42 @@ const ProductCategories: React.FC = () => {
     navigate.push(`/products/${productId}`);
   };
 
-  // Get current season
-  const getCurrentSeason = (): string => {
-    const month = new Date().getMonth() + 1; // 1-12
-    if (month >= 3 && month <= 5) return 'spring';
-    if (month >= 6 && month <= 8) return 'summer';
-    if (month >= 9 && month <= 11) return 'autumn';
-    return 'winter';
-  };
-
   // Filter products based on selected filter
   const getFilteredProducts = () => {
     if (productFilter === 'bestSeller') {
-      return products.filter((item) => item.isBestSeller);
+      const filtered = products.filter((item) => item.isBestSeller === true);
+      console.log(`Best Seller filter: ${filtered.length} products found`);
+      return filtered;
     } else if (productFilter === 'newLaunch') {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return products
-        .filter((item) => new Date(item.createdAt) >= thirtyDaysAgo)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      // First try: Use isNewLaunch flag
+      let filtered = products.filter((item) => item.isNewLaunch === true);
+      console.log(`New Launch filter (by flag): ${filtered.length} products found`);
+      
+      // Second try: If no products with flag, use date-based filtering (last 30 days)
+      if (filtered.length === 0) {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        filtered = products
+          .filter((item) => new Date(item.createdAt) >= thirtyDaysAgo)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        console.log(`New Launch filter (by date - last 30 days): ${filtered.length} products found`);
+      }
+      
+      return filtered;
     } else if (productFilter === 'seasonalFavorites') {
-      // Use isSeasonalFavorite flag if available, otherwise fall back to top-rated products
-      const seasonal = products.filter((item) => item.isSeasonalFavorite);
-      if (seasonal.length > 0) return seasonal;
-      // Fallback: top-rated products (rating >= 4)
-      return products
-        .filter((item) => item.rating >= 4)
-        .sort((a, b) => b.rating - a.rating);
+      // First try: Use isSeasonalFavorite flag
+      let filtered = products.filter((item) => item.isSeasonalFavorite === true);
+      console.log(`Seasonal Favorites filter (by flag): ${filtered.length} products found`);
+      
+      // Second try: If no products with flag, use rating-based filtering
+      if (filtered.length === 0) {
+        filtered = products
+          .filter((item) => item.rating >= 4)
+          .sort((a, b) => b.rating - a.rating);
+        console.log(`Seasonal Favorites filter (by rating >=4): ${filtered.length} products found`);
+      }
+      
+      return filtered;
     }
     return [];
   };
