@@ -46,35 +46,7 @@ export default function RootLayout({
           content="XtC6EQrHH90youbsYyydtk8Mti1pLbXkaCP-_RpzZ3g"
         />
 
-        {/* ✅ Marker.io Official Snippet */}
-        {process.env.NEXT_PUBLIC_ENABLE_MARKER === "true" && (
-          <Script
-            id="marker-io-snippet"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.markerConfig = {
-                  project: '699c30e340c2653be4cdbb6d',
-                  source: 'snippet'
-                };
-
-                !function(e,r,a){if(!e.__Marker){e.__Marker={};var t=[],n={__cs:t};
-                ["show","hide","isVisible","capture","cancelCapture","unload","reload",
-                "isExtensionInstalled","setReporter","clearReporter","setCustomData",
-                "on","off"].forEach(function(e){
-                n[e]=function(){var r=Array.prototype.slice.call(arguments);
-                r.unshift(e),t.push(r)}});
-                e.Marker=n;
-                var s=r.createElement("script");
-                s.async=1;
-                s.src="https://edge.marker.io/latest/shim.js";
-                var i=r.getElementsByTagName("script")[0];
-                i.parentNode.insertBefore(s,i)
-                }}(window,document);
-              `,
-            }}
-          />
-        )}
+      
       </head>
 
       <body
@@ -88,7 +60,7 @@ export default function RootLayout({
           <Footer />
 
           {/* Contact Button and Social Buttons */}
-          <div className="fixed bottom-24 md:bottom-6 right-3 z-50">
+          <div className="fixed bottom-24 md:bottom-6 right-5 z-50">
             <button
               onClick={toggleContact}
               className="bg-blue-600 text-white rounded-full p-4 shadow-lg hover:bg-blue-700 transition-colors"
