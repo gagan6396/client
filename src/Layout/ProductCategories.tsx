@@ -407,8 +407,8 @@ const ProductCategories: React.FC = () => {
       </main>
 
       {/* Video and Description Section */}
-      <main className="px-4 sm:px-6 lg:px-8 py-16 md:py-16 bg-green-100 to-white w-full">
-        <div className="container mx-auto max-w-6xl">
+      <main className="px-4 sm:px-6 lg:px-8 py-16 md:py-16 w-full">
+        <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center bg-white rounded-2xl shadow-xl shadow-amber-900/5 overflow-hidden p-0 lg:p-0">
             {/* Image Section */}
             <div className="relative lg:order-2 overflow-hidden h-full min-h-[400px] lg:min-h-[500px]">
