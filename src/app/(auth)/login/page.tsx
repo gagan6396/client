@@ -66,15 +66,16 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [otpStep, setOtpStep] = useState<OtpStep>("phone");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [otpLoading, setOtpLoading] = useState(false);
-  const [otpError, setOtpError] = useState("");
-  const [countdown, setCountdown] = useState(0);
-  const confirmationRef = useRef<ConfirmationResult | null>(null);
-  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  // OTP related states (commented out but kept for potential future use)
+  // const [otpStep, setOtpStep] = useState<OtpStep>("phone");
+  // const [phone, setPhone] = useState("");
+  // const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  // const [otpLoading, setOtpLoading] = useState(false);
+  // const [otpError, setOtpError] = useState("");
+  // const [countdown, setCountdown] = useState(0);
+  // const confirmationRef = useRef<ConfirmationResult | null>(null);
+  // const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  // const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const form = useForm<PasswordFormData>({
     resolver: yupResolver(passwordSchema),
@@ -91,40 +92,40 @@ const LoginPage = () => {
     document.body.appendChild(div);
 
     return () => {
-      clearRecaptcha();
+      // clearRecaptcha();
       document.getElementById(RECAPTCHA_CONTAINER_ID)?.remove();
     };
   }, []);
 
   // ─── Countdown timer ──────────────────────────────────
-  useEffect(() => {
-    if (countdown > 0) {
-      const t = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [countdown]);
+  // useEffect(() => {
+  //   if (countdown > 0) {
+  //     const t = setTimeout(() => setCountdown(countdown - 1), 1000);
+  //     return () => clearTimeout(t);
+  //   }
+  // }, [countdown]);
 
   // ─── Helper: destroy verifier ─────────────────────────
-  const clearRecaptcha = () => {
-    try {
-      recaptchaVerifierRef.current?.clear();
-    } catch (_) {}
-    recaptchaVerifierRef.current = null;
-  };
+  // const clearRecaptcha = () => {
+  //   try {
+  //     recaptchaVerifierRef.current?.clear();
+  //   } catch (_) {}
+  //   recaptchaVerifierRef.current = null;
+  // };
 
   // ─── Helper: create fresh verifier ────────────────────
-  const createRecaptcha = (): RecaptchaVerifier => {
-    clearRecaptcha();
-    const verifier = new RecaptchaVerifier(auth, RECAPTCHA_CONTAINER_ID, {
-      size: "invisible",
-      callback: () => {},
-      "expired-callback": () => {
-        clearRecaptcha();
-      },
-    });
-    recaptchaVerifierRef.current = verifier;
-    return verifier;
-  };
+  // const createRecaptcha = (): RecaptchaVerifier => {
+  //   clearRecaptcha();
+  //   const verifier = new RecaptchaVerifier(auth, RECAPTCHA_CONTAINER_ID, {
+  //     size: "invisible",
+  //     callback: () => {},
+  //     "expired-callback": () => {
+  //       clearRecaptcha();
+  //     },
+  //   });
+  //   recaptchaVerifierRef.current = verifier;
+  //   return verifier;
+  // };
 
   // ─── Password login ───────────────────────────────────
   const handlePasswordLogin = async (values: PasswordFormData) => {
@@ -168,134 +169,134 @@ const LoginPage = () => {
   };
 
   // ─── OTP: send ────────────────────────────────────────
-  const sendOTP = async () => {
-    setOtpError("");
-
-    if (!phone || phone.length !== 10) {
-      setOtpError("Please enter a valid 10-digit mobile number");
-      return;
-    }
-
-    setOtpLoading(true);
-    try {
-      const checkRes = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/auth/check-phone`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone: `+91${phone}` }),
-        }
-      );
-      const checkData = await checkRes.json();
-      if (!checkRes.ok || !checkData.success) {
-        setOtpError(
-          checkData.message ||
-            "No account found with this number. Please register first."
-        );
-        return;
-      }
-
-      const verifier = createRecaptcha();
-      await verifier.render();
-
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+91${phone}`,
-        verifier
-      );
-      confirmationRef.current = confirmation;
-      setOtpStep("otp");
-      setCountdown(30);
-    } catch (err: any) {
-      clearRecaptcha();
-      if (err?.code === "auth/invalid-phone-number") {
-        setOtpError("Invalid phone number. Please check and try again.");
-      } else if (err?.code === "auth/too-many-requests") {
-        setOtpError("Too many attempts. Please try again later.");
-      } else if (err?.code === "auth/captcha-check-failed") {
-        setOtpError("reCAPTCHA check failed. Please refresh and try again.");
-      } else {
-        setOtpError(`Error: ${err?.code ?? err?.message ?? "Unknown error"}`);
-      }
-    } finally {
-      setOtpLoading(false);
-    }
-  };
+  // const sendOTP = async () => {
+  //   setOtpError("");
+  //
+  //   if (!phone || phone.length !== 10) {
+  //     setOtpError("Please enter a valid 10-digit mobile number");
+  //     return;
+  //   }
+  //
+  //   setOtpLoading(true);
+  //   try {
+  //     const checkRes = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/auth/check-phone`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ phone: `+91${phone}` }),
+  //       }
+  //     );
+  //     const checkData = await checkRes.json();
+  //     if (!checkRes.ok || !checkData.success) {
+  //       setOtpError(
+  //         checkData.message ||
+  //           "No account found with this number. Please register first."
+  //       );
+  //       return;
+  //     }
+  //
+  //     const verifier = createRecaptcha();
+  //     await verifier.render();
+  //
+  //     const confirmation = await signInWithPhoneNumber(
+  //       auth,
+  //       `+91${phone}`,
+  //       verifier
+  //     );
+  //     confirmationRef.current = confirmation;
+  //     setOtpStep("otp");
+  //     setCountdown(30);
+  //   } catch (err: any) {
+  //     clearRecaptcha();
+  //     if (err?.code === "auth/invalid-phone-number") {
+  //       setOtpError("Invalid phone number. Please check and try again.");
+  //     } else if (err?.code === "auth/too-many-requests") {
+  //       setOtpError("Too many attempts. Please try again later.");
+  //     } else if (err?.code === "auth/captcha-check-failed") {
+  //       setOtpError("reCAPTCHA check failed. Please refresh and try again.");
+  //     } else {
+  //       setOtpError(`Error: ${err?.code ?? err?.message ?? "Unknown error"}`);
+  //     }
+  //   } finally {
+  //     setOtpLoading(false);
+  //   }
+  // };
 
   // ─── OTP: verify ─────────────────────────────────────
-  const verifyOTP = async () => {
-    setOtpError("");
-    const otpValue = otp.join("");
-    if (otpValue.length !== 6) {
-      setOtpError("Please enter the complete 6-digit OTP");
-      return;
-    }
-    try {
-      setOtpLoading(true);
-      const result = await confirmationRef.current!.confirm(otpValue);
-      const firebaseToken = await result.user.getIdToken();
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ firebaseToken, phone: `+91${phone}` }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        // ✅ FIX: Backend returns { data: { user: { token } } }
-        // Previously was reading .accessToken and .refreshToken which don't exist
-        const token = data.data?.user?.token ?? data.data?.token;
-
-        if (!token) {
-          setOtpError("Login failed: no token received. Contact support.");
-          return;
-        }
-
-        saveTokens(token);
-        toast.success("Login successful!", { position: "top-center" });
-        router.replace("/");
-      } else {
-        setOtpError(data.message || "Login failed. Please try again.");
-      }
-    } catch (err: any) {
-      console.error("[OTP] verifyOTP FAILED →", err?.code, err?.message);
-      if (err?.code === "auth/invalid-verification-code") {
-        setOtpError("Incorrect OTP. Please check and try again.");
-      } else if (err?.code === "auth/code-expired") {
-        setOtpError("OTP expired. Please request a new one.");
-      } else {
-        setOtpError("Verification failed. Please try again.");
-      }
-    } finally {
-      setOtpLoading(false);
-    }
-  };
+  // const verifyOTP = async () => {
+  //   setOtpError("");
+  //   const otpValue = otp.join("");
+  //   if (otpValue.length !== 6) {
+  //     setOtpError("Please enter the complete 6-digit OTP");
+  //     return;
+  //   }
+  //   try {
+  //     setOtpLoading(true);
+  //     const result = await confirmationRef.current!.confirm(otpValue);
+  //     const firebaseToken = await result.user.getIdToken();
+  //
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/auth/login`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ firebaseToken, phone: `+91${phone}` }),
+  //       }
+  //     );
+  //
+  //     const data = await response.json();
+  //
+  //     if (data.success) {
+  //       // ✅ FIX: Backend returns { data: { user: { token } } }
+  //       // Previously was reading .accessToken and .refreshToken which don't exist
+  //       const token = data.data?.user?.token ?? data.data?.token;
+  //
+  //       if (!token) {
+  //         setOtpError("Login failed: no token received. Contact support.");
+  //         return;
+  //       }
+  //
+  //       saveTokens(token);
+  //       toast.success("Login successful!", { position: "top-center" });
+  //       router.replace("/");
+  //     } else {
+  //       setOtpError(data.message || "Login failed. Please try again.");
+  //     }
+  //   } catch (err: any) {
+  //     console.error("[OTP] verifyOTP FAILED →", err?.code, err?.message);
+  //     if (err?.code === "auth/invalid-verification-code") {
+  //       setOtpError("Incorrect OTP. Please check and try again.");
+  //     } else if (err?.code === "auth/code-expired") {
+  //       setOtpError("OTP expired. Please request a new one.");
+  //     } else {
+  //       setOtpError("Verification failed. Please try again.");
+  //     }
+  //   } finally {
+  //     setOtpLoading(false);
+  //   }
+  // };
 
   // ─── OTP input handlers ───────────────────────────────
-  const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-    const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
-    setOtp(newOtp);
-    if (value && index < 5) inputRefs.current[index + 1]?.focus();
-  };
-
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleResend = async () => {
-    setOtp(["", "", "", "", "", ""]);
-    setOtpStep("phone");
-    setTimeout(() => sendOTP(), 150);
-  };
+  // const handleOtpChange = (index: number, value: string) => {
+  //   if (!/^\d*$/.test(value)) return;
+  //   const newOtp = [...otp];
+  //   newOtp[index] = value.slice(-1);
+  //   setOtp(newOtp);
+  //   if (value && index < 5) inputRefs.current[index + 1]?.focus();
+  // };
+  //
+  // const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
+  //   if (e.key === "Backspace" && !otp[index] && index > 0) {
+  //     inputRefs.current[index - 1]?.focus();
+  //   }
+  // };
+  //
+  // const handleResend = async () => {
+  //   setOtp(["", "", "", "", "", ""]);
+  //   setOtpStep("phone");
+  //   setTimeout(() => sendOTP(), 150);
+  // };
 
   // ─── Render ───────────────────────────────────────────
   return (
@@ -311,8 +312,8 @@ const LoginPage = () => {
         </CardHeader>
 
         <CardContent className="p-6 sm:p-8">
-          {/* ── Mode Toggle ── */}
-          <div className="flex rounded-xl overflow-hidden border border-gray-200 mb-6">
+          {/* ── Mode Toggle (commented out - only password login available) ── */}
+          {/* <div className="flex rounded-xl overflow-hidden border border-gray-200 mb-6">
             <button
               onClick={() => {
                 setLoginMode("password");
@@ -340,87 +341,87 @@ const LoginPage = () => {
             >
               Mobile OTP
             </button>
-          </div>
+          </div> */}
 
           {/* ══════════ PASSWORD LOGIN ══════════ */}
-          {loginMode === "password" && (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handlePasswordLogin)}
-                className="space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="emailOrPhone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm sm:text-base text-gray-700">
-                        Email or Phone Number
-                      </FormLabel>
-                      <FormControl>
+          {/* {loginMode === "password" && ( */}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handlePasswordLogin)}
+              className="space-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="emailOrPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Email or Phone Number
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="text"
+                        placeholder="Enter your email or phone number"
+                        className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs sm:text-sm" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm sm:text-base text-gray-700">
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
                         <Input
                           {...field}
-                          type="text"
-                          placeholder="Enter your email or phone number"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
                           className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
                         />
-                      </FormControl>
-                      <FormMessage className="text-xs sm:text-sm" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm sm:text-base text-gray-700">
-                        Password
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            {...field}
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Enter your password"
-                            className="rounded-lg border-gray-200 bg-gray-50 shadow-sm text-sm sm:text-base focus:ring-green-500 focus:border-green-500 p-3 sm:p-4 transition-all duration-300"
-                          />
-                          <div
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                          >
-                            {showPassword ? (
-                              <EyeOff size={20} />
-                            ) : (
-                              <Eye size={20} />
-                            )}
-                          </div>
+                        <div
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-3 sm:right-4 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
                         </div>
-                      </FormControl>
-                      <FormMessage className="text-xs sm:text-sm" />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#2d5437] hover:bg-[#2d5437] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <ClipLoader size={20} color="#ffffff" />
-                      Logging in...
-                    </div>
-                  ) : (
-                    "Login"
-                  )}
-                </Button>
-              </form>
-            </Form>
-          )}
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-xs sm:text-sm" />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#2d5437] hover:bg-[#2d5437] text-white text-sm sm:text-base md:text-lg font-semibold py-3 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <ClipLoader size={20} color="#ffffff" />
+                    Logging in...
+                  </div>
+                ) : (
+                  "Login"
+                )}
+              </Button>
+            </form>
+          </Form>
+          {/* )} */}
 
-          {/* ══════════ OTP LOGIN ══════════ */}
-          {loginMode === "otp" && (
+          {/* ══════════ OTP LOGIN (commented out) ══════════ */}
+          {/* {loginMode === "otp" && (
             <div className="space-y-6">
               {otpStep === "phone" ? (
                 <>
@@ -548,7 +549,7 @@ const LoginPage = () => {
                 </>
               )}
             </div>
-          )}
+          )} */}
 
           {/* ── Footer links ── */}
           <div className="mt-6 text-center text-sm text-gray-600">
