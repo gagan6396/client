@@ -1,7 +1,7 @@
 "use client";
 import { getAllSlidersAPI } from "@/apis/slider.service";
 import { Button } from "@/components/ui/button";
-import logoImage from "@/public/logo (2).png";
+import logoImage from "@/public/gauraajnew1.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -173,7 +173,7 @@ const HeroSection = () => {
                 alt="Logo"
                 width={120}
                 height={120}
-                className="w-14 sm:w-16 md:w-20 h-auto hover:opacity-90 transition-opacity duration-300"
+                className="w-14 sm:w-16 md:w-24 h-auto hover:opacity-90 transition-opacity duration-300"
               />
             </div>
 
