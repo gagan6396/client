@@ -2,7 +2,7 @@
 
 import { getCategoriesAPI } from "@/apis/categoriesAPIs";
 import bgImage from "@/public/l5.jpg";
-import logo from "@/public/logo (2).png";
+import logo from "@/public/gauraajnew1.png";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
