@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 const LOCAL_BANNER_IMAGES = [
   "/banner1.png",
-  "/banner2.png",
+  "/gauraaj-ban.png",
   "/banner3.jpg",
 ];
 
